@@ -10,15 +10,40 @@ class Program
         QuadTree<string> quadTree = new QuadTree<string>(new Rectangle(new Point(0, 0), new Point(100, 100)));
 
         // Inserting points with associated data
-        quadTree.Insert(new Point(10, 10), "Point A");
-        quadTree.Insert(new Point(50, 50), "Point B");
-        quadTree.Insert(new Point(90, 90), "Point C");
-        quadTree.Insert(new Point(90, 90), "Point C.1");
-        quadTree.Insert(new Point(60, 90), "Point C.1");
+
+        Point A = new Point(10, 10);
+        Point B = new Point(50, 50);
+        Point C = new Point(90, 90);
+        Point C1 = new Point(90, 90);
+        Point D = new Point(60, 90);
+        Point X = new Point(60, 120);
+
+        quadTree.Insert(A, "Point A");
+        quadTree.Insert(B, "Point B");
+        quadTree.Insert(C, "Point C");
+        quadTree.Insert(C1, "Point C1");
+        quadTree.Insert(D, "Point D");
+
+        var findA = quadTree.Find(A);
+        var findB = quadTree.Find(B);
+        var findC = quadTree.Find(C);
+        var findC1 = quadTree.Find(C1);
+        var findD = quadTree.Find(D);
+        var findX = quadTree.Find(X);
+
+        Rectangle Rectangle1 = new Rectangle(new Point(20, 20), new Point(40, 40));
+        Rectangle Rectangle2 = new Rectangle(new Point(80, 40), new Point(90, 60));
+        Rectangle RectangleFull = new Rectangle(new Point(0, 0), new Point(100, 100));
+        Rectangle RectangleX = new Rectangle(new Point(60, 120), new Point(70, 130));
 
         // Inserting a rectangle with associated data
-        quadTree.Insert(new Rectangle(new Point(20, 20), new Point(40, 40)), "Rectangle 1");
-        quadTree.Insert(new Rectangle(new Point(80, 40), new Point(90, 60)), "Rectangle 2");
+        quadTree.Insert(Rectangle1, "Rectangle 1");
+        quadTree.Insert(Rectangle2, "Rectangle 2");
+
+        var findRectangle1 = quadTree.Find(Rectangle1);
+        var findRectangle2 = quadTree.Find(Rectangle2);
+        var findRectangleFull = quadTree.Find(RectangleFull);
+        var findRectangleX = quadTree.Find(RectangleX);
 
         // Checking data at the root
         Console.WriteLine($"Root data count: {quadTree.Root.Data.Count}");

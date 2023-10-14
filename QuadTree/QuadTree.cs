@@ -42,16 +42,16 @@ public class QuadTreeNode<T> //where T : IComparable
     /// <returns>The quadrant in which the point lies.</returns>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when the point does not fit into any known quadrant.</exception>
 
-    public Quadrant DetermineQuadrant(Point point)
+    public Quadrant? DetermineQuadrant(Point point)
     {
         double midX = (Boundary.BottomLeft.X + Boundary.TopRight.X) / 2.0;
         double midY = (Boundary.BottomLeft.Y + Boundary.TopRight.Y) / 2.0;
 
-        Random rand = new Random();
-        if (midX == point.X)
-            midX += (rand.NextDouble() - 0.5) * midX;
-        if (midY == point.Y)
-            midY += (rand.NextDouble() - 0.5) * midY;
+        //Random rand = new Random();
+        //if (midX == point.X)
+        //    midX += (rand.NextDouble() - 0.5) * midX;
+        //if (midY == point.Y)
+        //    midY += (rand.NextDouble() - 0.5) * midY;
 
         if (point.X < midX && point.Y >= midY)
             return Quadrant.NorthWest;
@@ -62,6 +62,8 @@ public class QuadTreeNode<T> //where T : IComparable
         else if (point.X >= midX && point.Y < midY)
             return Quadrant.SouthEast;
 
+        //TODO: CHANGE TO RETURN NULL
+        return null;
         throw new ArgumentOutOfRangeException(nameof(point));
     }
 
@@ -159,7 +161,7 @@ public class QuadTree<T> // where T : IComparable
                 }
             }
 
-            Quadrant targetQuadrant = currentNode.DetermineQuadrant(point);
+            Quadrant? targetQuadrant = currentNode.DetermineQuadrant(point);
             currentNode = currentNode.Children[(int)targetQuadrant];
         }
     }
@@ -203,7 +205,6 @@ public class QuadTree<T> // where T : IComparable
                     fitsInAQuadrant = true;
                     break;
                 }
-
             }
 
             if (!fitsInAQuadrant)
@@ -214,4 +215,127 @@ public class QuadTree<T> // where T : IComparable
             }
         }
     }
+
+    /// <summary>
+    /// Finds an item in the quadtree based on the provided spatial key.
+    /// </summary>
+    /// <param name="key">The spatial item (either a Point or a Rectangle) to be found.</param>
+    /// <returns>A list of KeyValuePairs containing the key and its associated data if found, otherwise null.</returns>
+    /// <exception cref="ArgumentException">Thrown when the key is neither a Point nor a Rectangle.</exception>
+    public List<KeyValuePair<SpatialItem, T>>? Find(SpatialItem key)
+    {
+        if (key is Point)
+        {
+            return this.FindPoint((Point)key);
+        }
+        else if (key is Rectangle)
+        {
+            return this.FindRectangle((Rectangle)key);
+        } else
+        {
+            throw new ArgumentException("Key must be either a Point or a Rectangle");
+        }
+    }
+
+    /// <summary>
+    /// Finds a point in the quadtree and retrieves its associated data.
+    /// </summary>
+    /// <param name="point">The point to be found.</param>
+    /// <returns>A list of KeyValuePairs containing the point and its associated data if found, otherwise null.</returns>
+    public List<KeyValuePair<SpatialItem, T>>? FindPoint(Point point)
+    {
+        List<KeyValuePair<SpatialItem, T>>? listOfKeys = null;
+        QuadTreeNode<T> currentNode = Root;
+
+        while(true)
+        {
+
+            if (currentNode.Data.Count != 0)
+            {
+
+                foreach (var kvp in currentNode.Data)
+                {
+                    if (kvp.Key is Point && kvp.Key == (SpatialItem)point)
+                    {
+                        if(listOfKeys == null)
+                            listOfKeys = new List<KeyValuePair<SpatialItem, T>>();
+                        listOfKeys.Add(kvp);
+                    }
+                }
+
+                return listOfKeys;
+            }
+
+            if (currentNode.Children == null)
+                return null;
+
+            Quadrant? choosenQuadrant = currentNode.DetermineQuadrant(point);
+
+            //If the point is not in any quadrant, return null
+            if (choosenQuadrant == null)
+            {
+                return null;
+            }
+
+            currentNode = currentNode.Children[(int)choosenQuadrant];
+        }
+    }
+
+    /// <summary>
+    /// Finds all spatial items in the quadtree that are contained within the provided rectangle.
+    /// </summary>
+    /// <param name="rectangle">The rectangle within which to search for items.</param>
+    /// <returns>A list of KeyValuePairs containing spatial items and their associated data found within the rectangle.</returns>
+    /// <remarks>
+    /// This method returns all items that intersect with the provided rectangle, including items on the boundary of the rectangle. 
+    /// It uses a breadth-first search approach to traverse the QuadTree nodes that intersect with the search rectangle.
+    /// </remarks>
+    public List<KeyValuePair<SpatialItem, T>> FindRectangle(Rectangle rectangle)
+    {
+        List<KeyValuePair<SpatialItem, T>> foundItems = new List<KeyValuePair<SpatialItem, T>>();
+        Queue<QuadTreeNode<T>> nodesToCheck = new Queue<QuadTreeNode<T>>();
+        nodesToCheck.Enqueue(Root);
+
+        while (nodesToCheck.Count > 0)
+        {
+            QuadTreeNode<T> currentNode = nodesToCheck.Dequeue();
+
+            if (currentNode.Data.Count != 0)
+            {
+
+                foreach (var kvp in currentNode.Data)
+                {
+                    if (kvp.Key is Rectangle && rectangle.ContainsRectangle((Rectangle)kvp.Key))
+                    {
+                        foundItems.Add(kvp);
+                    } else if (kvp.Key is Point && rectangle.ContainsPoint((Point)kvp.Key))
+                    {
+                        foundItems.Add(kvp);
+                    }
+                }
+            }
+
+            if (currentNode.Children == null)
+                continue;
+
+            bool containsRectangle = false;
+
+            foreach (Quadrant quadrant in Enum.GetValues(typeof(Quadrant)))
+            {
+                if (rectangle.ContainsRectangle(currentNode.Children[(int)quadrant].Boundary) 
+                    ||
+                    currentNode.Children[(int)quadrant].Boundary.ContainsRectangle(rectangle))
+                {
+                    nodesToCheck.Enqueue(currentNode.Children[(int)quadrant]);
+                    containsRectangle = true;
+                }
+            }
+
+            if (!containsRectangle)
+            {
+                continue;
+            }
+        }
+        return foundItems;
+    } 
 }
