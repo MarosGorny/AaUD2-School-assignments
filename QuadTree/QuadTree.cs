@@ -385,10 +385,10 @@ public class QuadTree<K,V> where K : IComparable<K>
 
                 foreach (var kvp in currentNode.Data)
                 {
-                    if (kvp.Key is Rectangle && rectangle.ContainsRectangle((Rectangle)kvp.Item))
+                    if (kvp.Item is Rectangle && rectangle.ContainsRectangle((Rectangle)kvp.Item))
                     {
                         foundItems.Add(kvp);
-                    } else if (kvp.Key is Point && rectangle.ContainsPoint((Point)kvp.Item))
+                    } else if (kvp.Item is Point && rectangle.ContainsPoint((Point)kvp.Item))
                     {
                         foundItems.Add(kvp);
                     }
