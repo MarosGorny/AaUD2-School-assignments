@@ -150,7 +150,7 @@ public class QuadTree<K,V> where K : IComparable<K>
 
     private bool AddToData(QuadTreeNode<K,V> currentNode, QuadTreeObject<K,V> quadTreeObject) 
     {
-        if (currentNode.Data.Count > 0 && currentNode.Data[0].Item == quadTreeObject.Item)
+        if (currentNode.Data.Count > 0 && currentNode.Data[0].Item.Equals(quadTreeObject.Item))
         {
             foreach (var kvp in currentNode.Data)
             {
@@ -202,7 +202,10 @@ public class QuadTree<K,V> where K : IComparable<K>
             {
                 if (currentNode.Data.Count != 0)
                 {
-                    if(!AddToData(currentNode, quadTreeObject))
+                    if(AddToData(currentNode, quadTreeObject))
+                    {
+                        return;
+                    }
                         currentNode.Subdivide();
                 }
                 else
