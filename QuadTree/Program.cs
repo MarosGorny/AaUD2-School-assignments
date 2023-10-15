@@ -18,22 +18,22 @@ class Program
         QuadTreeObject<Guid, string> quadTreeObjectD = new QuadTreeObject<Guid, string>(Guid.NewGuid(), "Point D", new Point(60, 90));
         QuadTreeObject<Guid, string> quadTreeObjectX = new QuadTreeObject<Guid, string>(Guid.NewGuid(), "Point X", new Point(60, 120));
 
-        quadTree.Insert(quadTreeObjectA);
-        quadTree.Insert(quadTreeObjectB);
-        quadTree.DeletePoint(quadTreeObjectA);
-        quadTree.DeletePoint(quadTreeObjectB);
-        quadTree.Insert(quadTreeObjectC);
-        quadTree.Insert(quadTreeObjectC1);
-        quadTree.DeletePoint(quadTreeObjectC1);
-        quadTree.Insert(quadTreeObjectD);
-        quadTree.Insert(quadTreeObjectX);
+        //quadTree.Insert(quadTreeObjectA);
+        //quadTree.Insert(quadTreeObjectB);
+        //quadTree.DeletePoint(quadTreeObjectA);
+        //quadTree.DeletePoint(quadTreeObjectB);
+        //quadTree.Insert(quadTreeObjectC);
+        //quadTree.Insert(quadTreeObjectC1);
+        //quadTree.DeletePoint(quadTreeObjectC1);
+        //quadTree.Insert(quadTreeObjectD);
+        //quadTree.Insert(quadTreeObjectX);
 
-        // Finding points
-        var findA = quadTree.Find(quadTreeObjectA);
-        var findB = quadTree.Find(quadTreeObjectB);
-        var findC = quadTree.Find(quadTreeObjectC);
-        var findC1 = quadTree.Find(quadTreeObjectC1);
-        var findD = quadTree.Find(quadTreeObjectD);
+        //// Finding points
+        //var findA = quadTree.Find(quadTreeObjectA);
+        //var findB = quadTree.Find(quadTreeObjectB);
+        //var findC = quadTree.Find(quadTreeObjectC);
+        //var findC1 = quadTree.Find(quadTreeObjectC1);
+        //var findD = quadTree.Find(quadTreeObjectD);
         //var findX = quadTree.Find(quadTreeObjectX);
 
         Rectangle Rectangle1 = new Rectangle(new Point(20, 60), new Point(40, 80));
@@ -47,8 +47,15 @@ class Program
         QuadTreeObject<Guid, string> quadTreeObjectRectangleX = new QuadTreeObject<Guid, string>(Guid.NewGuid(), "Rectangle X", RectangleX);
 
         // Inserting a rectangle with associated data
-        quadTree.Insert(quadTreeObjectRectangle1);
         quadTree.Insert(quadTreeObjectRectangle2);
+        quadTree.Insert(quadTreeObjectRectangle1);
+
+
+        quadTree.DeletePoint(quadTreeObjectRectangle1);
+        quadTree.DeletePoint(quadTreeObjectRectangle2);
+
+        
+
 
 
         var findRectangle1 = quadTree.Find(quadTreeObjectRectangle1);

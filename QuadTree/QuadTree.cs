@@ -1,5 +1,4 @@
 ﻿using QuadTree.SpatialItems;
-using System.Reflection.Metadata.Ecma335;
 
 namespace QuadTree;
 
@@ -278,9 +277,10 @@ public class QuadTree<K,V> where K : IComparable<K>
                     if(!fitsInAQuadrant1)
                     {
                         AddToData(currentNode, quadTreeObject);
+                        return;
                     }
 
-                    return;
+                    
                 }
                 else
                 {
@@ -465,7 +465,7 @@ public class QuadTree<K,V> where K : IComparable<K>
         }
     }
 
-    public Point DeletePoint(QuadTreeObject<K, V> quadTreeObject)
+    public SpatialItem DeletePoint(QuadTreeObject<K, V> quadTreeObject)
     {
         QuadTreeNode<K, V>? foundNode = null;
         QuadTreeNode<K, V> currentNode = Root;
@@ -495,7 +495,24 @@ public class QuadTree<K,V> where K : IComparable<K>
             if (currentNode.Children == null)
                 break;
 
-            Quadrant? choosenQuadrant = currentNode.DetermineQuadrant((Point)quadTreeObject.Item);
+            Quadrant? choosenQuadrant = null;
+
+            //FIXME: What if it's rectangle?
+            if (quadTreeObject.Item is Rectangle)
+            {
+
+                foreach (Quadrant quadrant in Enum.GetValues(typeof(Quadrant)))
+                {
+                    if (currentNode.Children[(int)quadrant].Boundary.ContainsRectangle((Rectangle)quadTreeObject.Item))
+                    {
+                        choosenQuadrant = quadrant;
+                        break;
+                    }
+                }
+            }
+            
+            if(quadTreeObject.Item is Point)
+                choosenQuadrant = currentNode.DetermineQuadrant((Point)quadTreeObject.Item);
 
             //If the point is not in any quadrant, return null
             if (choosenQuadrant == null)
@@ -537,7 +554,7 @@ public class QuadTree<K,V> where K : IComparable<K>
 
             
         }
-        return (Point)quadTreeObject.Item;
+        return (SpatialItem)quadTreeObject.Item;
     
     }
 }
