@@ -510,13 +510,14 @@ public class QuadTree<K,V> where K : IComparable<K>
             return null;
 
         //If the node is empty, delete it
-        if (foundNode.isLeaf() && foundNode.Data.Count == 0)
-        {
+        //if (foundNode.isLeaf() && foundNode.Data.Count == 0)
+        //{
             currentNode = foundNode.Parent;
-        }
+        //}
 
         while (currentNode is not null) //Neviem ci dobra podmienka
         {
+
             int sumEmptyQuadrants = 0;
             foreach (var child in currentNode.Children)
             {

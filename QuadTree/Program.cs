@@ -20,6 +20,8 @@ class Program
 
         quadTree.Insert(quadTreeObjectA);
         quadTree.Insert(quadTreeObjectB);
+        quadTree.DeletePoint(quadTreeObjectA);
+        quadTree.DeletePoint(quadTreeObjectB);
         quadTree.Insert(quadTreeObjectC);
         quadTree.Insert(quadTreeObjectC1);
         quadTree.DeletePoint(quadTreeObjectC1);
