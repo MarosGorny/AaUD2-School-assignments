@@ -3,7 +3,7 @@
 namespace QuadTree;
 
 
-public class QuadTreeNode<T> //where T : IComparable
+public class QuadTreeNode<K,V> where K : IComparable<K>
 {
     /// <summary>
     /// The area represented by this node.
@@ -14,7 +14,8 @@ public class QuadTreeNode<T> //where T : IComparable
     /// List of data stored at this node. Each entry is a KeyValuePair where the key is 
     /// an SpatialItem (either a Point or a Rectangle) and the value is of type T.
     /// </summary>
-    public List<KeyValuePair<SpatialItem,T>> Data { get; private set; }
+    //public List<KeyValuePair<SpatialItem,T>> Data { get; private set; }
+    public List<QuadTreeObject<K,V>> Data { get; private set; }
 
     /// <summary>
     /// Array of child nodes for the current node.
@@ -23,7 +24,7 @@ public class QuadTreeNode<T> //where T : IComparable
     /// Each node can have up to four children, representing the four quadrants: NorthWest, NorthEast, SouthWest, and SouthEast.
     /// This array will be null if the node hasn't been subdivided.
     /// </remarks>
-    public QuadTreeNode<T>[] Children { get; private set; }
+    public QuadTreeNode<K,V>[] Children { get; private set; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="QuadTreeNode{T}"/> class.
@@ -32,7 +33,21 @@ public class QuadTreeNode<T> //where T : IComparable
     public QuadTreeNode(Rectangle boundary)
     {
         this.Boundary = boundary;
-        this.Data = new List<KeyValuePair<SpatialItem, T>>();
+        this.Data = new List<QuadTreeObject<K, V>>();
+    }
+
+    public bool ContainsKey(K key, out K? returnedKey)
+    {
+        foreach (var kvp in Data)
+        {
+            if (kvp.Key.CompareTo(key) == 0)
+            {
+                returnedKey = kvp.Key;
+                return true;
+            }
+        }
+        returnedKey = default;
+        return false;
     }
 
     /// <summary>
@@ -41,7 +56,6 @@ public class QuadTreeNode<T> //where T : IComparable
     /// <param name="point">The point for which the quadrant is to be determined.</param>
     /// <returns>The quadrant in which the point lies.</returns>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when the point does not fit into any known quadrant.</exception>
-
     public Quadrant? DetermineQuadrant(Point point)
     {
         double midX = (Boundary.BottomLeft.X + Boundary.TopRight.X) / 2.0;
@@ -77,16 +91,29 @@ public class QuadTreeNode<T> //where T : IComparable
     {
         if (Children == null)
         {
-            Children = new QuadTreeNode<T>[4];
+            Children = new QuadTreeNode<K,V>[4];
 
             double midX = (Boundary.BottomLeft.X + Boundary.TopRight.X) / 2.0;
             double midY = (Boundary.BottomLeft.Y + Boundary.TopRight.Y) / 2.0;
 
-            Children[(int)Quadrant.NorthWest] = new QuadTreeNode<T>(new Rectangle(new Point(Boundary.BottomLeft.X, midY), new Point(midX, Boundary.TopRight.Y)));
-            Children[(int)Quadrant.NorthEast] = new QuadTreeNode<T>(new Rectangle(new Point(midX, midY), Boundary.TopRight));
-            Children[(int)Quadrant.SouthWest] = new QuadTreeNode<T>(new Rectangle(Boundary.BottomLeft, new Point(midX, midY)));
-            Children[(int)Quadrant.SouthEast] = new QuadTreeNode<T>(new Rectangle(new Point(midX, Boundary.BottomLeft.Y), new Point(Boundary.TopRight.X, midY)));
+            Children[(int)Quadrant.NorthWest] = new QuadTreeNode<K, V>(new Rectangle(new Point(Boundary.BottomLeft.X, midY), new Point(midX, Boundary.TopRight.Y)));
+            Children[(int)Quadrant.NorthEast] = new QuadTreeNode<K, V>(new Rectangle(new Point(midX, midY), Boundary.TopRight));
+            Children[(int)Quadrant.SouthWest] = new QuadTreeNode<K, V>(new Rectangle(Boundary.BottomLeft, new Point(midX, midY)));
+            Children[(int)Quadrant.SouthEast] = new QuadTreeNode<K, V>(new Rectangle(new Point(midX, Boundary.BottomLeft.Y), new Point(Boundary.TopRight.X, midY)));
         }
+    }
+
+    public List<Rectangle>? CalculateSubquadrantsBoundaries()
+    {
+        double midX = (Boundary.BottomLeft.X + Boundary.TopRight.X) / 2.0;
+        double midY = (Boundary.BottomLeft.Y + Boundary.TopRight.Y) / 2.0;
+
+        List<Rectangle> subquadrants = new List<Rectangle>();
+        subquadrants.Add(new Rectangle(new Point(Boundary.BottomLeft.X, midY), new Point(midX, Boundary.TopRight.Y)));
+        subquadrants.Add(new Rectangle(new Point(midX, midY), Boundary.TopRight));
+        subquadrants.Add(new Rectangle(Boundary.BottomLeft, new Point(midX, midY)));
+        subquadrants.Add(new Rectangle(new Point(midX, Boundary.BottomLeft.Y), new Point(Boundary.TopRight.X, midY)));
+        return subquadrants;
     }
 }
 
@@ -96,12 +123,12 @@ public class QuadTreeNode<T> //where T : IComparable
 /// Represents a QuadTree data structure for spatial partitioning.
 /// </summary>
 /// <typeparam name="T">The type of data associated with spatial items in the quadtree.</typeparam>
-public class QuadTree<T> // where T : IComparable
+public class QuadTree<K,V> where K : IComparable<K>
 {
     /// <summary>
     /// Gets the root node of the QuadTree.
     /// </summary>
-    public QuadTreeNode<T> Root { get; private set; }
+    public QuadTreeNode<K,V> Root { get; private set; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="QuadTree{T}"/> class and subdivides the root node.
@@ -109,7 +136,7 @@ public class QuadTree<T> // where T : IComparable
     /// <param name="boundary">The boundary rectangle that defines the spatial limits of the quadtree.</param>
     public QuadTree(Rectangle boundary)
     {
-        Root = new QuadTreeNode<T>(boundary);
+        Root = new QuadTreeNode<K, V>(boundary);
         Root.Subdivide();
     }
 
@@ -120,16 +147,41 @@ public class QuadTree<T> // where T : IComparable
     /// <param name="item">The spatial item to be added.</param>
     /// <param name="value">The associated data for the spatial item.</param>
     /// <returns>A KeyValuePair if the item is added, null if the node is subdivided.</returns>
-    private KeyValuePair<SpatialItem, T>? AddOrSubdivide(QuadTreeNode<T> currentNode, SpatialItem item, T value)
-    {
-        if (currentNode.Data[0].Key == item)
-        {
-            KeyValuePair<SpatialItem, T> kvp = KeyValuePair.Create(item, value);
-            return kvp;
-        }
 
-        currentNode.Subdivide();
-        return null;        
+    private bool AddToData(QuadTreeNode<K,V> currentNode, QuadTreeObject<K,V> quadTreeObject) 
+    {
+        if (currentNode.Data.Count > 0 && currentNode.Data[0].Item == quadTreeObject.Item)
+        {
+            foreach (var kvp in currentNode.Data)
+            {
+                if (kvp.Key.Equals(quadTreeObject.Key))
+                {
+                    throw new ArgumentException(String.Format("Key {0} already exists in QuadTree", kvp.Key.ToString()));
+                }
+            }
+            currentNode.Data.Add(quadTreeObject);
+            return true;
+        } else if (currentNode.Data.Count == 0)
+        {
+            currentNode.Data.Add(quadTreeObject);
+            return true;
+        }
+        return false;
+    }
+
+
+    public void Insert(QuadTreeObject<K, V> quadTreeObject)
+    {
+        if(quadTreeObject.Item is Point)
+        {
+            InsertPoint(quadTreeObject);
+        } else if (quadTreeObject.Item is Rectangle)
+        {
+            InsertRectangle(quadTreeObject);
+        } else
+        {
+            throw new ArgumentException("Item in object must be either a Point or a Rectangle");
+        }
     }
 
     /// <summary>
@@ -137,31 +189,30 @@ public class QuadTree<T> // where T : IComparable
     /// </summary>
     /// <param name="point">The point to be inserted.</param>
     /// <param name="value">The data associated with the point.</param>
-    public void Insert(Point point, T value)
+    public void InsertPoint(QuadTreeObject<K,V> quadTreeObject)
     {
-        QuadTreeNode<T> currentNode = Root;
+        QuadTreeNode<K,V> currentNode = Root;
 
         while (true)
         {
-            if (!currentNode.Boundary.ContainsPoint(point))
+            if (!currentNode.Boundary.ContainsPoint((Point)quadTreeObject.Item))
                 return;
 
             if (currentNode.Children == null)
             {
                 if (currentNode.Data.Count != 0)
                 {
-                    if(AddOrSubdivide(currentNode, point, value) != null)
-                        return;
+                    if(!AddToData(currentNode, quadTreeObject))
+                        currentNode.Subdivide();
                 }
                 else
                 {
-                    KeyValuePair<SpatialItem, T> kvp = KeyValuePair.Create((SpatialItem)point, value);
-                    currentNode.Data.Add(kvp);
+                    AddToData(currentNode, quadTreeObject);
                     return;
                 }
             }
 
-            Quadrant? targetQuadrant = currentNode.DetermineQuadrant(point);
+            Quadrant? targetQuadrant = currentNode.DetermineQuadrant((Point)quadTreeObject.Item);
             currentNode = currentNode.Children[(int)targetQuadrant];
         }
     }
@@ -171,9 +222,10 @@ public class QuadTree<T> // where T : IComparable
     /// </summary>
     /// <param name="rectangle">The rectangle to be inserted.</param>
     /// <param name="value">The data associated with the rectangle.</param>
-    public void Insert(Rectangle rectangle, T value)
+    public void InsertRectangle(QuadTreeObject<K, V> quadTreeObject)
     {
-        QuadTreeNode<T> currentNode = Root;
+        QuadTreeNode<K,V> currentNode = Root;
+        Rectangle rectangle = (Rectangle)quadTreeObject.Item;
 
         while (true)
         {
@@ -184,13 +236,28 @@ public class QuadTree<T> // where T : IComparable
             {
                 if (currentNode.Data.Count != 0)
                 {
-                    if (AddOrSubdivide(currentNode, rectangle, value) != null)
-                        return;
+
+                    bool fitsInAQuadrant1 = false;
+                    foreach(Rectangle boundary in currentNode.CalculateSubquadrantsBoundaries() )
+                    {
+                        if(boundary.ContainsRectangle(rectangle))
+                        {
+                            fitsInAQuadrant1 = true;
+                            currentNode.Subdivide();
+                            break;
+                        }
+                    }
+
+                    if(!fitsInAQuadrant1)
+                    {
+                        AddToData(currentNode, quadTreeObject);
+                    }
+
+                    return;
                 }
                 else
                 {
-                    KeyValuePair<SpatialItem, T> kvp = KeyValuePair.Create((SpatialItem)rectangle, value);
-                    currentNode.Data.Add(kvp);
+                    AddToData(currentNode, quadTreeObject);
                     return;
                 }
             }
@@ -209,11 +276,24 @@ public class QuadTree<T> // where T : IComparable
 
             if (!fitsInAQuadrant)
             {
-                KeyValuePair<SpatialItem, T> kvp = KeyValuePair.Create((SpatialItem)rectangle, value);
-                currentNode.Data.Add(kvp);
+                AddToData(currentNode, quadTreeObject);
                 return;
             }
         }
+    }
+
+    private bool FitsInAQuadrant(QuadTreeNode<K,V> currentNode, Rectangle rectangle, out Quadrant? returnedQuadrant)
+    {
+        foreach (Quadrant quadrant in Enum.GetValues(typeof(Quadrant)))
+        {
+            if (currentNode.Children[(int)quadrant].Boundary.ContainsRectangle(rectangle))
+            {
+                returnedQuadrant = quadrant;
+                return true;
+            }
+        }
+        returnedQuadrant = null;
+        return false;
     }
 
     /// <summary>
@@ -222,18 +302,18 @@ public class QuadTree<T> // where T : IComparable
     /// <param name="key">The spatial item (either a Point or a Rectangle) to be found.</param>
     /// <returns>A list of KeyValuePairs containing the key and its associated data if found, otherwise null.</returns>
     /// <exception cref="ArgumentException">Thrown when the key is neither a Point nor a Rectangle.</exception>
-    public List<KeyValuePair<SpatialItem, T>>? Find(SpatialItem key)
+    public List<QuadTreeObject<K,V>>? Find(QuadTreeObject<K,V> quadTreeObject)
     {
-        if (key is Point)
+        if (quadTreeObject.Item is Point)
         {
-            return this.FindPoint((Point)key);
+            return FindPoint((Point)quadTreeObject.Item);
         }
-        else if (key is Rectangle)
+        else if (quadTreeObject.Item is Rectangle)
         {
-            return this.FindRectangle((Rectangle)key);
+            return FindRectangle((Rectangle)quadTreeObject.Item);
         } else
         {
-            throw new ArgumentException("Key must be either a Point or a Rectangle");
+            throw new ArgumentException("Item in object must be either a Point or a Rectangle");
         }
     }
 
@@ -242,10 +322,10 @@ public class QuadTree<T> // where T : IComparable
     /// </summary>
     /// <param name="point">The point to be found.</param>
     /// <returns>A list of KeyValuePairs containing the point and its associated data if found, otherwise null.</returns>
-    public List<KeyValuePair<SpatialItem, T>>? FindPoint(Point point)
+    public List<QuadTreeObject<K, V>>? FindPoint(Point point)
     {
-        List<KeyValuePair<SpatialItem, T>>? listOfKeys = null;
-        QuadTreeNode<T> currentNode = Root;
+        List<QuadTreeObject<K, V>>? foundItems = new List<QuadTreeObject<K, V>>();
+        QuadTreeNode<K,V> currentNode = Root;
 
         while(true)
         {
@@ -255,15 +335,15 @@ public class QuadTree<T> // where T : IComparable
 
                 foreach (var kvp in currentNode.Data)
                 {
-                    if (kvp.Key is Point && kvp.Key == (SpatialItem)point)
+                    if (kvp.Item is Point && kvp.Item == (SpatialItem)point)
                     {
-                        if(listOfKeys == null)
-                            listOfKeys = new List<KeyValuePair<SpatialItem, T>>();
-                        listOfKeys.Add(kvp);
+                        foundItems.Add(kvp);
                     }
                 }
 
-                return listOfKeys;
+                if (foundItems .Count > 0)
+                    return foundItems;
+
             }
 
             if (currentNode.Children == null)
@@ -290,25 +370,25 @@ public class QuadTree<T> // where T : IComparable
     /// This method returns all items that intersect with the provided rectangle, including items on the boundary of the rectangle. 
     /// It uses a breadth-first search approach to traverse the QuadTree nodes that intersect with the search rectangle.
     /// </remarks>
-    public List<KeyValuePair<SpatialItem, T>> FindRectangle(Rectangle rectangle)
+    public List<QuadTreeObject<K, V>> FindRectangle(Rectangle rectangle)
     {
-        List<KeyValuePair<SpatialItem, T>> foundItems = new List<KeyValuePair<SpatialItem, T>>();
-        Queue<QuadTreeNode<T>> nodesToCheck = new Queue<QuadTreeNode<T>>();
+        List<QuadTreeObject<K, V>>? foundItems = new List<QuadTreeObject<K, V>>();
+        Queue<QuadTreeNode<K, V>> nodesToCheck = new Queue<QuadTreeNode<K, V>>();
         nodesToCheck.Enqueue(Root);
 
         while (nodesToCheck.Count > 0)
         {
-            QuadTreeNode<T> currentNode = nodesToCheck.Dequeue();
+            QuadTreeNode<K,V> currentNode = nodesToCheck.Dequeue();
 
             if (currentNode.Data.Count != 0)
             {
 
                 foreach (var kvp in currentNode.Data)
                 {
-                    if (kvp.Key is Rectangle && rectangle.ContainsRectangle((Rectangle)kvp.Key))
+                    if (kvp.Key is Rectangle && rectangle.ContainsRectangle((Rectangle)kvp.Item))
                     {
                         foundItems.Add(kvp);
-                    } else if (kvp.Key is Point && rectangle.ContainsPoint((Point)kvp.Key))
+                    } else if (kvp.Key is Point && rectangle.ContainsPoint((Point)kvp.Item))
                     {
                         foundItems.Add(kvp);
                     }
