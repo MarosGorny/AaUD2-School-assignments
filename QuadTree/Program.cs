@@ -22,6 +22,7 @@ class Program
         quadTree.Insert(quadTreeObjectB);
         quadTree.Insert(quadTreeObjectC);
         quadTree.Insert(quadTreeObjectC1);
+        quadTree.DeletePoint(quadTreeObjectC1);
         quadTree.Insert(quadTreeObjectD);
         quadTree.Insert(quadTreeObjectX);
 
@@ -52,6 +53,9 @@ class Program
         var findRectangle2 = quadTree.Find(quadTreeObjectRectangle2);
         var findRectangleFull = quadTree.Find(quadTreeObjectRectangleFull);
         var findRectangleX = quadTree.Find(quadTreeObjectRectangleX);
+
+        //var findByKeyPointA = quadTree.FindByKey(quadTreeObjectA.Key);
+        //var findByKeyRectangle1 = quadTree.FindByKey(quadTreeObjectRectangle1.Key);
 
         // Checking data at the root
         Console.WriteLine($"Root data count: {quadTree.Root.Data.Count}");

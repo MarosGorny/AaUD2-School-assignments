@@ -1,4 +1,5 @@
 ﻿using QuadTree.SpatialItems;
+using System.Reflection.Metadata.Ecma335;
 
 namespace QuadTree;
 
@@ -26,14 +27,32 @@ public class QuadTreeNode<K,V> where K : IComparable<K>
     /// </remarks>
     public QuadTreeNode<K,V>[] Children { get; private set; }
 
+    public QuadTreeNode<K,V>? Parent { get; private set; }
+
     /// <summary>
     /// Initializes a new instance of the <see cref="QuadTreeNode{T}"/> class.
     /// </summary>
     /// <param name="boundary">The spatial boundary represented by this node.</param>
-    public QuadTreeNode(Rectangle boundary)
+    public QuadTreeNode(Rectangle boundary, QuadTreeNode<K, V>? parent)
     {
         this.Boundary = boundary;
         this.Data = new List<QuadTreeObject<K, V>>();
+        Parent = parent;
+    }
+
+    public bool isRoot()
+    {
+        return Parent == null;
+    }
+
+    public bool isParent()
+    {
+        return Children != null;
+    }
+
+    public bool isLeaf()
+    {
+        return Children == null;
     }
 
     public bool ContainsKey(K key, out K? returnedKey)
@@ -96,11 +115,16 @@ public class QuadTreeNode<K,V> where K : IComparable<K>
             double midX = (Boundary.BottomLeft.X + Boundary.TopRight.X) / 2.0;
             double midY = (Boundary.BottomLeft.Y + Boundary.TopRight.Y) / 2.0;
 
-            Children[(int)Quadrant.NorthWest] = new QuadTreeNode<K, V>(new Rectangle(new Point(Boundary.BottomLeft.X, midY), new Point(midX, Boundary.TopRight.Y)));
-            Children[(int)Quadrant.NorthEast] = new QuadTreeNode<K, V>(new Rectangle(new Point(midX, midY), Boundary.TopRight));
-            Children[(int)Quadrant.SouthWest] = new QuadTreeNode<K, V>(new Rectangle(Boundary.BottomLeft, new Point(midX, midY)));
-            Children[(int)Quadrant.SouthEast] = new QuadTreeNode<K, V>(new Rectangle(new Point(midX, Boundary.BottomLeft.Y), new Point(Boundary.TopRight.X, midY)));
+            Children[(int)Quadrant.NorthWest] = new QuadTreeNode<K, V>(new Rectangle(new Point(Boundary.BottomLeft.X, midY), new Point(midX, Boundary.TopRight.Y)),this);
+            Children[(int)Quadrant.NorthEast] = new QuadTreeNode<K, V>(new Rectangle(new Point(midX, midY), Boundary.TopRight),this);
+            Children[(int)Quadrant.SouthWest] = new QuadTreeNode<K, V>(new Rectangle(Boundary.BottomLeft, new Point(midX, midY)), this);
+            Children[(int)Quadrant.SouthEast] = new QuadTreeNode<K, V>(new Rectangle(new Point(midX, Boundary.BottomLeft.Y), new Point(Boundary.TopRight.X, midY)), this);
         }
+    }
+
+    public void deleteChildren()
+    {
+        Children = null;
     }
 
     public List<Rectangle>? CalculateSubquadrantsBoundaries()
@@ -136,8 +160,8 @@ public class QuadTree<K,V> where K : IComparable<K>
     /// <param name="boundary">The boundary rectangle that defines the spatial limits of the quadtree.</param>
     public QuadTree(Rectangle boundary)
     {
-        Root = new QuadTreeNode<K, V>(boundary);
-        Root.Subdivide();
+        Root = new QuadTreeNode<K, V>(boundary,null);
+        //Root.Subdivide();
     }
 
     /// <summary>
@@ -150,7 +174,7 @@ public class QuadTree<K,V> where K : IComparable<K>
 
     private bool AddToData(QuadTreeNode<K,V> currentNode, QuadTreeObject<K,V> quadTreeObject) 
     {
-        if (currentNode.Data.Count > 0 && currentNode.Data[0].Item.Equals(quadTreeObject.Item))
+        if (currentNode.Data.Count > 0 && currentNode.Data[0].Item.Equals(quadTreeObject.Item)) //FIXME: can't compare Data[0]
         {
             foreach (var kvp in currentNode.Data)
             {
@@ -206,7 +230,7 @@ public class QuadTree<K,V> where K : IComparable<K>
                     {
                         return;
                     }
-                        currentNode.Subdivide();
+                    currentNode.Subdivide();
                 }
                 else
                 {
@@ -420,5 +444,99 @@ public class QuadTree<K,V> where K : IComparable<K>
             }
         }
         return foundItems;
-    } 
+    }
+
+    //delete point
+    public bool Delete(QuadTreeObject<K, V> quadTreeObject)
+    {
+        if (quadTreeObject.Item is Point)
+        {
+            DeletePoint(quadTreeObject);
+            return true;
+        }
+        else if (quadTreeObject.Item is Rectangle)
+        {
+            //return DeleteRectangle((Rectangle)quadTreeObject.Item);
+            return false;
+        }
+        else
+        {
+            throw new ArgumentException("Item in object must be either a Point or a Rectangle");
+        }
+    }
+
+    public Point DeletePoint(QuadTreeObject<K, V> quadTreeObject)
+    {
+        QuadTreeNode<K, V>? foundNode = null;
+        QuadTreeNode<K, V> currentNode = Root;
+
+        while (true)
+        {
+
+            if (currentNode.Data.Count != 0)
+            {
+
+                foreach (var kvp in currentNode.Data)
+                {
+                    if (kvp.Key.Equals(quadTreeObject.Key))
+                    {
+                        foundNode = currentNode;
+                        currentNode.Data.Remove(kvp); //Delete the point
+                        break;
+
+                    }
+                }
+
+                if (foundNode is not null)
+                    break;
+
+            }
+
+            if (currentNode.Children == null)
+                break;
+
+            Quadrant? choosenQuadrant = currentNode.DetermineQuadrant((Point)quadTreeObject.Item);
+
+            //If the point is not in any quadrant, return null
+            if (choosenQuadrant == null)
+            {
+                break;
+            }
+
+            currentNode = currentNode.Children[(int)choosenQuadrant];
+        }
+
+        if (foundNode is null)
+            return null;
+
+        //If the node is empty, delete it
+        if (foundNode.isLeaf() && foundNode.Data.Count == 0)
+        {
+            currentNode = foundNode.Parent;
+        }
+
+        while (currentNode is not null) //Neviem ci dobra podmienka
+        {
+            int sumEmptyQuadrants = 0;
+            foreach (var child in currentNode.Children)
+            {
+                if (child.Data.Count == 0)
+                    sumEmptyQuadrants++;
+            }
+
+            //Ak som prazdny a list
+            if (sumEmptyQuadrants == 4)
+            {
+                currentNode.deleteChildren();
+                currentNode = currentNode.Parent;
+            } else
+            {
+                break;
+            }
+
+            
+        }
+        return (Point)quadTreeObject.Item;
+    
+    }
 }
