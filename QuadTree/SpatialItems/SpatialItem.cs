@@ -102,10 +102,23 @@ public class Rectangle : SpatialItem
     //            BottomLeft.Y <= other.TopRight.Y && TopRight.Y >= other.BottomLeft.Y);
     //}
 
-    public bool ContainsRectangle(Rectangle other)
+    /// <summary>
+    /// Checks if the current rectangle completely contains the specified rectangle.
+    /// </summary>
+    /// <param name="targetRectangle">The rectangle to check for containment within the current rectangle.</param>
+    /// <returns>True if the current rectangle completely contains the target rectangle; otherwise, false.</returns>
+    public bool Contains(Rectangle targetRectangle)
     {
-        return (BottomLeft.X <= other.BottomLeft.X && TopRight.X >= other.TopRight.X &&
-                BottomLeft.Y <= other.BottomLeft.Y && TopRight.Y >= other.TopRight.Y);
+        // Check if the X-coordinates of the target rectangle are within the current rectangle's X-coordinates
+        bool xCoordinatesContained = BottomLeft.X <= targetRectangle.BottomLeft.X &&
+                                     TopRight.X >= targetRectangle.TopRight.X;
+
+        // Check if the Y-coordinates of the target rectangle are within the current rectangle's Y-coordinates
+        bool yCoordinatesContained = BottomLeft.Y <= targetRectangle.BottomLeft.Y &&
+                                     TopRight.Y >= targetRectangle.TopRight.Y;
+
+        // The target rectangle is completely contained if both its X and Y coordinates are within the current rectangle's coordinates
+        return xCoordinatesContained && yCoordinatesContained;
     }
 
     #region Overrides
