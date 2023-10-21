@@ -504,4 +504,110 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
         return false;
     }
     #endregion
+
+    #region Traversal
+    public List<QuadTreeNode<K, V>> PreorderTraversal()
+    {
+        List<QuadTreeNode<K, V>> result = new List<QuadTreeNode<K, V>>();
+        Stack<QuadTreeNode<K, V>> stack = new Stack<QuadTreeNode<K, V>>();
+        stack.Push(this);
+
+        while (stack.Count > 0)
+        {
+            QuadTreeNode<K, V> currentNode = stack.Pop();
+            result.Add(currentNode);
+
+            if (currentNode.Children != null)
+            {
+                for (int i = 3; i >= 0; i--) // pushing in reverse order so they are processed from left to right
+                {
+                    stack.Push(currentNode.Children[i]);
+                }
+            }
+        }
+
+        return result;
+    }
+
+    public List<QuadTreeNode<K, V>> InOrderTraversal()
+    {
+        List<QuadTreeNode<K, V>> result = new List<QuadTreeNode<K, V>>();
+        if (this == null) return result;
+
+        Stack<(QuadTreeNode<K, V> Node, bool Visited)> stack = new Stack<(QuadTreeNode<K, V> Node, bool Visited)>();
+        stack.Push((this, false));
+
+        while (stack.Count > 0)
+        {
+            var (current, visited) = stack.Pop();
+
+            if (current == null) continue;
+
+            if (visited)
+            {
+                result.Add(current);
+                if(current.Children is null) continue;
+                stack.Push((current.Children[(int)Quadrant.SouthEast], false));
+                stack.Push((current.Children[(int)Quadrant.SouthWest], false));
+
+            }
+            else
+            {
+                if (current.Children is null)
+                {
+                    stack.Push((current, true));
+                    continue;
+                }
+                stack.Push((current, true));
+                stack.Push((current.Children[(int)Quadrant.NorthEast], false));
+                stack.Push((current.Children[(int)Quadrant.NorthWest], false));
+
+
+            }
+        }
+
+        return result;
+    }
+
+    //First left subtree then right subtree then root
+    public List<QuadTreeNode<K, V>> PostOrderTraversal()
+    {
+        if (this is null) return new List<QuadTreeNode<K, V>>();
+
+        Stack<QuadTreeNode<K, V>> stack1 = new Stack<QuadTreeNode<K, V>>();
+        Stack<QuadTreeNode<K, V>> stack2 = new Stack<QuadTreeNode<K, V>>();
+        List<QuadTreeNode<K, V>> result = new List<QuadTreeNode<K, V>>();
+
+        stack1.Push(this);
+
+        while (stack1.Count > 0)
+        {
+            QuadTreeNode<K, V> currentNode = stack1.Pop();
+
+            if (currentNode.Children != null)
+            {
+                foreach (var child in currentNode.Children)
+                {
+                    if (child != null)
+                    {
+                        stack1.Push(child);
+                    }
+                }
+            }
+
+            stack2.Push(currentNode);
+        }
+
+        // Now pop nodes from the second stack to get them in postorder and add them to the result.
+        while (stack2.Count > 0)
+        {
+            result.Add(stack2.Pop());
+        }
+
+        return result;
+    }
+
+
+
+    #endregion
 }
