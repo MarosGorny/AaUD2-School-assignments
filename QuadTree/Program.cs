@@ -7,7 +7,7 @@ class Program
     static void Main()
     {
         // Initialize a QuadTree with a specified boundary
-        QuadTree<Guid, string> quadTree = new QuadTree<Guid, string>(new Rectangle(new Point(0, 0), new Point(100, 100)));
+        QuadTree<Guid, string> quadTree = new QuadTree<Guid, string>(new Rectangle(new Point(0, 0), new Point(100, 100)),0);
 
         // Inserting points with associated data
         QuadTreeObject<Guid, string> quadTreeObjectA = new QuadTreeObject<Guid, string>(Guid.NewGuid(), "Point A", new Point(10, 10));

@@ -5,19 +5,22 @@ namespace QuadTree;
 public class QuadTreeNode<K, V> where K : IComparable<K>
 {
     #region Constructor and properties
-    private const int QUADRANT_COUNT = 4;
     public Rectangle Boundary { get; }
     public int Depth { get; }
     public int MaxSubtreeDepth { get; private set; } = 0;
-    public List<QuadTreeObject<K, V>> Data { get; private set; } = new List<QuadTreeObject<K, V>>();
+    public List<QuadTreeObject<K, V>> Data { get; private set; } = new List<QuadTreeObject<K, V>>(); //TODO: Rectangle Data and point Data should be seperated
     public QuadTreeNode<K, V>[]? Children { get; private set; }
     public QuadTreeNode<K, V>? Parent { get; }
 
-    public QuadTreeNode(Rectangle boundary, QuadTreeNode<K, V>? parent)
+    private const int QUADRANT_COUNT = 4;
+    public QuadTree<K, V> QuadTree { get; private set; }
+
+    public QuadTreeNode(Rectangle boundary, QuadTreeNode<K, V>? parent, QuadTree<K, V> quadTree)
     {
         Boundary = boundary;
         Parent = parent;
         Depth = parent?.Depth + 1 ?? 0;
+        QuadTree = quadTree;
     }
     #endregion
 
@@ -40,7 +43,7 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
 
             for (int i = 0; i < QUADRANT_COUNT; i++)
             {
-                Children[i] = new QuadTreeNode<K, V>(boundaries[i], this);
+                Children[i] = new QuadTreeNode<K, V>(boundaries[i], this, this.QuadTree);
             }
             UpdateMaxSubtreeDepthAfterSubdivision();
         }
@@ -169,7 +172,15 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
                     return;
                 }
 
-                currentNode.Subdivide();
+                if (currentNode.Depth < currentNode.QuadTree.MaxAllowedDepth)
+                {
+                    currentNode.Subdivide();
+                }
+                else
+                {
+                    currentNode.Data.Add(quadTreeObject);
+                    return;
+                }
 
             }
 
@@ -202,7 +213,7 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
                     return;
                 }
 
-                if (ShouldSubdivide(currentNode, rectangle))
+                if (ShouldSubdivide(currentNode, rectangle) && currentNode.Depth < currentNode.QuadTree.MaxAllowedDepth)
                 {
                     currentNode.Subdivide();
                 }

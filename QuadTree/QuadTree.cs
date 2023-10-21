@@ -5,11 +5,12 @@ namespace QuadTree;
 public class QuadTree<K,V> where K : IComparable<K>
 {
     public QuadTreeNode<K,V> Root { get; private set; }
-    public int maxDepth { get; set; } = 10; //TODO: Need to be set by user and need to be implemented
+    public int MaxAllowedDepth { get; set; } //TODO: Need to be set by user and need to be implemented
 
-    public QuadTree(Rectangle boundary)
+    public QuadTree(Rectangle boundary, int maxAllowedDepth = 10)
     {
-        Root = new QuadTreeNode<K, V>(boundary,null);
+        Root = new QuadTreeNode<K, V>(boundary,null,this);
+        MaxAllowedDepth = maxAllowedDepth;
         //Root.Subdivide();
     }
 
