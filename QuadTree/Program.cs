@@ -51,8 +51,8 @@ class Program
         quadTree.Insert(quadTreeObjectRectangle1);
 
 
-        quadTree.DeletePoint(quadTreeObjectRectangle1);
-        quadTree.DeletePoint(quadTreeObjectRectangle2);
+        //quadTree.DeletePoint(quadTreeObjectRectangle1);
+        //quadTree.DeletePoint(quadTreeObjectRectangle2);
 
         
 
