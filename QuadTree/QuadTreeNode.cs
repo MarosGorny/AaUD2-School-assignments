@@ -4,12 +4,12 @@ namespace QuadTree;
 
 public class QuadTreeNode<K, V> where K : IComparable<K>
 {
+    #region Constructor and properties
     private const int QUADRANT_COUNT = 4;
-
     public Rectangle Boundary { get; }
     public int Depth { get; }
-    public int SubTreeMaxItemsSize { get; private set; }
-    public List<QuadTreeObject<K, V>> Data { get; } = new List<QuadTreeObject<K, V>>();
+    public int MaxSubtreeDepth { get; private set; } = 0;
+    public List<QuadTreeObject<K, V>> Data { get; private set; } = new List<QuadTreeObject<K, V>>();
     public QuadTreeNode<K, V>[]? Children { get; private set; }
     public QuadTreeNode<K, V>? Parent { get; }
 
@@ -19,29 +19,123 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
         Parent = parent;
         Depth = parent?.Depth + 1 ?? 0;
     }
+    #endregion
 
-    public bool IsRoot() => Parent == null;
-    public bool IsLeaf() => Children == null;
+    #region Node Type Checks
+    public bool IsRoot() => Parent is null;
+    public bool IsLeaf() => Children is null;
+    #endregion
 
-    public bool ContainsKey(K key, out K? returnedKey)
-    {
-        foreach (var kvp in Data)
-        {
-            if (kvp.Key.CompareTo(key) == 0)
-            {
-                returnedKey = kvp.Key;
-                return true;
-            }
-        }
-        returnedKey = default;
-        return false;
-    }
-
-    public void MakeLeaf()
+    #region Node Manipulation
+    private void MakeLeaf()
     {
         Children = null;
     }
+    private void Subdivide()
+    {
+        if (IsLeaf())
+        {
+            Children = new QuadTreeNode<K, V>[QUADRANT_COUNT];
+            var boundaries = CalculateSubquadrantsBoundaries();
 
+            for (int i = 0; i < QUADRANT_COUNT; i++)
+            {
+                Children[i] = new QuadTreeNode<K, V>(boundaries[i], this);
+            }
+            UpdateMaxSubtreeDepthAfterSubdivision();
+        }
+    }
+
+    private void UpdateMaxSubtreeDepthAfterSubdivision()
+    {
+        this.MaxSubtreeDepth = 1;
+        UpdateAncestorsMaxSubtreeDepth();
+    }
+
+    private void UpdateAncestorsMaxSubtreeDepth()
+    {
+        QuadTreeNode<K, V>? currentNode = this.Parent;
+        int childDepth = this.MaxSubtreeDepth;
+
+        while (currentNode != null)
+        {
+            if (currentNode.MaxSubtreeDepth < childDepth + 1)
+            {
+                currentNode.MaxSubtreeDepth = childDepth + 1;
+                childDepth = currentNode.MaxSubtreeDepth;
+                currentNode = currentNode.Parent;
+            }
+            else
+            {
+                break;
+            }
+        }
+    }
+
+    private void SimplifyIfEmpty()
+    {
+        if (this.Data.Count == 0 && !IsLeaf())
+        {
+            bool canSimplify = true;
+
+            foreach (var child in Children)
+            {
+                if (!child.IsLeaf() || child.Data.Count > 0)
+                {
+                    canSimplify = false;
+                    break;
+                }
+            }
+
+            if (canSimplify)
+            {
+                MakeLeaf();
+            }
+            else
+            {
+                TransferDataFromDeepestLeaf();
+            }
+        }
+    }
+
+    private void TransferDataFromDeepestLeaf()
+    {
+        var deepestLeaf = GetDeepestLeafWithMinimalData();
+        if (deepestLeaf != null)
+        {
+            this.Data = deepestLeaf.Data;
+            deepestLeaf.Data = new List<QuadTreeObject<K, V>>();
+        }
+    }
+
+    private QuadTreeNode<K, V>? GetDeepestLeafWithMinimalData()
+    {
+        QuadTreeNode<K, V> currentNode = this;
+
+        while (!currentNode.IsLeaf())
+        {
+            currentNode = currentNode.Children.MaxBy(child => child.MaxSubtreeDepth);
+            if (currentNode is null) return null;
+        }
+
+        // At this point, currentNode's siblings including itself are the leaf nodes at the deepest level.
+        QuadTreeNode<K, V>? leafWithMinimalData = null;
+        int minimalDataCount = int.MaxValue;
+
+        foreach (var sibling in currentNode.Parent.Children)
+        {
+            if (sibling.IsLeaf() && sibling.Data.Count > 0 && sibling.Data.Count < minimalDataCount)
+            {
+                leafWithMinimalData = sibling;
+                minimalDataCount = sibling.Data.Count;
+            }
+        }
+
+        return leafWithMinimalData;
+    }
+    #endregion
+
+    #region Insertion
     public void Insert(QuadTreeObject<K, V> quadTreeObject)
     {
         if (quadTreeObject.Item is Point)
@@ -51,22 +145,6 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
         else if (quadTreeObject.Item is Rectangle)
         {
             InsertRectangle(quadTreeObject);
-        }
-        else
-        {
-            throw new ArgumentException("Item in object must be either a Point or a Rectangle");
-        }
-    }
-
-    public List<QuadTreeObject<K, V>>? Find(QuadTreeObject<K, V> quadTreeObject)
-    {
-        if (quadTreeObject.Item is Point)
-        {
-            return FindPoint((Point)quadTreeObject.Item);
-        }
-        else if (quadTreeObject.Item is Rectangle)
-        {
-            return FindRectangle((Rectangle)quadTreeObject.Item);
         }
         else
         {
@@ -92,10 +170,11 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
                 }
 
                 currentNode.Subdivide();
+
             }
 
             Quadrant? targetQuadrant = currentNode.DetermineQuadrant(itemPoint);
-            if (targetQuadrant.HasValue)
+            if (targetQuadrant is not null)
             {
                 currentNode = currentNode.Children[(int)targetQuadrant.Value];
             }
@@ -104,32 +183,6 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
                 throw new InvalidOperationException("DetermineQuadrant returned null");
             }
         }
-    }
-
-    private List<QuadTreeObject<K, V>>? FindPoint(Point point)
-    {
-        List<QuadTreeObject<K, V>>? foundItems = new List<QuadTreeObject<K, V>>();
-        QuadTreeNode<K, V> currentNode = this;
-
-        while (currentNode != null)
-        {
-            foreach (var kvp in currentNode.Data)
-            {
-                if (kvp.Item is Point currentPoint && currentPoint.Equals(point))
-                {
-                    foundItems.Add(kvp);
-                }
-            }
-
-            if (foundItems.Count > 0 || currentNode.IsLeaf())
-            {
-                return foundItems;
-            }
-
-            Quadrant? chosenQuadrant = currentNode.DetermineQuadrant(point);
-            currentNode = chosenQuadrant.HasValue ? currentNode.Children[(int)chosenQuadrant.Value] : null;
-        }
-        return null;
     }
 
     private void InsertRectangle(QuadTreeObject<K, V> quadTreeObject)
@@ -177,6 +230,129 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
             }
         }
     }
+    #endregion
+
+    #region Deletion
+    public void Delete(QuadTreeObject<K, V> quadTreeObject) //TODO: Return bool or object
+    {
+        if (quadTreeObject.Item is Point)
+        {
+            DeletePoint(quadTreeObject);
+        }
+        else if (quadTreeObject.Item is Rectangle)
+        {
+            DeleteRectangle(quadTreeObject);
+        }
+        else
+        {
+            throw new ArgumentException("Item in object must be either a Point or a Rectangle");
+        }
+    }
+
+    private void DeletePoint(QuadTreeObject<K, V> quadTreeObject)
+    {
+        QuadTreeNode<K, V> currentNode = this;
+
+        while (currentNode != null)
+        {
+            if (TryRemoveDataFromNode(currentNode, quadTreeObject))
+                return;
+
+            if (currentNode.IsLeaf())
+            {
+                return;
+            }
+
+            Point point = quadTreeObject.Item as Point;
+            Quadrant? chosenQuadrant = currentNode.DetermineQuadrant(point);
+            currentNode = chosenQuadrant is not null ? currentNode.Children[(int)chosenQuadrant.Value] : null;
+        }
+    }
+
+    private void DeleteRectangle(QuadTreeObject<K, V> quadTreeObject)
+    {
+        Rectangle rectangle = quadTreeObject.Item as Rectangle;
+        Queue<QuadTreeNode<K, V>> nodesToCheck = new Queue<QuadTreeNode<K, V>>();
+        nodesToCheck.Enqueue(this);
+
+        while (nodesToCheck.Count > 0)
+        {
+            QuadTreeNode<K, V> currentNode = nodesToCheck.Dequeue();
+
+            if (TryRemoveDataFromNode(currentNode, quadTreeObject))
+                return;
+
+            if (currentNode.Children is null) continue;
+
+            foreach (Quadrant quadrant in Enum.GetValues(typeof(Quadrant)))
+            {
+                var childNodeBoundary = currentNode.Children[(int)quadrant].Boundary;
+
+                if (childNodeBoundary.Contains(rectangle))
+                {
+                    nodesToCheck.Enqueue(currentNode.Children[(int)quadrant]);
+                }
+            }
+        }
+    }
+
+    private bool TryRemoveDataFromNode(QuadTreeNode<K, V> node, QuadTreeObject<K, V> targetObject)
+    {
+        for (int i = 0; i < node.Data.Count; i++)
+        {
+            if (node.Data[i] == targetObject)
+            {
+                node.Data.RemoveAt(i);
+                node.SimplifyIfEmpty(); // Or whatever you renamed ReduceIfEmpty to.
+                return true;
+            }
+        }
+        return false;
+    }
+    #endregion
+
+    #region Find
+    public List<QuadTreeObject<K, V>>? Find(QuadTreeObject<K, V> quadTreeObject)
+    {
+        if (quadTreeObject.Item is Point)
+        {
+            return FindPoint((Point)quadTreeObject.Item);
+        }
+        else if (quadTreeObject.Item is Rectangle)
+        {
+            return FindRectangle((Rectangle)quadTreeObject.Item);
+        }
+        else
+        {
+            throw new ArgumentException("Item in object must be either a Point or a Rectangle");
+        }
+    }
+
+    private List<QuadTreeObject<K, V>>? FindPoint(Point point)
+    {
+        List<QuadTreeObject<K, V>>? foundItems = new List<QuadTreeObject<K, V>>();
+        QuadTreeNode<K, V> currentNode = this;
+
+        while (currentNode != null)
+        {
+            foreach (var kvp in currentNode.Data)
+            {
+                if (kvp.Item is Point currentPoint && currentPoint.Equals(point))
+                {
+                    foundItems.Add(kvp);
+                }
+            }
+
+            if (foundItems.Count > 0 || currentNode.IsLeaf())
+            {
+                return foundItems;
+            }
+
+            Quadrant? chosenQuadrant = currentNode.DetermineQuadrant(point);
+            currentNode = chosenQuadrant is not null ? currentNode.Children[(int)chosenQuadrant.Value] : null;
+        }
+        return null;
+    }
 
     private List<QuadTreeObject<K, V>> FindRectangle(Rectangle rectangle)
     {
@@ -199,7 +375,7 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
             }
 
             // If the current node doesn't have children, proceed to the next node
-            if (currentNode.Children == null) continue;
+            if (currentNode.Children is null) continue;
 
             foreach (Quadrant quadrant in Enum.GetValues(typeof(Quadrant)))
             {
@@ -212,6 +388,71 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
             }
         }
         return foundItems;
+    }
+    #endregion
+
+    #region Utility and Helper Methods
+    private bool TryAddItem(QuadTreeObject<K, V> item)
+    {
+
+        foreach (var existingItem in Data)
+        {
+
+            if (existingItem.Key.Equals(item.Key))
+            {
+                throw new ArgumentException($"Key {item.Key} already exists in QuadTree");
+            }
+
+            if (existingItem.Item.Equals(item.Item))
+            {
+                Data.Add(item);
+                return true;
+            }
+        }
+
+        // If we reached here, then there's no matching item.
+        // So, if the node data was empty, we add the new item.
+        if (Data.Count == 0)
+        {
+            Data.Add(item);
+            return true;
+        }
+
+        return false;
+    }
+
+    private (double, double) CalculateMidPoints() =>
+        ((Boundary.BottomLeft.X + Boundary.TopRight.X) / 2.0, (Boundary.BottomLeft.Y + Boundary.TopRight.Y) / 2.0);
+
+    private List<Rectangle> CalculateSubquadrantsBoundaries()
+    {
+        (double midX, double midY) = CalculateMidPoints();
+
+        return new List<Rectangle>
+        {
+            // NorthWest
+            new Rectangle(new Point(Boundary.BottomLeft.X, midY), new Point(midX, Boundary.TopRight.Y)),
+            // NorthEast
+            new Rectangle(new Point(midX, midY), Boundary.TopRight),
+            // SouthWest
+            new Rectangle(Boundary.BottomLeft, new Point(midX, midY)),
+            // SouthEast
+            new Rectangle(new Point(midX, Boundary.BottomLeft.Y), new Point(Boundary.TopRight.X, midY))
+        };
+    }
+
+    private Quadrant? DetermineQuadrant(Point point)
+    {
+        (double midX, double midY) = CalculateMidPoints();
+
+        return point switch
+        {
+            _ when point.X < midX && point.Y >= midY => Quadrant.NorthWest,
+            _ when point.X >= midX && point.Y >= midY => Quadrant.NorthEast,
+            _ when point.X < midX && point.Y < midY => Quadrant.SouthWest,
+            _ when point.X >= midX && point.Y < midY => Quadrant.SouthEast,
+            _ => null
+        };
     }
 
     private bool ShouldSubdivide(QuadTreeNode<K, V> node, Rectangle rectangle)
@@ -251,83 +492,5 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
         fittingQuadrant = null;
         return false;
     }
-
-    private bool TryAddItem(QuadTreeObject<K, V> item)
-    {
-        bool nodeDataIsEmpty = true;
-        foreach (var existingItem in Data)
-        {
-            nodeDataIsEmpty = false;
-
-            if (existingItem.Key.Equals(item.Key))
-            {
-                throw new ArgumentException($"Key {item.Key} already exists in QuadTree");
-            }
-
-            if (existingItem.Item.Equals(item.Item))
-            {
-                Data.Add(item);
-                return true;
-            }
-        }
-
-        // If we reached here, then there's no matching item.
-        // So, if the node data was empty, we add the new item.
-        if (nodeDataIsEmpty)
-        {
-            Data.Add(item);
-            return true;
-        }
-
-        return false;
-    }
-
-    private (double, double) CalculateMidPoints() =>
-        ((Boundary.BottomLeft.X + Boundary.TopRight.X) / 2.0, (Boundary.BottomLeft.Y + Boundary.TopRight.Y) / 2.0);
-
-
-    public Quadrant? DetermineQuadrant(Point point)
-    {
-        (double midX, double midY) = CalculateMidPoints();
-
-        return point switch
-        {
-            _ when point.X < midX && point.Y >= midY => Quadrant.NorthWest,
-            _ when point.X >= midX && point.Y >= midY => Quadrant.NorthEast,
-            _ when point.X < midX && point.Y < midY => Quadrant.SouthWest,
-            _ when point.X >= midX && point.Y < midY => Quadrant.SouthEast,
-            _ => null
-        };
-    }
-
-    public void Subdivide()
-    {
-        if (IsLeaf())
-        {
-            Children = new QuadTreeNode<K, V>[QUADRANT_COUNT];
-            var boundaries = CalculateSubquadrantsBoundaries();
-
-            for (int i = 0; i < QUADRANT_COUNT; i++)
-            {
-                Children[i] = new QuadTreeNode<K, V>(boundaries[i], this);
-            }
-        }
-    }
-
-    public List<Rectangle> CalculateSubquadrantsBoundaries()
-    {
-        (double midX, double midY) = CalculateMidPoints();
-
-        return new List<Rectangle>
-        {
-            // NorthWest
-            new Rectangle(new Point(Boundary.BottomLeft.X, midY), new Point(midX, Boundary.TopRight.Y)),
-            // NorthEast
-            new Rectangle(new Point(midX, midY), Boundary.TopRight),
-            // SouthWest
-            new Rectangle(Boundary.BottomLeft, new Point(midX, midY)),
-            // SouthEast
-            new Rectangle(new Point(midX, Boundary.BottomLeft.Y), new Point(Boundary.TopRight.X, midY))
-        };
-    }
+    #endregion
 }

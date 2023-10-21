@@ -96,12 +96,6 @@ public class Rectangle : SpatialItem
                 p.Y >= BottomLeft.Y && p.Y <= TopRight.Y);
     }
 
-    //public bool IntersectsRectangle(Rectangle other)
-    //{
-    //    return (BottomLeft.X <= other.TopRight.X && TopRight.X >= other.BottomLeft.X &&
-    //            BottomLeft.Y <= other.TopRight.Y && TopRight.Y >= other.BottomLeft.Y);
-    //}
-
     /// <summary>
     /// Checks if the current rectangle completely contains the specified rectangle.
     /// </summary>
