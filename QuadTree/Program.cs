@@ -1,5 +1,4 @@
-﻿using System;
-using QuadTree;
+﻿using QuadTree;
 using QuadTree.SpatialItems;
 
 class Program
@@ -49,19 +48,19 @@ class Program
 
         //////////////////////////
         // Point C1 to be stored in Inner NW quadrant of NW quadrant
-        QuadTreeObject<Guid, string> quadTreeObjectC11 = new QuadTreeObject<Guid, string>(Guid.NewGuid(), "Point 3.0", new Point(10, 45));
+        QuadTreeObject<Guid, string> quadTreeObjectC11 = new QuadTreeObject<Guid, string>(Guid.NewGuid(), "Point 3.0", new Point(60, 45));
         quadTree.Insert(quadTreeObjectC11);
 
         // Point D1 to be stored in Inner NE quadrant of NW quadrant
-        QuadTreeObject<Guid, string> quadTreeObjectD11 = new QuadTreeObject<Guid, string>(Guid.NewGuid(), "Point 3.1", new Point(35, 45));
+        QuadTreeObject<Guid, string> quadTreeObjectD11 = new QuadTreeObject<Guid, string>(Guid.NewGuid(), "Point 3.1", new Point(85, 45));
         quadTree.Insert(quadTreeObjectD11);
 
         // Point A1 to be stored in Inner SW quadrant of NW quadrant
-        QuadTreeObject<Guid, string> quadTreeObjectA11 = new QuadTreeObject<Guid, string>(Guid.NewGuid(), "Point 3.2", new Point(10, 20));
+        QuadTreeObject<Guid, string> quadTreeObjectA11 = new QuadTreeObject<Guid, string>(Guid.NewGuid(), "Point 3.2", new Point(60, 20));
         quadTree.Insert(quadTreeObjectA11);
 
         // Point B1 to be stored in Inner SE quadrant of NW quadrant
-        QuadTreeObject<Guid, string> quadTreeObjectB11 = new QuadTreeObject<Guid, string>(Guid.NewGuid(), "Point 3.3", new Point(35, 20));
+        QuadTreeObject<Guid, string> quadTreeObjectB11 = new QuadTreeObject<Guid, string>(Guid.NewGuid(), "Point 3.3", new Point(85, 20));
         quadTree.Insert(quadTreeObjectB11);
 
 
