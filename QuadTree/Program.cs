@@ -1,4 +1,4 @@
-﻿using QuadTree.QuadTreeTest;
+﻿using QuadTreeDS.QuadTreeTest;
 
 class Program
 {

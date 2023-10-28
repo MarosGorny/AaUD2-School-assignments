@@ -1,4 +1,4 @@
-﻿using QuadTree.SpatialItems;
+﻿using QuadTreeDS.SpatialItems;
 
 namespace SemesterAssignment1.RealtyObjects;
 
@@ -11,13 +11,13 @@ public class Property : SpatialItem
     public int ConscriptionNumber { get; set; }
     public string Description { get; set; }
     public List<Parcel> PositionedOnParcels { get; set; } = new List<Parcel>(); 
-    public GPSRectangle Boundary { get; private set; }
+    public override SpatialItem Boundary {get; }
 
-    public Property(int conscriptionNumber, string description, GPSPoint bottomLeft, GPSPoint topRight)
+    public Property(int conscriptionNumber, string description, GPSRectangle gpsRectangle)
     {
         ConscriptionNumber = conscriptionNumber;
         Description = description;
-        Boundary = new GPSRectangle(bottomLeft, topRight);
+        Boundary = gpsRectangle.Boundary;
     }
 
     public override bool ContainsPoint(Point p)
@@ -33,15 +33,14 @@ public class Parcel : SpatialItem
 {
     public int ParcelNumber { get; set; }
     public string Description { get; set; }
-    public List<Property> OccupiedByProperties { get; set; } = new List<Property>(); 
+    public List<Property> OccupiedByProperties { get; set; } = new List<Property>();
+    public override SpatialItem Boundary { get; }
 
-    private GPSRectangle Boundary;
-
-    public Parcel(int parcelNumber, string description, GPSPoint bottomLeft, GPSPoint topRight)
+    public Parcel(int parcelNumber, string description, GPSRectangle gpsRectangle)
     {
         ParcelNumber = parcelNumber;
         Description = description;
-        Boundary = new GPSRectangle(bottomLeft, topRight);
+        Boundary = gpsRectangle.Boundary;
     }
 
     public override bool ContainsPoint(Point p)

@@ -1,7 +1,7 @@
-﻿using QuadTree.QuadTree;
-using QuadTree.SpatialItems;
+﻿using QuadTreeDS.QuadTree;
+using QuadTreeDS.SpatialItems;
 
-namespace QuadTree.QuadTreeTest;
+namespace QuadTreeDS.QuadTreeTest;
 class QuadTreeTester
 {
     private QuadTree<Guid, string> _quadTree;

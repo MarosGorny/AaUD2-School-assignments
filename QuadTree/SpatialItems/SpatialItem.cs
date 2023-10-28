@@ -1,4 +1,4 @@
-﻿namespace QuadTree.SpatialItems;
+﻿namespace QuadTreeDS.SpatialItems;
 
 /// <summary>
 /// Enum representing the four possible quadrants in a 2D space.
@@ -23,6 +23,8 @@ public abstract class SpatialItem
     /// <param name="p">Point to be checked.</param>
     /// <returns>True if the point is contained within the item, otherwise false.</returns>
     public abstract bool ContainsPoint(Point p);
+
+    public abstract SpatialItem Boundary { get; }
 }
 
 /// <summary>
@@ -33,6 +35,8 @@ public class Point : SpatialItem
     public double X { get; set; }
     public double Y { get; set; }
 
+    public override SpatialItem Boundary => this;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="Point"/> class.
     /// </summary>
@@ -42,6 +46,8 @@ public class Point : SpatialItem
     {
         X = x;
         Y = y;
+
+        //Boundary = new Rectangle(this, this);
     }
 
     public override bool ContainsPoint(Point p)
@@ -79,10 +85,14 @@ public class Rectangle : SpatialItem
     public Point BottomLeft { get; set; }
     public Point TopRight { get; set; }
 
+    public override SpatialItem Boundary {get; }
+
     public Rectangle(Point bottomLeft, Point topRight)
     {
         BottomLeft = bottomLeft;
         TopRight = topRight;
+
+        Boundary = this;
     }
 
     public override bool ContainsPoint(Point p)
@@ -157,15 +167,18 @@ public class GPSPoint : Point
     }
 }
 
-public class GPSRectangle : SpatialItem
+public class GPSRectangle : Rectangle
 {
-    public GPSPoint BottomLeft { get; set; }
-    public GPSPoint TopRight { get; set; }
+    //public GPSPoint BottomLeft { get; set; }
+    //public GPSPoint TopRight { get; set; }
+
+    //public override SpatialItem Boundary { get;}
 
     public GPSRectangle(GPSPoint bottomLeft, GPSPoint topRight)
+        : base(bottomLeft, topRight)
     {
-        BottomLeft = bottomLeft;
-        TopRight = topRight;
+        //BottomLeft = bottomLeft;
+        //TopRight = topRight;
     }
 
     public override bool ContainsPoint(Point p)
