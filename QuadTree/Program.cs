@@ -1,4 +1,4 @@
-﻿using QuadTree.QuadTreeTest;
+﻿using QuadTreeDS.QuadTreeTest;
 
 class Program
 {
@@ -21,7 +21,7 @@ class Program
         Console.ReadLine();
 
         var testerDelete = new QuadTreeTester(0.1, 0.8, 0.1);
-        testerDelete.InsertBatch(10_000);   
+        testerDelete.InsertBatch(10_000);
         testerDelete.RunRandomTest(100_000);
 
         Console.WriteLine("After 10_000 inserts and 100_000 random tests, delete tree");
@@ -44,7 +44,8 @@ class Program
         Console.WriteLine();
         Console.ReadLine();
 
-        //tester.quadTreeEdgeCases();
+        //var testerEdgeCases = new QuadTreeTester(0.4, 0.3, 0.3);
+        //testerEdgeCases.quadTreeEdgeCases();
 
 
 
