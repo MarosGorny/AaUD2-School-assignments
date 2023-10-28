@@ -215,7 +215,7 @@
             Controls.Add(groupBox1);
             Controls.Add(button1);
             Name = "Form1";
-            Text = "Form1";
+            Text = "Vyhladavenie nehnutelnosti";
             groupBox2.ResumeLayout(false);
             groupBox2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)numericUpDown3).EndInit();

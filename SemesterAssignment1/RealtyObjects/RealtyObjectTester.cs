@@ -57,8 +57,18 @@ public class RealtyObjectTester
         applicationLogic.AddObject(property5);
         applicationLogic.AddObject(propertyOutside);
 
-        var foundProperties = applicationLogic.FindPropertiesInArea(gpsRectangle);
-        var foundParcels = applicationLogic.FindParcelsInArea(gpsRectangle);
+        //Find object at point
+
+        var foundProperties = applicationLogic.FindProperties(gpsPropertyLeftBottom1);
+        var foundProperties2 = applicationLogic.FindProperties(gpsPropertyLeftBottom2);
+        var foundProperties3 = applicationLogic.FindProperties(gpsPropertyRightTop3);
+        var foundPropertiesOutside = applicationLogic.FindProperties(gpsPropertyLeftBottomOutside);
+
+        var foundParcels = applicationLogic.FindParcels(gpsPropertyLeftBottom1);
+        var foundParcels2 = applicationLogic.FindParcels(gpsPropertyLeftBottom2);
+        var foundParcels3 = applicationLogic.FindParcels(gpsPropertyRightTop3);
+        var foundParcelsOutside = applicationLogic.FindParcels(gpsPropertyLeftBottomOutside);
+
         var foundMixed = applicationLogic.FindObjectsInArea(gpsRectangle);
     }
 }
