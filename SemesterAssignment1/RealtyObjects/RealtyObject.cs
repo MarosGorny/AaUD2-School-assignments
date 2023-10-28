@@ -2,49 +2,57 @@
 
 namespace SemesterAssignment1.RealtyObjects;
 
+public abstract class RealtyObject : SpatialItem
+{
+    public string Description { get; set; }
+
+    public RealtyObject(string description)
+    {
+        Description = description;
+    }
+}
+
 
 /// <summary>
 /// Represents a real estate property.
 /// </summary>
-public class Property : SpatialItem
+public class Property : RealtyObject
 {
     public int ConscriptionNumber { get; set; }
-    public string Description { get; set; }
     public List<Parcel> PositionedOnParcels { get; set; } = new List<Parcel>(); 
-    //public override SpatialItem Boundary {get; }
 
     public Property(int conscriptionNumber, string description, GPSRectangle gpsRectangle)
+        : base(description)
     {
         ConscriptionNumber = conscriptionNumber;
-        Description = description;
-        //Boundary = gpsRectangle.Boundary;
+        LowerLeft = gpsRectangle.LowerLeft;
+        UpperRight = gpsRectangle.UpperRight;
     }
 
-    //public override bool ContainsPoint(Point p)
-    //{
-    //    return Boundary.ContainsPoint(p);
-    //}
+    public void AddParcel(Parcel parcel)
+    {
+        PositionedOnParcels.Add(parcel);
+    }
 }
 
 /// <summary>
 /// Represents a parcel of land.
 /// </summary>
-public class Parcel : SpatialItem
+public class Parcel : RealtyObject
 {
     public int ParcelNumber { get; set; }
-    public string Description { get; set; }
     public List<Property> OccupiedByProperties { get; set; } = new List<Property>();
-    //public override SpatialItem Boundary { get; }
 
     public Parcel(int parcelNumber, string description, GPSRectangle gpsRectangle)
+        :base(description)
     {
         ParcelNumber = parcelNumber;
-        Description = description;
-        //Boundary = gpsRectangle.Boundary;
+        LowerLeft = gpsRectangle.LowerLeft;
+        UpperRight = gpsRectangle.UpperRight;
     }
 
-    //public override bool ContainsPoint(Point p)
-    //{
-    //    return Boundary.ContainsPoint(p);
-    //}
+    public void AddProperty(Property property)
+    {
+        OccupiedByProperties.Add(property);
+    }
 }

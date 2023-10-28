@@ -236,9 +236,8 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
     #endregion
 
     #region Find
-    public List<QuadTreeObject<K, V>>? Find(QuadTreeObject<K, V> quadTreeObject)
+    public List<QuadTreeObject<K, V>>? Find(SpatialItem rectangle)
     {
-        SpatialItem rectangle = quadTreeObject.Item;
         List<QuadTreeObject<K, V>>? foundItems = new List<QuadTreeObject<K, V>>();
         Queue<QuadTreeNode<K, V>> nodesToCheck = new Queue<QuadTreeNode<K, V>>();
         nodesToCheck.Enqueue(this);
@@ -255,6 +254,10 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
                 {
                     foundItems.Add(kvp);
                 }
+                if(kvp.Item is SpatialItem spatialItem && rectangle.Intersects(spatialItem))
+                {
+                    foundItems.Add(kvp);
+                }
             }
 
             // If the current node doesn't have children, proceed to the next node
@@ -263,7 +266,7 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
             foreach (Quadrant quadrant in Enum.GetValues(typeof(Quadrant)))
             {
                 var childNodeBoundary = currentNode.Children[(int)quadrant].Boundary;
-
+                //TODO: Can use intersects instead of containsstrict?
                 if (rectangle.ContainsStrict(childNodeBoundary) || childNodeBoundary.ContainsStrict(rectangle))
                 {
                     nodesToCheck.Enqueue(currentNode.Children[(int)quadrant]);
@@ -427,7 +430,6 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
         return result;
     }
 
-    //First left subtree then right subtree then root
     public List<QuadTreeNode<K, V>> PostOrderTraversal()
     {
         if (this is null) return new List<QuadTreeNode<K, V>>();
@@ -464,8 +466,5 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
 
         return result;
     }
-
-
-
     #endregion
 }

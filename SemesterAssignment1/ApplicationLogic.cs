@@ -5,10 +5,9 @@ using QuadTreeDS.SpatialItems;
 namespace SemesterAssignment1;
 class ApplicationLogic
 {
-    //Need to create one quadtree for property and one for parcel
-    private QuadTree<int, Property> _propertyQuadTree;
-    private QuadTree<int, Parcel> _parcelQuadTree;
-    private QuadTree<int, SpatialItem> _mixedQuadTree;
+    private QuadTree<int, string> _propertyQuadTree;
+    private QuadTree<int, string> _parcelQuadTree;
+    private QuadTree<int, string> _mixedQuadTree;
 
     public ApplicationLogic()
     {
@@ -16,21 +15,63 @@ class ApplicationLogic
         var boundaryPointTopRight = new Point(90, 90);
 
 
-        _propertyQuadTree = new QuadTree<int, Property>(new Rectangle(boundaryPointBottomLeft, boundaryPointTopRight));
-        _parcelQuadTree = new QuadTree<int, Parcel>(new Rectangle(boundaryPointBottomLeft, boundaryPointTopRight));
-        _mixedQuadTree = new QuadTree<int, SpatialItem>(new Rectangle(boundaryPointBottomLeft, boundaryPointTopRight));
+        _propertyQuadTree = new QuadTree<int, string>(new Rectangle(boundaryPointBottomLeft, boundaryPointTopRight));
+        _parcelQuadTree = new QuadTree<int, string>(new Rectangle(boundaryPointBottomLeft, boundaryPointTopRight));
+        _mixedQuadTree = new QuadTree<int, string>(new Rectangle(boundaryPointBottomLeft, boundaryPointTopRight));
     }
 
-    public void AddObject(SpatialItem spatialItem)
+    public List<RealtyObject> FindObjectsInArea(Rectangle area)
     {
-        // Add object to quadTree
-        _mixedQuadTree.Insert(new QuadTreeObject<int, string>(spatialItem.GetHashCode(), spatialItem., spatialItem));
+        var foundObjects = new List<RealtyObject>();
 
-        if(spatialItem is Property property)
+        foreach (var foundObject in _mixedQuadTree.Find(area))
+        {
+            if (foundObject.Item is RealtyObject realtyObject)
+            {
+                foundObjects.Add(realtyObject);
+            }
+        }
+
+        return foundObjects;
+    }
+
+    public List<RealtyObject> FindPropertiesInArea(Rectangle area)
+    {
+        var foundObjects = new List<RealtyObject>();
+
+        foreach (var foundProperty in _propertyQuadTree.Find(area))
+        {
+            if (foundProperty.Item is Property property)
+            {
+                foundObjects.Add(property);
+            }
+        }
+
+        return foundObjects;
+    }
+
+    public List<RealtyObject> FindParcelsInArea(Rectangle area)
+    {
+        var foundObjects = new List<RealtyObject>();
+
+        foreach (var foundParcel in _parcelQuadTree.Find(area))
+        {
+            if (foundParcel.Item is Parcel parcel)
+            {
+                foundObjects.Add(parcel);
+            }
+        }
+
+        return foundObjects;
+    }
+
+    public void AddObject(RealtyObject realtyObject)
+    {
+        if(realtyObject is Property property)
         {
             AddProperty(property);
         }
-        else if(spatialItem is Parcel parcel)
+        else if(realtyObject is Parcel parcel)
         {
             AddParcel(parcel);
         }
@@ -42,14 +83,37 @@ class ApplicationLogic
     
     public void AddProperty(Property property)
     {
-        // property is a SpatialItem
-        // Add property to quadTree
-        _propertyQuadTree.Insert(new QuadTreeObject<int, string>(property.ConscriptionNumber, property.Description, property));
+        var newItem = new QuadTreeObject<int, string>(property.ConscriptionNumber, property.Description, property);
+        _propertyQuadTree.Insert(newItem);
+        _mixedQuadTree.Insert(newItem);
+
+        var foundParcels = _parcelQuadTree.Find(new Rectangle(property.LowerLeft, property.UpperRight));
+        foreach (var foundParcel in foundParcels)
+        {
+            if (foundParcel.Item is Parcel parcel)
+            {
+                parcel.AddProperty(property);
+                property.AddParcel(parcel);
+            }
+        }
     }
 
     public void AddParcel(Parcel parcel)
     {
-        // Add parcel to QuadTree
-        _parcelQuadTree.Insert(new QuadTreeObject<int, Parcel>(parcel.ParcelNumber, parcel, parcel.Boundary));
+        var mixedQuadTreeKey = parcel.ParcelNumber * -1; //FIXME: Better to implement option in QuadTree to use duplicate keys
+
+        var newItem = new QuadTreeObject<int, string>(mixedQuadTreeKey, parcel.Description, parcel);
+        _parcelQuadTree.Insert(newItem); //FIXME: Don't forgot that the key is negative
+        _mixedQuadTree.Insert(newItem); //FIXME: Don't forgot that the key is negative
+
+        var foundProperties = _propertyQuadTree.Find(new Rectangle(parcel.LowerLeft, parcel.UpperRight));
+        foreach (var foundProperty in foundProperties)
+        {
+            if (foundProperty.Item is Property property)
+            {
+                property.AddParcel(parcel);
+                parcel.AddProperty(property);
+            }
+        }
     }
 }
