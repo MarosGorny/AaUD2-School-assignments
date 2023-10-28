@@ -37,10 +37,14 @@
             radioButton5 = new RadioButton();
             radioButton2 = new RadioButton();
             button1 = new Button();
+            dataGridView1 = new DataGridView();
+            PropertyTableID = new DataGridViewTextBoxColumn();
+            PropertyTableDescription = new DataGridViewTextBoxColumn();
             groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)numericUpDown2).BeginInit();
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)numericUpDown1).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             SuspendLayout();
             // 
             // groupBox2
@@ -145,11 +149,43 @@
             button1.UseVisualStyleBackColor = true;
             button1.Click += button1_Click_1;
             // 
+            // dataGridView1
+            // 
+            dataGridView1.AllowUserToDeleteRows = false;
+            dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridView1.Columns.AddRange(new DataGridViewColumn[] { PropertyTableID, PropertyTableDescription });
+            dataGridView1.Location = new Point(284, 21);
+            dataGridView1.Name = "dataGridView1";
+            dataGridView1.ReadOnly = true;
+            dataGridView1.RowHeadersWidth = 51;
+            dataGridView1.RowTemplate.Height = 29;
+            dataGridView1.Size = new Size(812, 406);
+            dataGridView1.TabIndex = 37;
+            // 
+            // PropertyTableID
+            // 
+            PropertyTableID.Frozen = true;
+            PropertyTableID.HeaderText = "Conscription Number";
+            PropertyTableID.MinimumWidth = 6;
+            PropertyTableID.Name = "PropertyTableID";
+            PropertyTableID.ReadOnly = true;
+            PropertyTableID.Width = 180;
+            // 
+            // PropertyTableDescription
+            // 
+            PropertyTableDescription.Frozen = true;
+            PropertyTableDescription.HeaderText = "Description";
+            PropertyTableDescription.MinimumWidth = 6;
+            PropertyTableDescription.Name = "PropertyTableDescription";
+            PropertyTableDescription.ReadOnly = true;
+            PropertyTableDescription.Width = 125;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
+            ClientSize = new Size(1121, 450);
+            Controls.Add(dataGridView1);
             Controls.Add(groupBox2);
             Controls.Add(groupBox1);
             Controls.Add(button1);
@@ -161,6 +197,7 @@
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)numericUpDown1).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
             ResumeLayout(false);
         }
 
@@ -175,5 +212,8 @@
         private RadioButton radioButton5;
         private RadioButton radioButton2;
         private Button button1;
+        private DataGridView dataGridView1;
+        private DataGridViewTextBoxColumn PropertyTableID;
+        private DataGridViewTextBoxColumn PropertyTableDescription;
     }
 }

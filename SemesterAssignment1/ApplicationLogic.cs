@@ -34,9 +34,9 @@ public class ApplicationLogic
         return foundObjects;
     }
 
-    public List<RealtyObject> FindProperties(Point point)
+    public List<Property> FindProperties(Point point)
     {
-        var foundObjects = new List<RealtyObject>();
+        var foundObjects = new List<Property>();
 
         foreach (var foundProperty in _propertyQuadTree.Find(point))
         {

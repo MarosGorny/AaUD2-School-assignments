@@ -37,6 +37,16 @@ namespace GUIAssignment1
 
             GPSPoint gpsPoint = new GPSPoint(latDir, lat, longDir, lon);
             var foundProperties = Program.ApplicationLogic.FindProperties(gpsPoint);
+            foreach (var foundProperty in foundProperties)
+            {
+                //TODO: Need to remake return of findProperties to return a list of properties instead of a list of realty objects
+                dataGridView1.Rows.Add(foundProperty.ConscriptionNumber, foundProperty.Description);
+            }
+        }
+
+        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
         }
     }
 }
