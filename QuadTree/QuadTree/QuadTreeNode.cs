@@ -1,6 +1,6 @@
 ﻿using QuadTree.SpatialItems;
 
-namespace QuadTree;
+namespace QuadTree.QuadTree;
 
 public class QuadTreeNode<K, V> where K : IComparable<K>
 {
@@ -43,7 +43,7 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
 
             for (int i = 0; i < QUADRANT_COUNT; i++)
             {
-                Children[i] = new QuadTreeNode<K, V>(boundaries[i], this, this.QuadTree);
+                Children[i] = new QuadTreeNode<K, V>(boundaries[i], this, QuadTree);
             }
             UpdateMaxSubtreeDepthAfterSubdivision();
         }
@@ -51,14 +51,14 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
 
     private void UpdateMaxSubtreeDepthAfterSubdivision()
     {
-        this.MaxSubtreeDepth = 1;
+        MaxSubtreeDepth = 1;
         UpdateAncestorsMaxSubtreeDepth();
     }
 
     private void UpdateAncestorsMaxSubtreeDepth()
     {
-        QuadTreeNode<K, V>? currentNode = this.Parent;
-        int childDepth = this.MaxSubtreeDepth;
+        QuadTreeNode<K, V>? currentNode = Parent;
+        int childDepth = MaxSubtreeDepth;
 
         while (currentNode != null)
         {
@@ -77,7 +77,7 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
 
     private void SimplifyIfEmpty()
     {
-        if (this.Data.Count == 0 && !IsLeaf())
+        if (Data.Count == 0 && !IsLeaf())
         {
             bool canSimplify = true;
 
@@ -106,7 +106,7 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
         var deepestLeaf = GetDeepestLeafWithMinimalData();
         if (deepestLeaf != null)
         {
-            this.Data = deepestLeaf.Data;
+            Data = deepestLeaf.Data;
             deepestLeaf.Data = new List<QuadTreeObject<K, V>>();
         }
     }
@@ -378,8 +378,8 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
             // Check and add data items contained within the rectangle
             foreach (var kvp in currentNode.Data)
             {
-                if ((kvp.Item is Rectangle rect && rectangle.Contains(rect)) ||
-                    (kvp.Item is Point pt && rectangle.ContainsPoint(pt)))
+                if (kvp.Item is Rectangle rect && rectangle.Contains(rect) ||
+                    kvp.Item is Point pt && rectangle.ContainsPoint(pt))
                 {
                     foundItems.Add(kvp);
                 }
@@ -546,7 +546,7 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
             if (visited)
             {
                 result.Add(current);
-                if(current.Children is null) continue;
+                if (current.Children is null) continue;
                 stack.Push((current.Children[(int)Quadrant.SouthEast], false));
                 stack.Push((current.Children[(int)Quadrant.SouthWest], false));
 
