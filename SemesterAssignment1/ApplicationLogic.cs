@@ -3,7 +3,7 @@ using QuadTreeDS.QuadTree;
 using QuadTreeDS.SpatialItems;
 
 namespace SemesterAssignment1;
-class ApplicationLogic
+public class ApplicationLogic
 {
     private QuadTree<int, string> _propertyQuadTree;
     private QuadTree<int, string> _parcelQuadTree;
