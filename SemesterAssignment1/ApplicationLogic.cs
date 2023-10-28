@@ -24,7 +24,7 @@ class ApplicationLogic
     public void AddObject(SpatialItem spatialItem)
     {
         // Add object to quadTree
-        _mixedQuadTree.Insert(new QuadTreeObject<int, SpatialItem>(spatialItem.GetHashCode(), spatialItem, spatialItem));
+        _mixedQuadTree.Insert(new QuadTreeObject<int, string>(spatialItem.GetHashCode(), spatialItem., spatialItem));
 
         if(spatialItem is Property property)
         {
@@ -44,7 +44,7 @@ class ApplicationLogic
     {
         // property is a SpatialItem
         // Add property to quadTree
-        _propertyQuadTree.Insert(new QuadTreeObject<int, Property>(property.ConscriptionNumber, property, property.Boundary));
+        _propertyQuadTree.Insert(new QuadTreeObject<int, string>(property.ConscriptionNumber, property.Description, property));
     }
 
     public void AddParcel(Parcel parcel)
