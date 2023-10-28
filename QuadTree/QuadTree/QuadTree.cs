@@ -1,6 +1,6 @@
-﻿using QuadTree.SpatialItems;
+﻿using QuadTreeDS.SpatialItems;
 
-namespace QuadTree.QuadTree;
+namespace QuadTreeDS.QuadTree;
 
 public class QuadTree<K, V> where K : IComparable<K>
 {
