@@ -276,13 +276,13 @@ class QuadTreeTester
         quadTree.Insert(quadTreeObjectA);
         quadTree.Insert(quadTreeObjectB);
 
-        //quadTree.Delete(quadTreeObjectA);
-        //quadTree.Delete(quadTreeObjectB);
+        quadTree.Delete(quadTreeObjectA);
+        quadTree.Delete(quadTreeObjectB);
 
         quadTree.Insert(quadTreeObjectC);
         quadTree.Insert(quadTreeObjectC1);
 
-        // quadTree.Delete(quadTreeObjectC1);
+        quadTree.Delete(quadTreeObjectC1);
 
         quadTree.Insert(quadTreeObjectD);
         quadTree.Insert(quadTreeObjectX);
@@ -291,9 +291,9 @@ class QuadTreeTester
         var findA = quadTree.Find(quadTreeObjectA);
         var findB = quadTree.Find(quadTreeObjectB);
         var findC = quadTree.Find(quadTreeObjectC);
-        //  var findC1 = quadTree.Find(quadTreeObjectC1);
+        var findC1 = quadTree.Find(quadTreeObjectC1);
         var findD = quadTree.Find(quadTreeObjectD);
-        //    var findX = quadTree.Find(quadTreeObjectX);
+        var findX = quadTree.Find(quadTreeObjectX);
 
         Rectangle Rectangle1 = new Rectangle(new Point(20, 60), new Point(40, 80));
         Rectangle Rectangle2 = new Rectangle(new Point(80, 40), new Point(90, 60));

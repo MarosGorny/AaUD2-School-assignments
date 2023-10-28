@@ -79,16 +79,7 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
     {
         if (Data.Count == 0 && !IsLeaf())
         {
-            bool canSimplify = true;
-
-            foreach (var child in Children)
-            {
-                if (!child.IsLeaf() || child.Data.Count > 0)
-                {
-                    canSimplify = false;
-                    break;
-                }
-            }
+            bool canSimplify = AreChildrenLeavesAndEmpty();
 
             if (canSimplify)
             {
@@ -101,13 +92,30 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
         }
     }
 
+    private bool AreChildrenLeavesAndEmpty()
+    {
+        foreach (var child in Children)
+        {
+            if (!child.IsLeaf() || child.Data.Count > 0)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
     private void TransferDataFromDeepestLeaf()
     {
         var deepestLeaf = GetDeepestLeafWithMinimalData();
         if (deepestLeaf != null)
         {
             Data = deepestLeaf.Data;
-            deepestLeaf.Data = new List<QuadTreeObject<K, V>>();
+            deepestLeaf.Data = new List<QuadTreeObject<K, V>>(); 
+            //TODO: look at the siblings of the deepest leaf and see if they can be simplified
+            if(deepestLeaf.Data.Count == 0 && deepestLeaf.Parent.AreChildrenLeavesAndEmpty())
+            {
+                deepestLeaf.Parent.MakeLeaf();
+            }
         }
     }
 
@@ -250,7 +258,8 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
     {
         if (quadTreeObject.Item is Point)
         {
-            DeletePoint(quadTreeObject);
+            //DeletePoint(quadTreeObject);
+            DeleteRectangle(quadTreeObject);
         }
         else if (quadTreeObject.Item is Rectangle)
         {
@@ -284,7 +293,7 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
 
     private void DeleteRectangle(QuadTreeObject<K, V> quadTreeObject)
     {
-        Rectangle rectangle = quadTreeObject.Item as Rectangle;
+        SpatialItem rectangle = quadTreeObject.Item;// as Rectangle;
         Queue<QuadTreeNode<K, V>> nodesToCheck = new Queue<QuadTreeNode<K, V>>();
         nodesToCheck.Enqueue(this);
 
@@ -316,7 +325,7 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
             if (node.Data[i] == targetObject)
             {
                 node.Data.RemoveAt(i);
-                node.SimplifyIfEmpty(); // Or whatever you renamed ReduceIfEmpty to.
+                node.SimplifyIfEmpty();
                 return true;
             }
         }
@@ -329,7 +338,8 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
     {
         if (quadTreeObject.Item is Point)
         {
-            return FindPoint((Point)quadTreeObject.Item);
+            //return FindPoint((Point)quadTreeObject.Item);
+            return FindRectangle(quadTreeObject.Item);
         }
         else if (quadTreeObject.Item is Rectangle)
         {
@@ -367,7 +377,7 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
         return null;
     }
 
-    private List<QuadTreeObject<K, V>> FindRectangle(Rectangle rectangle)
+    private List<QuadTreeObject<K, V>> FindRectangle(SpatialItem rectangle)
     {
         List<QuadTreeObject<K, V>>? foundItems = new List<QuadTreeObject<K, V>>();
         Queue<QuadTreeNode<K, V>> nodesToCheck = new Queue<QuadTreeNode<K, V>>();
