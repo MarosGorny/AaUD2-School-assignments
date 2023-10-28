@@ -14,7 +14,6 @@ class ApplicationLogic
         var boundaryPointBottomLeft = new Point(-90, -90);
         var boundaryPointTopRight = new Point(90, 90);
 
-
         _propertyQuadTree = new QuadTree<int, string>(new Rectangle(boundaryPointBottomLeft, boundaryPointTopRight));
         _parcelQuadTree = new QuadTree<int, string>(new Rectangle(boundaryPointBottomLeft, boundaryPointTopRight));
         _mixedQuadTree = new QuadTree<int, string>(new Rectangle(boundaryPointBottomLeft, boundaryPointTopRight));

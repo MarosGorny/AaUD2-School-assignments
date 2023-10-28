@@ -11,7 +11,6 @@ namespace SemesterAssignment1
         {
             Console.WriteLine("Hello, World!");
             RealtyObjectTester.Test();
-
         }
     }
 }

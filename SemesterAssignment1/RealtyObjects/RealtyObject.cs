@@ -12,7 +12,6 @@ public abstract class RealtyObject : SpatialItem
     }
 }
 
-
 /// <summary>
 /// Represents a real estate property.
 /// </summary>
