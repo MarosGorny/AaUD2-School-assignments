@@ -137,7 +137,7 @@ class QuadTreeTester
 
         int index = _random.Next(_insertedObjects.Count);
         var obj = _insertedObjects[index];
-        var foundObj = _quadTree.Find(obj);
+        var foundObj = _quadTree.Find(obj.Item);
 
         Console.WriteLine($"Find: {obj.Value} at ({obj.Item})");
     }
@@ -288,12 +288,12 @@ class QuadTreeTester
         quadTree.Insert(quadTreeObjectX);
 
         // Finding points
-        var findA = quadTree.Find(quadTreeObjectA);
-        var findB = quadTree.Find(quadTreeObjectB);
-        var findC = quadTree.Find(quadTreeObjectC);
-        var findC1 = quadTree.Find(quadTreeObjectC1);
-        var findD = quadTree.Find(quadTreeObjectD);
-        var findX = quadTree.Find(quadTreeObjectX);
+        var findA = quadTree.Find(quadTreeObjectA.Item);
+        var findB = quadTree.Find(quadTreeObjectB.Item);
+        var findC = quadTree.Find(quadTreeObjectC.Item);
+        var findC1 = quadTree.Find(quadTreeObjectC1.Item);
+        var findD = quadTree.Find(quadTreeObjectD.Item);
+        var findX = quadTree.Find(quadTreeObjectX.Item);
 
         Rectangle Rectangle1 = new Rectangle(new Point(20, 60), new Point(40, 80));
         Rectangle Rectangle2 = new Rectangle(new Point(80, 40), new Point(90, 60));
@@ -314,9 +314,9 @@ class QuadTreeTester
         quadTree.Delete(quadTreeObjectC);
         quadTree.Delete(quadTreeObjectD);
 
-        var findRectangle1 = quadTree.Find(quadTreeObjectRectangle1);
-        var findRectangle2 = quadTree.Find(quadTreeObjectRectangle2);
-        var findRectangleFull = quadTree.Find(quadTreeObjectRectangleFull);
-        var findRectangleX = quadTree.Find(quadTreeObjectRectangleX);
+        var findRectangle1 = quadTree.Find(quadTreeObjectRectangle1.Item);
+        var findRectangle2 = quadTree.Find(quadTreeObjectRectangle2.Item);
+        var findRectangleFull = quadTree.Find(quadTreeObjectRectangleFull.Item);
+        var findRectangleX = quadTree.Find(quadTreeObjectRectangleX.Item);
     }
 }

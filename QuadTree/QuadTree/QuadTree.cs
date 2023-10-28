@@ -5,13 +5,12 @@ namespace QuadTreeDS.QuadTree;
 public class QuadTree<K, V> where K : IComparable<K>
 {
     public QuadTreeNode<K, V> Root { get; private set; }
-    public int MaxAllowedDepth { get; set; } //TODO: Need to be set by user and need to be implemented
+    public int MaxAllowedDepth { get; set; }
 
     public QuadTree(Rectangle boundary, int maxAllowedDepth = 10)
     {
         Root = new QuadTreeNode<K, V>(boundary, null, this);
         MaxAllowedDepth = maxAllowedDepth;
-        //Root.Subdivide();
     }
 
     public void Insert(QuadTreeObject<K, V> quadTreeObject)
@@ -19,9 +18,9 @@ public class QuadTree<K, V> where K : IComparable<K>
         Root.Insert(quadTreeObject);
     }
 
-    public List<QuadTreeObject<K, V>>? Find(QuadTreeObject<K, V> quadTreeObject)
+    public List<QuadTreeObject<K, V>>? Find(SpatialItem rectangle)
     {
-        return Root.Find(quadTreeObject);
+        return Root.Find(rectangle);
     }
 
     public void Delete(QuadTreeObject<K, V> quadTreeObject)
