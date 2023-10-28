@@ -79,11 +79,6 @@ public class Rectangle : SpatialItem
     public Point BottomLeft { get; set; }
     public Point TopRight { get; set; }
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="Rectangle"/> class.
-    /// </summary>
-    /// <param name="bottomLeft">The bottom left corner of the rectangle.</param>
-    /// <param name="topRight">The top right corner of the rectangle.</param>
     public Rectangle(Point bottomLeft, Point topRight)
     {
         BottomLeft = bottomLeft;
@@ -96,11 +91,6 @@ public class Rectangle : SpatialItem
                 p.Y >= BottomLeft.Y && p.Y <= TopRight.Y);
     }
 
-    /// <summary>
-    /// Checks if the current rectangle completely contains the specified rectangle.
-    /// </summary>
-    /// <param name="targetRectangle">The rectangle to check for containment within the current rectangle.</param>
-    /// <returns>True if the current rectangle completely contains the target rectangle; otherwise, false.</returns>
     public bool Contains(Rectangle targetRectangle)
     {
         // Check if the X-coordinates of the target rectangle are within the current rectangle's X-coordinates
@@ -135,4 +125,75 @@ public class Rectangle : SpatialItem
         return false;
     }
     #endregion
+
+}
+
+public enum LatitudeDirection
+{
+    N = 1,
+    S = -1
+}
+
+public enum LongitudeDirection
+{
+    E = 1,
+    W = -1
+}
+
+public class GPSPoint : Point
+{
+    public LatitudeDirection LatitudeDirection { get; set; }
+    public LongitudeDirection LongitudeDirection { get; set; }
+
+    public GPSPoint(LatitudeDirection latDir, double latVal, LongitudeDirection longDir, double longVal)
+        : base(latVal, longVal)
+    {
+        LatitudeDirection = latDir;
+        LongitudeDirection = longDir;
+
+        // Compute the relative coordinates 
+        X = latVal * (double)latDir;
+        Y = longVal * (double)longDir;
+    }
+}
+
+public class GPSRectangle : SpatialItem
+{
+    public GPSPoint BottomLeft { get; set; }
+    public GPSPoint TopRight { get; set; }
+
+    public GPSRectangle(GPSPoint bottomLeft, GPSPoint topRight)
+    {
+        BottomLeft = bottomLeft;
+        TopRight = topRight;
+    }
+
+    public override bool ContainsPoint(Point p)
+    {
+        if (p is not GPSPoint gpsP)
+        {
+            return false;
+        }
+
+        bool latitudeContained = BottomLeft.Y <= gpsP.Y && TopRight.Y >= gpsP.Y;
+        bool longitudeContained = BottomLeft.X <= gpsP.X && TopRight.X >= gpsP.X;
+
+        return latitudeContained && longitudeContained;
+    }
+
+    public bool ContainsStrict(GPSRectangle targetRectangle)
+    {
+        bool xCoordinatesContained = BottomLeft.X <= targetRectangle.BottomLeft.X && TopRight.X >= targetRectangle.TopRight.X;
+        bool yCoordinatesContained = BottomLeft.Y <= targetRectangle.BottomLeft.Y && TopRight.Y >= targetRectangle.TopRight.Y;
+
+        return xCoordinatesContained && yCoordinatesContained;
+    }
+
+    public bool Intersects(GPSRectangle targetRectangle)
+    {
+        bool xOverlap = BottomLeft.X <= targetRectangle.TopRight.X && TopRight.X >= targetRectangle.BottomLeft.X;
+        bool yOverlap = BottomLeft.Y <= targetRectangle.TopRight.Y && TopRight.Y >= targetRectangle.BottomLeft.Y;
+
+        return xOverlap && yOverlap;
+    }
 }
