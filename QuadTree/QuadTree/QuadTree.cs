@@ -27,4 +27,19 @@ public class QuadTree<K, V> where K : IComparable<K>
     {
         Root.Delete(quadTreeObject);
     }
+
+    public void ChangeMaxAllowedDepth(int maxAllowedDepth)
+    {
+        int newMaxAllowDepth = maxAllowedDepth;
+        if (newMaxAllowDepth < MaxAllowedDepth)
+        {
+            MaxAllowedDepth = newMaxAllowDepth;
+            Root.ReduceDepth();
+        }
+        else if (newMaxAllowDepth > MaxAllowedDepth)
+        {
+            MaxAllowedDepth = newMaxAllowDepth;
+            Root.IncreaseDepth();
+        } 
+    }
 }

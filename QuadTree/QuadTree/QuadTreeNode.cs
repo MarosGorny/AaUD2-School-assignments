@@ -33,6 +33,22 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
     {
         Children = null;
     }
+
+    private bool TryMakeLeaf()
+    {
+        if(IsLeaf())
+        {
+            return true;
+        }
+
+        if(AreChildrenLeavesAndEmpty())
+        {
+            MakeLeaf();
+            return true;
+        }
+        return false;
+    }
+
     private void Subdivide()
     {
         if (IsLeaf())
@@ -176,7 +192,7 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
             }
 
             //If the SpatialItem fits in any subquadrant, set the currentNode to that subquadrant
-            if (TryMoveToChildContainingRectangle(ref currentNode, insertItem))
+            if (currentNode.Depth < currentNode.QuadTree.MaxAllowedDepth && TryMoveToChildContainingRectangle(ref currentNode, insertItem))
             {
                 if (currentNode.TryAddItem(quadTreeObject))
                 {
@@ -465,6 +481,61 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
         }
 
         return result;
+    }
+
+    public void ReduceDepth()
+    {
+        Stack<QuadTreeNode<K, V>> stack1 = new Stack<QuadTreeNode<K, V>>();
+        Stack<QuadTreeNode<K, V>> stack2 = new Stack<QuadTreeNode<K, V>>();
+
+        stack1.Push(this);
+
+        while (stack1.Count > 0)
+        {
+            QuadTreeNode<K, V> currentNode = stack1.Pop();
+
+            if (currentNode.Children != null)
+            {
+                foreach (var child in currentNode.Children)
+                {
+                    if (child != null)
+                    {
+                        stack1.Push(child);
+                    }
+                }
+            }
+
+            stack2.Push(currentNode);
+        }
+
+        // Now pop nodes from the second stack to get them in postorder and add them to the result.
+        while (stack2.Count > 0)
+        {
+            var node = stack2.Pop();
+
+            if(node.Depth > node.QuadTree.MaxAllowedDepth)
+            {
+                if (node.TryMakeLeaf())
+                {
+                    foreach (var data in node.Data)
+                    {
+                        QuadTree.Insert(data);
+                    }
+
+                    node.Data.Clear();
+                }
+            }
+            else
+            {
+                node.TryMakeLeaf();
+            }
+        }
+
+    }
+
+    public void IncreaseDepth()
+    {
+        throw new NotImplementedException();
     }
     #endregion
 }
