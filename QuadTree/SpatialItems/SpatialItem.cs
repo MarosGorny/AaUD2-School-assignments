@@ -19,13 +19,6 @@ public abstract class SpatialItem
 {
     public Point LowerLeft { get; protected set; }
     public Point UpperRight { get; protected set; }
-    //public virtual Rectangle Boundary
-    //{
-    //    get
-    //    {
-    //        return new Rectangle(LowerLeft, UpperRight);
-    //    }
-    //}
 
     public bool ContainsStrict(SpatialItem other)
     {

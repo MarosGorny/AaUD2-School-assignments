@@ -535,7 +535,41 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
 
     public void IncreaseDepth()
     {
-        throw new NotImplementedException();
+        List<QuadTreeNode<K, V>> leafNodes = new List<QuadTreeNode<K, V>>();
+        Stack<QuadTreeNode<K, V>> stack = new Stack<QuadTreeNode<K, V>>();
+        stack.Push(this);
+
+        while (stack.Count > 0)
+        {
+            QuadTreeNode<K, V> currentNode = stack.Pop();
+            if(currentNode.IsLeaf())
+            {
+                leafNodes.Add(currentNode);
+            }
+
+            if (currentNode.Children != null)
+            {
+                for (int i = 3; i >= 0; i--) // pushing in reverse order so they are processed from left to right
+                {
+                    stack.Push(currentNode.Children[i]);
+                }
+            }
+        }
+
+        var data = new List<QuadTreeObject<K, V>>();
+        foreach (var leaf in leafNodes)
+        {
+            foreach (var item in leaf.Data)
+            {
+                data.Add(item);
+            }
+            leaf.Data.Clear();
+        }
+
+        foreach (var item in data)
+        {
+            QuadTree.Insert(item);
+        }
     }
     #endregion
 }
