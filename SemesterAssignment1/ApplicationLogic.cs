@@ -3,7 +3,7 @@ using QuadTreeDS.QuadTree;
 using QuadTreeDS.SpatialItems;
 
 namespace SemesterAssignment1;
-class ApplicationLogic
+public class ApplicationLogic
 {
     private QuadTree<int, string> _propertyQuadTree;
     private QuadTree<int, string> _parcelQuadTree;
@@ -34,11 +34,11 @@ class ApplicationLogic
         return foundObjects;
     }
 
-    public List<RealtyObject> FindPropertiesInArea(Rectangle area)
+    public List<Property> FindProperties(Point point)
     {
-        var foundObjects = new List<RealtyObject>();
+        var foundObjects = new List<Property>();
 
-        foreach (var foundProperty in _propertyQuadTree.Find(area))
+        foreach (var foundProperty in _propertyQuadTree.Find(point))
         {
             if (foundProperty.Item is Property property)
             {
@@ -49,11 +49,11 @@ class ApplicationLogic
         return foundObjects;
     }
 
-    public List<RealtyObject> FindParcelsInArea(Rectangle area)
+    public List<RealtyObject> FindParcels(Point point)
     {
         var foundObjects = new List<RealtyObject>();
 
-        foreach (var foundParcel in _parcelQuadTree.Find(area))
+        foreach (var foundParcel in _parcelQuadTree.Find(point))
         {
             if (foundParcel.Item is Parcel parcel)
             {
