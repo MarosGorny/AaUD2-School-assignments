@@ -19,13 +19,6 @@ public abstract class SpatialItem
 {
     public Point LowerLeft { get; protected set; }
     public Point UpperRight { get; protected set; }
-    //public virtual Rectangle Boundary
-    //{
-    //    get
-    //    {
-    //        return new Rectangle(LowerLeft, UpperRight);
-    //    }
-    //}
 
     public bool ContainsStrict(SpatialItem other)
     {
@@ -52,32 +45,13 @@ public class Point : SpatialItem
     public double X { get; set; }
     public double Y { get; set; }
 
-    //public override SpatialItem Boundary => this;
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="Point"/> class.
-    /// </summary>
-    /// <param name="x">X coordinate of the point.</param>
-    /// <param name="y">Y coordinate of the point.</param>
     public Point(double x, double y)
     {
         X = x;
         Y = y;
         LowerLeft = this;
         UpperRight = this;
-
-        //Boundary = new Rectangle(this, this);
     }
-
-    //public override bool ContainsStrict(SpatialItem spatialItem)
-    //{
-    //    if(spatialItem is not Point p)
-    //    {
-    //        return false;
-    //    }
-
-    //    return p.X == X && p.Y == Y;
-    //}
 
     #region Overrides
     public static bool operator ==(Point left, Point right)
@@ -106,36 +80,12 @@ public class Point : SpatialItem
 /// </summary>
 public class Rectangle : SpatialItem
 {
-    //public override SpatialItem Boundary {get; }
 
     public Rectangle(Point bottomLeft, Point topRight)
     {
         LowerLeft = bottomLeft;
         UpperRight = topRight;
-
-        //Boundary = this;
     }
-
-    //public override bool ContainsStrict(Point p)
-    //{
-    //    return (p.X >= BottomLeft.X && p.X <= TopRight.X &&
-    //            p.Y >= BottomLeft.Y && p.Y <= TopRight.Y);
-    //}
-
-    //public bool Contains(Rectangle targetRectangle)
-    //{
-    //    Check if the X - coordinates of the target rectangle are within the current rectangle's X-coordinates
-    //    bool xCoordinatesContained = BottomLeft.X <= targetRectangle.BottomLeft.X &&
-    //                                 TopRight.X >= targetRectangle.TopRight.X;
-
-    //    Check if the Y - coordinates of the target rectangle are within the current rectangle's Y-coordinates
-    //    bool yCoordinatesContained = BottomLeft.Y <= targetRectangle.BottomLeft.Y &&
-    //                                 TopRight.Y >= targetRectangle.TopRight.Y;
-
-    //    The target rectangle is completely contained if both its X and Y coordinates are within the current rectangle's coordinates
-    //    return xCoordinatesContained && yCoordinatesContained;
-    //}
-
     #region Overrides
     public static bool operator ==(Rectangle left, Rectangle right)
     {
@@ -190,44 +140,11 @@ public class GPSPoint : Point
 
 public class GPSRectangle : Rectangle
 {
-    //public GPSPoint BottomLeft { get; set; }
-    //public GPSPoint TopRight { get; set; }
-
-    //public override SpatialItem Boundary { get;}
 
     public GPSRectangle(GPSPoint bottomLeft, GPSPoint topRight)
         : base(bottomLeft, topRight)
     {
-        //BottomLeft = bottomLeft;
-        //TopRight = topRight;
+
     }
 
-    //public override bool ContainsStrict(Point p)
-    //{
-    //    if (p is not GPSPoint gpsP)
-    //    {
-    //        return false;
-    //    }
-
-    //    bool latitudeContained = BottomLeft.Y <= gpsP.Y && TopRight.Y >= gpsP.Y;
-    //    bool longitudeContained = BottomLeft.X <= gpsP.X && TopRight.X >= gpsP.X;
-
-    //    return latitudeContained && longitudeContained;
-    //}
-
-    //public bool ContainsStrict(GPSRectangle targetRectangle)
-    //{
-    //    bool xCoordinatesContained = BottomLeft.X <= targetRectangle.BottomLeft.X && TopRight.X >= targetRectangle.TopRight.X;
-    //    bool yCoordinatesContained = BottomLeft.Y <= targetRectangle.BottomLeft.Y && TopRight.Y >= targetRectangle.TopRight.Y;
-
-    //    return xCoordinatesContained && yCoordinatesContained;
-    //}
-
-    //public bool Intersects(GPSRectangle targetRectangle)
-    //{
-    //    bool xOverlap = BottomLeft.X <= targetRectangle.TopRight.X && TopRight.X >= targetRectangle.BottomLeft.X;
-    //    bool yOverlap = BottomLeft.Y <= targetRectangle.TopRight.Y && TopRight.Y >= targetRectangle.BottomLeft.Y;
-
-    //    return xOverlap && yOverlap;
-    //}
 }

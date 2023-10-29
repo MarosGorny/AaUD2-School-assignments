@@ -23,8 +23,23 @@ public class QuadTree<K, V> where K : IComparable<K>
         return Root.Find(rectangle);
     }
 
-    public void Delete(QuadTreeObject<K, V> quadTreeObject)
+    public bool Delete(QuadTreeObject<K, V> quadTreeObject)
     {
-        Root.Delete(quadTreeObject);
+        return Root.Delete(quadTreeObject);
+    }
+
+    public void ChangeMaxAllowedDepth(int maxAllowedDepth)
+    {
+        int newMaxAllowDepth = maxAllowedDepth;
+        if (newMaxAllowDepth < MaxAllowedDepth)
+        {
+            MaxAllowedDepth = newMaxAllowDepth;
+            Root.ReduceDepth();
+        }
+        else if (newMaxAllowDepth > MaxAllowedDepth)
+        {
+            MaxAllowedDepth = newMaxAllowDepth;
+            Root.IncreaseDepth();
+        } 
     }
 }
