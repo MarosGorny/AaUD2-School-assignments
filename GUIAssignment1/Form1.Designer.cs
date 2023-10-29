@@ -28,192 +28,193 @@
         /// </summary>
         private void InitializeComponent()
         {
-            groupBox2 = new GroupBox();
-            numericUpDown2 = new NumericUpDown();
-            radioButton1 = new RadioButton();
-            radioButton3 = new RadioButton();
-            groupBox1 = new GroupBox();
-            numericUpDown1 = new NumericUpDown();
-            radioButton5 = new RadioButton();
-            radioButton2 = new RadioButton();
-            button1 = new Button();
-            dataGridView1 = new DataGridView();
-            PropertyTableID = new DataGridViewTextBoxColumn();
-            PropertyTableDescription = new DataGridViewTextBoxColumn();
-            groupBox2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown2).BeginInit();
-            groupBox1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown1).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
+            panel1 = new Panel();
+            tableLayoutPanel1 = new TableLayoutPanel();
+            button10 = new Button();
+            button9 = new Button();
+            button8 = new Button();
+            button7 = new Button();
+            button6 = new Button();
+            button5 = new Button();
+            button4 = new Button();
+            button3 = new Button();
+            button2 = new Button();
+            panel2 = new Panel();
+            panel1.SuspendLayout();
+            tableLayoutPanel1.SuspendLayout();
             SuspendLayout();
             // 
-            // groupBox2
+            // panel1
             // 
-            groupBox2.Controls.Add(numericUpDown2);
-            groupBox2.Controls.Add(radioButton1);
-            groupBox2.Controls.Add(radioButton3);
-            groupBox2.Location = new Point(12, 95);
-            groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(215, 68);
-            groupBox2.TabIndex = 36;
-            groupBox2.TabStop = false;
-            groupBox2.Text = "Longitude (decimal degrees)";
+            panel1.Controls.Add(tableLayoutPanel1);
+            panel1.Dock = DockStyle.Right;
+            panel1.Location = new Point(1121, 0);
+            panel1.Name = "panel1";
+            panel1.Size = new Size(227, 721);
+            panel1.TabIndex = 38;
             // 
-            // numericUpDown2
+            // tableLayoutPanel1
             // 
-            numericUpDown2.DecimalPlaces = 3;
-            numericUpDown2.Location = new Point(122, 30);
-            numericUpDown2.Maximum = new decimal(new int[] { 90, 0, 0, 0 });
-            numericUpDown2.Name = "numericUpDown2";
-            numericUpDown2.Size = new Size(77, 27);
-            numericUpDown2.TabIndex = 23;
-            numericUpDown2.Tag = "";
+            tableLayoutPanel1.ColumnCount = 1;
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            tableLayoutPanel1.Controls.Add(button10, 0, 8);
+            tableLayoutPanel1.Controls.Add(button9, 0, 7);
+            tableLayoutPanel1.Controls.Add(button8, 0, 6);
+            tableLayoutPanel1.Controls.Add(button7, 0, 5);
+            tableLayoutPanel1.Controls.Add(button6, 0, 4);
+            tableLayoutPanel1.Controls.Add(button5, 0, 3);
+            tableLayoutPanel1.Controls.Add(button4, 0, 2);
+            tableLayoutPanel1.Controls.Add(button3, 0, 1);
+            tableLayoutPanel1.Controls.Add(button2, 0, 0);
+            tableLayoutPanel1.Dock = DockStyle.Top;
+            tableLayoutPanel1.Location = new Point(0, 0);
+            tableLayoutPanel1.Name = "tableLayoutPanel1";
+            tableLayoutPanel1.RowCount = 9;
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 11.1111107F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 11.1111107F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 11.1111107F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 11.1111107F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 11.1111107F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 11.1111107F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 11.1111107F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 11.1111107F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 11.1111107F));
+            tableLayoutPanel1.Size = new Size(227, 721);
+            tableLayoutPanel1.TabIndex = 0;
             // 
-            // radioButton1
+            // button10
             // 
-            radioButton1.AutoSize = true;
-            radioButton1.Font = new Font("Segoe UI", 15F, FontStyle.Regular, GraphicsUnit.Point);
-            radioButton1.Location = new Point(6, 23);
-            radioButton1.Name = "radioButton1";
-            radioButton1.Size = new Size(49, 39);
-            radioButton1.TabIndex = 21;
-            radioButton1.TabStop = true;
-            radioButton1.Text = "E";
-            radioButton1.UseVisualStyleBackColor = true;
+            button10.Dock = DockStyle.Fill;
+            button10.Location = new Point(3, 643);
+            button10.Name = "button10";
+            button10.Size = new Size(221, 75);
+            button10.TabIndex = 8;
+            button10.Text = "9";
+            button10.UseVisualStyleBackColor = true;
+            button10.Click += button10_Click;
             // 
-            // radioButton3
+            // button9
             // 
-            radioButton3.AutoSize = true;
-            radioButton3.Font = new Font("Segoe UI", 15F, FontStyle.Regular, GraphicsUnit.Point);
-            radioButton3.Location = new Point(65, 23);
-            radioButton3.Name = "radioButton3";
-            radioButton3.Size = new Size(59, 39);
-            radioButton3.TabIndex = 20;
-            radioButton3.TabStop = true;
-            radioButton3.Text = "W";
-            radioButton3.UseVisualStyleBackColor = true;
+            button9.Dock = DockStyle.Fill;
+            button9.Location = new Point(3, 563);
+            button9.Name = "button9";
+            button9.Size = new Size(221, 74);
+            button9.TabIndex = 7;
+            button9.Text = "8";
+            button9.UseVisualStyleBackColor = true;
+            button9.Click += button9_Click;
             // 
-            // groupBox1
+            // button8
             // 
-            groupBox1.Controls.Add(numericUpDown1);
-            groupBox1.Controls.Add(radioButton5);
-            groupBox1.Controls.Add(radioButton2);
-            groupBox1.Location = new Point(12, 21);
-            groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(215, 68);
-            groupBox1.TabIndex = 35;
-            groupBox1.TabStop = false;
-            groupBox1.Text = "Latitude (decimal degrees)";
+            button8.Dock = DockStyle.Fill;
+            button8.Location = new Point(3, 483);
+            button8.Name = "button8";
+            button8.Size = new Size(221, 74);
+            button8.TabIndex = 6;
+            button8.Text = "7";
+            button8.UseVisualStyleBackColor = true;
+            button8.Click += button8_Click;
             // 
-            // numericUpDown1
+            // button7
             // 
-            numericUpDown1.DecimalPlaces = 3;
-            numericUpDown1.Location = new Point(122, 31);
-            numericUpDown1.Maximum = new decimal(new int[] { 90, 0, 0, 0 });
-            numericUpDown1.Name = "numericUpDown1";
-            numericUpDown1.Size = new Size(77, 27);
-            numericUpDown1.TabIndex = 22;
-            numericUpDown1.Tag = "";
+            button7.Dock = DockStyle.Fill;
+            button7.Location = new Point(3, 403);
+            button7.Name = "button7";
+            button7.Size = new Size(221, 74);
+            button7.TabIndex = 5;
+            button7.Text = "6";
+            button7.UseVisualStyleBackColor = true;
+            button7.Click += button7_Click;
             // 
-            // radioButton5
+            // button6
             // 
-            radioButton5.AutoSize = true;
-            radioButton5.Font = new Font("Segoe UI", 15F, FontStyle.Regular, GraphicsUnit.Point);
-            radioButton5.Location = new Point(6, 23);
-            radioButton5.Name = "radioButton5";
-            radioButton5.Size = new Size(55, 39);
-            radioButton5.TabIndex = 21;
-            radioButton5.TabStop = true;
-            radioButton5.Text = "N";
-            radioButton5.UseVisualStyleBackColor = true;
+            button6.Dock = DockStyle.Fill;
+            button6.Location = new Point(3, 323);
+            button6.Name = "button6";
+            button6.Size = new Size(221, 74);
+            button6.TabIndex = 4;
+            button6.Text = "5";
+            button6.UseVisualStyleBackColor = true;
+            button6.Click += button6_Click;
             // 
-            // radioButton2
+            // button5
             // 
-            radioButton2.AutoSize = true;
-            radioButton2.Font = new Font("Segoe UI", 15F, FontStyle.Regular, GraphicsUnit.Point);
-            radioButton2.Location = new Point(65, 23);
-            radioButton2.Name = "radioButton2";
-            radioButton2.Size = new Size(49, 39);
-            radioButton2.TabIndex = 20;
-            radioButton2.TabStop = true;
-            radioButton2.Text = "S";
-            radioButton2.UseVisualStyleBackColor = true;
+            button5.Dock = DockStyle.Fill;
+            button5.Location = new Point(3, 243);
+            button5.Name = "button5";
+            button5.Size = new Size(221, 74);
+            button5.TabIndex = 3;
+            button5.Text = "4";
+            button5.UseVisualStyleBackColor = true;
+            button5.Click += button5_Click;
             // 
-            // button1
+            // button4
             // 
-            button1.Location = new Point(12, 169);
-            button1.Name = "button1";
-            button1.Size = new Size(94, 29);
-            button1.TabIndex = 34;
-            button1.Text = "Search";
-            button1.UseVisualStyleBackColor = true;
-            button1.Click += button1_Click_1;
+            button4.Dock = DockStyle.Fill;
+            button4.Location = new Point(3, 163);
+            button4.Name = "button4";
+            button4.Size = new Size(221, 74);
+            button4.TabIndex = 2;
+            button4.Text = "3";
+            button4.UseVisualStyleBackColor = true;
+            button4.Click += button4_Click;
             // 
-            // dataGridView1
+            // button3
             // 
-            dataGridView1.AllowUserToDeleteRows = false;
-            dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView1.Columns.AddRange(new DataGridViewColumn[] { PropertyTableID, PropertyTableDescription });
-            dataGridView1.Location = new Point(284, 21);
-            dataGridView1.Name = "dataGridView1";
-            dataGridView1.ReadOnly = true;
-            dataGridView1.RowHeadersWidth = 51;
-            dataGridView1.RowTemplate.Height = 29;
-            dataGridView1.Size = new Size(812, 406);
-            dataGridView1.TabIndex = 37;
+            button3.Dock = DockStyle.Fill;
+            button3.Location = new Point(3, 83);
+            button3.Name = "button3";
+            button3.Size = new Size(221, 74);
+            button3.TabIndex = 1;
+            button3.Text = "2";
+            button3.UseVisualStyleBackColor = true;
+            button3.Click += button3_Click;
             // 
-            // PropertyTableID
+            // button2
             // 
-            PropertyTableID.Frozen = true;
-            PropertyTableID.HeaderText = "Conscription Number";
-            PropertyTableID.MinimumWidth = 6;
-            PropertyTableID.Name = "PropertyTableID";
-            PropertyTableID.ReadOnly = true;
-            PropertyTableID.Width = 180;
+            button2.Dock = DockStyle.Fill;
+            button2.Location = new Point(3, 3);
+            button2.Name = "button2";
+            button2.Size = new Size(221, 74);
+            button2.TabIndex = 0;
+            button2.Text = "1";
+            button2.UseVisualStyleBackColor = true;
+            button2.Click += button2_Click;
             // 
-            // PropertyTableDescription
+            // panel2
             // 
-            PropertyTableDescription.Frozen = true;
-            PropertyTableDescription.HeaderText = "Description";
-            PropertyTableDescription.MinimumWidth = 6;
-            PropertyTableDescription.Name = "PropertyTableDescription";
-            PropertyTableDescription.ReadOnly = true;
-            PropertyTableDescription.Width = 125;
+            panel2.Dock = DockStyle.Left;
+            panel2.Location = new Point(0, 0);
+            panel2.Name = "panel2";
+            panel2.Size = new Size(1118, 721);
+            panel2.TabIndex = 39;
             // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1121, 450);
-            Controls.Add(dataGridView1);
-            Controls.Add(groupBox2);
-            Controls.Add(groupBox1);
-            Controls.Add(button1);
+            ClientSize = new Size(1348, 721);
+            Controls.Add(panel1);
+            Controls.Add(panel2);
             Name = "Form1";
             Text = "Vyhladavenie nehnutelnosti";
-            groupBox2.ResumeLayout(false);
-            groupBox2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown2).EndInit();
-            groupBox1.ResumeLayout(false);
-            groupBox1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown1).EndInit();
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
+            panel1.ResumeLayout(false);
+            tableLayoutPanel1.ResumeLayout(false);
             ResumeLayout(false);
         }
 
         #endregion
-
-        private GroupBox groupBox2;
-        private NumericUpDown numericUpDown2;
-        private RadioButton radioButton1;
-        private RadioButton radioButton3;
-        private GroupBox groupBox1;
-        private NumericUpDown numericUpDown1;
-        private RadioButton radioButton5;
-        private RadioButton radioButton2;
-        private Button button1;
-        private DataGridView dataGridView1;
-        private DataGridViewTextBoxColumn PropertyTableID;
-        private DataGridViewTextBoxColumn PropertyTableDescription;
+        private Panel panel1;
+        private TableLayoutPanel tableLayoutPanel1;
+        private Panel panel2;
+        private Button button10;
+        private Button button9;
+        private Button button8;
+        private Button button7;
+        private Button button6;
+        private Button button5;
+        private Button button4;
+        private Button button3;
+        private Button button2;
     }
 }
