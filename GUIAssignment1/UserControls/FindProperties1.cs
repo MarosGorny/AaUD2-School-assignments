@@ -47,7 +47,6 @@ namespace GUIAssignment1.UserControls
             var foundProperties = Program.ApplicationLogic.FindProperties(gpsPoint);
             foreach (var foundProperty in foundProperties)
             {
-                //TODO: Need to remake return of findProperties to return a list of properties instead of a list of realty objects
                 dataGridView1.Rows.Add(foundProperty.ConscriptionNumber, foundProperty.Description);
             }
         }
