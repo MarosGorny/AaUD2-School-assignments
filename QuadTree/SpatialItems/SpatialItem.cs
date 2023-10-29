@@ -140,44 +140,11 @@ public class GPSPoint : Point
 
 public class GPSRectangle : Rectangle
 {
-    //public GPSPoint BottomLeft { get; set; }
-    //public GPSPoint TopRight { get; set; }
-
-    //public override SpatialItem Boundary { get;}
 
     public GPSRectangle(GPSPoint bottomLeft, GPSPoint topRight)
         : base(bottomLeft, topRight)
     {
-        //BottomLeft = bottomLeft;
-        //TopRight = topRight;
+
     }
 
-    //public override bool ContainsStrict(Point p)
-    //{
-    //    if (p is not GPSPoint gpsP)
-    //    {
-    //        return false;
-    //    }
-
-    //    bool latitudeContained = BottomLeft.Y <= gpsP.Y && TopRight.Y >= gpsP.Y;
-    //    bool longitudeContained = BottomLeft.X <= gpsP.X && TopRight.X >= gpsP.X;
-
-    //    return latitudeContained && longitudeContained;
-    //}
-
-    //public bool ContainsStrict(GPSRectangle targetRectangle)
-    //{
-    //    bool xCoordinatesContained = BottomLeft.X <= targetRectangle.BottomLeft.X && TopRight.X >= targetRectangle.TopRight.X;
-    //    bool yCoordinatesContained = BottomLeft.Y <= targetRectangle.BottomLeft.Y && TopRight.Y >= targetRectangle.TopRight.Y;
-
-    //    return xCoordinatesContained && yCoordinatesContained;
-    //}
-
-    //public bool Intersects(GPSRectangle targetRectangle)
-    //{
-    //    bool xOverlap = BottomLeft.X <= targetRectangle.TopRight.X && TopRight.X >= targetRectangle.BottomLeft.X;
-    //    bool yOverlap = BottomLeft.Y <= targetRectangle.TopRight.Y && TopRight.Y >= targetRectangle.BottomLeft.Y;
-
-    //    return xOverlap && yOverlap;
-    //}
 }

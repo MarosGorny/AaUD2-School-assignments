@@ -218,7 +218,7 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
     #endregion
 
     #region Deletion
-    public void Delete(QuadTreeObject<K, V> quadTreeObject) //TODO: Return bool or object
+    public bool Delete(QuadTreeObject<K, V> quadTreeObject) //TODO: Return bool or object
     {
         SpatialItem deleteItem = quadTreeObject.Item;
         Queue<QuadTreeNode<K, V>> nodesToCheck = new Queue<QuadTreeNode<K, V>>();
@@ -229,7 +229,7 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
             QuadTreeNode<K, V> currentNode = nodesToCheck.Dequeue();
 
             if (TryRemoveDataFromNode(currentNode, quadTreeObject))
-                return;
+                return true;
 
             if (currentNode.Children is null) continue;
 
@@ -243,6 +243,7 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
                 }
             }
         }
+        return false;
     }
 
     private bool TryRemoveDataFromNode(QuadTreeNode<K, V> node, QuadTreeObject<K, V> targetObject)
