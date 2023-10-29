@@ -25,6 +25,7 @@ namespace GUIAssignment1
                 new FindProperties1(),
                 new FindParcels2(),
                 new FindAllObjects3(),
+                new AddProperty4(),
                 //Also add other user controls here
             };
 

@@ -4,11 +4,21 @@ using Rectangle = QuadTreeDS.SpatialItems.Rectangle;
 
 namespace GUIAssignment1.UserControls
 {
-    public partial class FindAllObjects3 : UserControl
+    public partial class AddProperty4 : UserControl
     {
-        public FindAllObjects3()
+        public AddProperty4()
         {
             InitializeComponent();
+        }
+
+        private void reset()
+        {
+            numericUpDown1.Value = 0;
+            numericUpDown2.Value = 0;
+            numericUpDown3.Value = 0;
+            numericUpDown4.Value = 0;
+            textBox1.Text = "";
+            textBox2.Text = "";
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -21,6 +31,9 @@ namespace GUIAssignment1.UserControls
             double lonLeft = Convert.ToDouble(numericUpDown2.Value);
             double latRight = Convert.ToDouble(numericUpDown4.Value);
             double lonRight = Convert.ToDouble(numericUpDown3.Value);
+
+            int conscriptionNumber = int.Parse(textBox1.Text);
+            string description = textBox2.Text;
 
             if (radioButton5.Checked)
             {
@@ -49,30 +62,22 @@ namespace GUIAssignment1.UserControls
                 latDirRight = LatitudeDirection.S;
             }
 
-            if(radioButton4.Checked)
+            if (radioButton4.Checked)
             {
                 longDirRight = LongitudeDirection.E;
             }
-            else if(radioButton6.Checked)
+            else if (radioButton6.Checked)
             {
                 longDirRight = LongitudeDirection.W;
             }
 
             GPSPoint gpsPoint = new GPSPoint(latDirLeft, latLeft, longDirLeft, lonLeft);
             GPSPoint gpsPoint2 = new GPSPoint(latDirRight, latRight, longDirRight, lonRight);
-            Rectangle area = new Rectangle(gpsPoint, gpsPoint2);
-            var foundOjects = Program.ApplicationLogic.FindObjectsInArea(area);
-            foreach (var foundObject in foundOjects)
-            {
-                if(foundObject is Property foundProperty)
-                {
-                    dataGridView1.Rows.Add(foundProperty.ConscriptionNumber, foundProperty.Description);
-                }
-                else if (foundObject is Parcel foundParcel)
-                {
-                    dataGridView1.Rows.Add(foundParcel.ParcelNumber, foundParcel.Description);
-                }
-            }
+            GPSRectangle area = new GPSRectangle(gpsPoint, gpsPoint2);
+
+            Property property = new Property(conscriptionNumber, description, area);
+            Program.ApplicationLogic.AddProperty(property);
+            reset();
         }
     }
 }
