@@ -8,6 +8,8 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
     public int Depth { get; }
     public int MaxSubtreeDepth { get; private set; } = 0;
     public List<QuadTreeObject<K, V>> Data { get; private set; } = new List<QuadTreeObject<K, V>>(); //TODO: Rectangle Data and point Data should be seperated
+    public List<QuadTreeObject<K, V>> PointData { get; private set; } = new List<QuadTreeObject<K, V>>();
+    public List<QuadTreeObject<K, V>> RectangleData { get; private set; } = new List<QuadTreeObject<K, V>>();
     public QuadTreeNode<K, V>[]? Children { get; private set; }
     public QuadTreeNode<K, V>? Parent { get; }
 
@@ -125,9 +127,14 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
         if (deepestLeaf != null)
         {
             Data = deepestLeaf.Data;
+            PointData = deepestLeaf.PointData;
+            RectangleData = deepestLeaf.RectangleData;
+
             deepestLeaf.Data = new List<QuadTreeObject<K, V>>(); 
-            //TODO: look at the siblings of the deepest leaf and see if they can be simplified
-            if(deepestLeaf.Data.Count == 0 && deepestLeaf.Parent.AreChildrenLeavesAndEmpty())
+            deepestLeaf.PointData = new List<QuadTreeObject<K, V>>();
+            deepestLeaf.RectangleData = new List<QuadTreeObject<K, V>>();
+
+            if(deepestLeaf.Data.Count == 0 && !deepestLeaf.IsRoot() && deepestLeaf.Parent.AreChildrenLeavesAndEmpty())
             {
                 deepestLeaf.Parent.MakeLeaf();
             }
@@ -186,7 +193,8 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
                 else
                 {
                     // If the spatialITem doesnt fit in any subquadrant, add it to the data
-                    currentNode.Data.Add(quadTreeObject);
+                    currentNode.AddSpatialItemToData(quadTreeObject);
+                    //currentNode.Data.Add(quadTreeObject);
                     return;
                 }
             }
@@ -201,7 +209,8 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
             }
             else
             {
-                currentNode.Data.Add(quadTreeObject);
+                currentNode.AddSpatialItemToData(quadTreeObject);
+                //currentNode.Data.Add(quadTreeObject);
                 return;
             }
         }
@@ -238,15 +247,33 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
 
     private bool TryRemoveDataFromNode(QuadTreeNode<K, V> node, QuadTreeObject<K, V> targetObject)
     {
-        for (int i = 0; i < node.Data.Count; i++)
+        if (targetObject.Item is Point)
         {
-            if (node.Data[i] == targetObject)
+            for (int i = 0; i < node.PointData.Count; i++)
             {
-                node.Data.RemoveAt(i);
-                node.SimplifyIfEmpty();
-                return true;
+                if (node.PointData[i] == targetObject)
+                {
+                    node.PointData.RemoveAt(i);
+                    node.Data.Remove(targetObject);
+                    node.SimplifyIfEmpty();
+                    return true;
+                }
             }
         }
+        else if (targetObject.Item is Rectangle)
+        {
+            for (int i = 0; i < node.RectangleData.Count; i++)
+            {
+                if (node.RectangleData[i] == targetObject)
+                {
+                    node.RectangleData.RemoveAt(i);
+                    node.Data.Remove(targetObject);
+                    node.SimplifyIfEmpty();
+                    return true;
+                }
+            }
+        }
+
         return false;
     }
     #endregion
@@ -261,7 +288,7 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
         while (nodesToCheck.Count > 0)
         {
             QuadTreeNode<K, V> currentNode = nodesToCheck.Dequeue();
-
+                        
             // Check and add data items contained within the rectangle
             foreach (var kvp in currentNode.Data)
             {
@@ -296,27 +323,50 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
     #region Utility and Helper Methods
     private bool TryAddItem(QuadTreeObject<K, V> item)
     {
-
-        foreach (var existingItem in Data)
+        if(item.Item is Point)
         {
-
-            if (existingItem.Key.Equals(item.Key))
+            foreach (var existingItem in PointData)
             {
-                throw new ArgumentException($"Key {item.Key} already exists in QuadTree");
-            }
 
-            if (existingItem.Item.Equals(item.Item))
-            {
-                Data.Add(item);
-                return true;
+                if (existingItem.Key.Equals(item.Key))
+                {
+                    throw new ArgumentException($"Key {item.Key} already exists in QuadTree");
+                }
+
+                if (existingItem.Item.Equals(item.Item))
+                {
+                    AddSpatialItemToData(item);
+                    return true;
+                }
             }
+        }
+        else if(item.Item is Rectangle)
+        {
+            foreach (var existingItem in RectangleData)
+            {
+
+                if (existingItem.Key.Equals(item.Key))
+                {
+                    throw new ArgumentException($"Key {item.Key} already exists in QuadTree");
+                }
+
+                if (existingItem.Item.Equals(item.Item))
+                {
+                    AddSpatialItemToData(item);
+                    return true;
+                }
+            }
+        }
+        else
+        {
+            throw new ArgumentException("Item is not a Point or Rectangle");
         }
 
         // If we reached here, then there's no matching item.
         // So, if the node data was empty, we add the new item.
         if (Data.Count == 0)
         {
-            Data.Add(item);
+            AddSpatialItemToData(item);
             return true;
         }
 
@@ -523,6 +573,8 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
                     }
 
                     node.Data.Clear();
+                    node.PointData.Clear();
+                    node.RectangleData.Clear();
                 }
             }
             else
@@ -564,6 +616,8 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
                 data.Add(item);
             }
             leaf.Data.Clear();
+            leaf.PointData.Clear();
+            leaf.RectangleData.Clear();
         }
 
         foreach (var item in data)
@@ -612,6 +666,20 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
         Point topRight = new Point(maxX, maxY);
 
         return (bottomLeft, topRight);
+    }
+
+    private void AddSpatialItemToData(QuadTreeObject<K, V> quadTreeObject)
+    {
+        if (quadTreeObject.Item is Point)
+        {
+            PointData.Add(quadTreeObject);
+        }
+        else if (quadTreeObject.Item is Rectangle)
+        {
+            RectangleData.Add(quadTreeObject);
+        }
+
+        Data.Add(quadTreeObject);
     }
 
 
