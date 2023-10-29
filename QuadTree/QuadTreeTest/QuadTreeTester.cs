@@ -237,9 +237,9 @@ class QuadTreeTester
 
         // Reducing depth
         quadTree.ChangeMaxAllowedDepth(0);
-        var i = quadTree.Root;
         quadTree.ChangeMaxAllowedDepth(2);
-        i = quadTree.Root;
+        var (bottomLeft,TopRight) = quadTree.Root.FindBoundaryPoints(quadTree.Root.InOrderTraversal());
+        Console.WriteLine("BottomLeft: " + bottomLeft.X + " " + bottomLeft.Y);
 
         //var traverse = quadTree.Root.PreorderTraversal();
         //var traverse1 = quadTree.Root.InOrderTraversal();

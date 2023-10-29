@@ -572,4 +572,47 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
         }
     }
     #endregion
+
+    public (Point BottomLeft, Point TopRight) FindBoundaryPoints<K, V>(List<QuadTreeNode<K, V>> nodeList) where K : IComparable<K>
+    {
+        double minX = Double.MaxValue;
+        double minY = Double.MaxValue;
+        double maxX = Double.MinValue;
+        double maxY = Double.MinValue;
+
+        foreach (var node in nodeList)
+        {
+            foreach (var obj in node.Data)
+            {
+                var spatialItem = obj.Item;
+
+                // Update minX and minY for bottom-left point
+                if (spatialItem.LowerLeft.X < minX)
+                {
+                    minX = spatialItem.LowerLeft.X;
+                }
+                if (spatialItem.LowerLeft.Y < minY)
+                {
+                    minY = spatialItem.LowerLeft.Y;
+                }
+
+                // Update maxX and maxY for top-right point
+                if (spatialItem.UpperRight.X > maxX)
+                {
+                    maxX = spatialItem.UpperRight.X;
+                }
+                if (spatialItem.UpperRight.Y > maxY)
+                {
+                    maxY = spatialItem.UpperRight.Y;
+                }
+            }
+        }
+
+        Point bottomLeft = new Point(minX, minY);
+        Point topRight = new Point(maxX, maxY);
+
+        return (bottomLeft, topRight);
+    }
+
+
 }
