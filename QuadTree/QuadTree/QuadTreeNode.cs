@@ -434,7 +434,7 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
     #endregion
 
     #region Traversal
-    public List<QuadTreeNode<K, V>> PreorderTraversal()
+    public List<QuadTreeNode<K, V>> PreorderTraversal(Action<QuadTreeNode<K, V>>? action = null)
     {
         List<QuadTreeNode<K, V>> result = new List<QuadTreeNode<K, V>>();
         Stack<QuadTreeNode<K, V>> stack = new Stack<QuadTreeNode<K, V>>();
@@ -444,6 +444,7 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
         {
             QuadTreeNode<K, V> currentNode = stack.Pop();
             result.Add(currentNode);
+            action?.Invoke(currentNode); // Execute the passed action on the current node if provided
 
             if (currentNode.Children != null)
             {
@@ -457,7 +458,7 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
         return result;
     }
 
-    public List<QuadTreeNode<K, V>> InOrderTraversal()
+    public List<QuadTreeNode<K, V>> InOrderTraversal(Action<QuadTreeNode<K, V>>? action = null)
     {
         List<QuadTreeNode<K, V>> result = new List<QuadTreeNode<K, V>>();
         if (this == null) return result;
@@ -474,6 +475,8 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
             if (visited)
             {
                 result.Add(current);
+                action?.Invoke(current); // Execute the passed action on the current node if provided
+
                 if (current.Children is null) continue;
                 stack.Push((current.Children[(int)Quadrant.SouthEast], false));
                 stack.Push((current.Children[(int)Quadrant.SouthWest], false));
@@ -497,7 +500,7 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
         return result;
     }
 
-    public List<QuadTreeNode<K, V>> PostOrderTraversal()
+    public List<QuadTreeNode<K, V>> PostOrderTraversal(Action<QuadTreeNode<K, V>>? action = null)
     {
         if (this is null) return new List<QuadTreeNode<K, V>>();
 
@@ -528,7 +531,10 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
         // Now pop nodes from the second stack to get them in postorder and add them to the result.
         while (stack2.Count > 0)
         {
-            result.Add(stack2.Pop());
+            var node = stack2.Pop();
+
+            result.Add(node);
+            action?.Invoke(node); // Execute the passed action on the current node if provided
         }
 
         return result;
