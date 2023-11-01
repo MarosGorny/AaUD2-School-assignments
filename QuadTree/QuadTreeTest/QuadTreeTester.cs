@@ -235,13 +235,25 @@ class QuadTreeTester
         QuadTreeObject<Guid, string> quadTreeObjectB11 = new QuadTreeObject<Guid, string>(Guid.NewGuid(), "Point 3.3", new Point(85, 20));
         quadTree.Insert(quadTreeObjectB11);
 
+        //QuadTreeObject<Guid, string> quadTreeObjectB12 = new QuadTreeObject<Guid, string>(Guid.NewGuid(), "Point 3.3", new Point(85, 20));
+        //quadTree.Insert(quadTreeObjectB12);
         // Reducing depth
         //quadTree.ChangeMaxAllowedDepth(0);
         //quadTree.ChangeMaxAllowedDepth(2);
         //var (bottomLeft,TopRight) = quadTree.Root.FindBoundaryPoints(quadTree.Root.InOrderTraversal());
         //Console.WriteLine("BottomLeft: " + bottomLeft.X + " " + bottomLeft.Y);
 
-        var traverse = quadTree.Root.PreorderTraversal(node => Console.WriteLine(node.Depth));
+        //var traverse = quadTree.Root.PreorderTraversal(node => Console.WriteLine(node.Data.Count));
+        //Console.WriteLine(quadTree.CalculateTreeHealth());
+        //quadTree.Delete(quadTreeObjectA);
+        //Console.WriteLine(quadTree.CalculateTreeHealth());
+        //Console.WriteLine("Ideal depth for tree with 1 total data: " + quadTree.CalculateIdealDepth(1));
+        //Console.WriteLine("Ideal depth for tree with 2 total data: " + quadTree.CalculateIdealDepth(2));
+        //Console.WriteLine("Ideal depth for tree with 5 total data: " + quadTree.CalculateIdealDepth(5));
+        //Console.WriteLine("Ideal depth for tree with 6 total data: " + quadTree.CalculateIdealDepth(6));
+        //Console.WriteLine("Ideal depth for tree with 21 total data: " + quadTree.CalculateIdealDepth(21));
+        //Console.WriteLine("Ideal depth for tree with 22 total data: " + quadTree.CalculateIdealDepth(22));
+        
         //var traverse1 = quadTree.Root.InOrderTraversal();
         //var traverse2 = quadTree.Root.PostOrderTraversal();
 

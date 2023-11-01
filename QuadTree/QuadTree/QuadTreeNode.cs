@@ -12,8 +12,6 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
     public List<QuadTreeObject<K, V>> RectangleData { get; private set; } = new List<QuadTreeObject<K, V>>();
     public QuadTreeNode<K, V>[]? Children { get; private set; }
     public QuadTreeNode<K, V>? Parent { get; }
-
-    private const int QUADRANT_COUNT = 4;
     public QuadTree<K, V> QuadTree { get; private set; }
 
     public QuadTreeNode(Rectangle boundary, QuadTreeNode<K, V>? parent, QuadTree<K, V> quadTree)
@@ -55,10 +53,10 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
     {
         if (IsLeaf())
         {
-            Children = new QuadTreeNode<K, V>[QUADRANT_COUNT];
+            Children = new QuadTreeNode<K, V>[QuadTree.QUADRANT_COUNT];
             var boundaries = CalculateSubquadrantsBoundaries();
 
-            for (int i = 0; i < QUADRANT_COUNT; i++)
+            for (int i = 0; i < QuadTree.QUADRANT_COUNT; i++)
             {
                 Children[i] = new QuadTreeNode<K, V>(boundaries[i], this, QuadTree);
             }
@@ -376,6 +374,17 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
 
     private (double, double) CalculateMidPoints() =>
         ((Boundary.LowerLeft.X + Boundary.UpperRight.X) / 2.0, (Boundary.LowerLeft.Y + Boundary.UpperRight.Y) / 2.0);
+
+    public double DataScore()
+    {
+        if(IsLeaf() && Data.Count == 0)
+        {
+            return 1;
+        }
+
+        //If data count is 1, then 1 else quick decrease of DataScore
+        return 1.0 / (1 + (Data.Count - 1) * (Data.Count - 1));
+    }
 
     private List<Rectangle> CalculateSubquadrantsBoundaries()
     {
