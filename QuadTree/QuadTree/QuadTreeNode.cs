@@ -697,6 +697,4 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
 
         Data.Add(quadTreeObject);
     }
-
-
 }

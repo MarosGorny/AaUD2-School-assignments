@@ -35,6 +35,27 @@ public abstract class SpatialItem
                LowerLeft.Y <= other.UpperRight.Y &&
                UpperRight.Y >= other.LowerLeft.Y;
     }
+
+    public bool OverlapsBorder(SpatialItem other)
+    {
+        // Check if the two items intersect in general.
+        bool generalIntersection = LowerLeft.X <= other.UpperRight.X &&
+                                   UpperRight.X >= other.LowerLeft.X &&
+                                   LowerLeft.Y <= other.UpperRight.Y &&
+                                   UpperRight.Y >= other.LowerLeft.Y;
+
+        if (generalIntersection)
+        {
+            // Check if one item is fully contained within the other.
+            bool thisContainsOther = ContainsStrict(other);
+            bool otherContainsThis = other.ContainsStrict(this);
+
+            // Return true only if neither item fully contains the other (indicating a border overlap).
+            return !(thisContainsOther || otherContainsThis);
+        }
+        return false;
+    }
+
 }
 
 /// <summary>
