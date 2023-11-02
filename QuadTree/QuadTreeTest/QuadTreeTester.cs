@@ -178,7 +178,7 @@ class QuadTreeTester
 
         #region traversal testing
         //Traversing the tree
-        Rectangle baseRectangle = new Rectangle(new Point(100, 100), new Point(200, 200));
+        Rectangle baseRectangle = new Rectangle(new Point(0, 0), new Point(100, 100));
         QuadTree<Guid, string> quadTree = new QuadTree<Guid, string>(baseRectangle);
 
         // Point A will go to root
@@ -321,15 +321,36 @@ class QuadTreeTester
         //Rectangle RectangleFull = new Rectangle(new Point(0, 0), new Point(100, 100));
         //Rectangle RectangleX = new Rectangle(new Point(60, 120), new Point(70, 130));
 
-        Rectangle RectangleMiddle = new Rectangle(new Point(130, 130), new Point(160, 160));
-        Rectangle UpperRight = new Rectangle(new Point(155, 155), new Point(190, 190));
+        Rectangle RectangleMiddle = new Rectangle(new Point(30, 30), new Point(60, 60));
+        Rectangle UpperRight = new Rectangle(new Point(55, 55), new Point(90, 90));
+        Rectangle BigUpperRight = new Rectangle(new Point(28, 28), new Point(95, 95));
+        Rectangle LowerSmallLeft = new Rectangle(new Point(5, 5), new Point(20, 30));
         QuadTreeObject<Guid,string> quadTreeObjectMiddle = new QuadTreeObject<Guid, string>(Guid.NewGuid(), "Middle", RectangleMiddle);
         QuadTreeObject<Guid, string> quadTreeObjectUpperRight = new QuadTreeObject<Guid, string>(Guid.NewGuid(), "UpperRight", UpperRight);
+        QuadTreeObject<Guid, string> quadTreeObjectBigUpperRight = new QuadTreeObject<Guid, string>(Guid.NewGuid(), "BigUpperRight", BigUpperRight);
+        QuadTreeObject<Guid, string> quadTreeObjectLowerSmallLeft = new QuadTreeObject<Guid, string>(Guid.NewGuid(), "LowerSmallLeft", LowerSmallLeft);
         List<QuadTreeObject<Guid, string>> quadTreeObjects = new List<QuadTreeObject<Guid, string>>();
-        quadTreeObjects.Add(quadTreeObjectUpperRight);
         quadTreeObjects.Add(quadTreeObjectMiddle);
+        quadTreeObjects.Add(quadTreeObjectUpperRight);
+        quadTreeObjects.Add(quadTreeObjectBigUpperRight);
+        quadTreeObjects.Add(quadTreeObjectLowerSmallLeft);
 
-        QuadTreeOptimalization<Guid,string>.BestSubdivision(baseRectangle,quadTreeObjects,4);
+        QuadTree<Guid, string> quadTreeOfficial = new QuadTree<Guid, string>(baseRectangle);
+        quadTreeOfficial.Insert(quadTreeObjectMiddle);
+        quadTreeOfficial.Insert(quadTreeObjectUpperRight);
+        quadTreeOfficial.Insert(quadTreeObjectBigUpperRight);
+        quadTreeOfficial.Insert(quadTreeObjectLowerSmallLeft);
+        Console.WriteLine(quadTreeOfficial.CalculateTreeHealth());
+
+        
+        //Optimalization
+        QuadTree<Guid, string> quadTreeOptimalized = new QuadTree<Guid, string>(baseRectangle, quadTreeObjects, portions:4);
+        Console.WriteLine(quadTreeOptimalized.CalculateTreeHealth());
+        //quadTreeOptimalized.Root.InOrderTraversal(node => Console.WriteLine(node.Data.Count));
+
+
+
+
         Console.WriteLine();
 
         //QuadTreeObject<Guid, string> quadTreeObjectRectangle1 = new QuadTreeObject<Guid, string>(Guid.NewGuid(), "Rectangle 1", Rectangle1);
