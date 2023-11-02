@@ -242,119 +242,97 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
     }
     public void InsertOptimalizedIterative(QuadTreeOptimalization<K, V>.SubdivisionResult optimalizationData, int portion)
     {
-        Stack<QuadTreeNode<K, V>> nodeStack = new Stack<QuadTreeNode<K, V>>();
-        Stack<QuadTreeOptimalization<K, V>.SubdivisionResult> dataStack = new Stack<QuadTreeOptimalization<K, V>.SubdivisionResult>();
+        var nodeStack = new Stack<QuadTreeNode<K, V>>();
+        var dataStack = new Stack<QuadTreeOptimalization<K, V>.SubdivisionResult>();
 
         nodeStack.Push(this);
         dataStack.Push(optimalizationData);
-
-        Random random = new Random();
 
         while (nodeStack.Count > 0)
         {
             var currentNode = nodeStack.Pop();
             var currentData = dataStack.Pop();
 
-            currentNode.HorizontalCut = currentData.HorizontalCut;
-            currentNode.VerticalCut = currentData.VerticalCut;
-
-            var noChildrenItems = true;
-            for ( var i = 0; i < currentData.SortedItems.Length - 1; i++)
+            // Check and handle non-empty quadrants
+            bool hasChildrenItems = HasNonEmptyQuadrants(currentData.SortedItems);
+            if (hasChildrenItems)
             {
-                if (currentData.SortedItems[i].Count > 0)
-                {
-                    noChildrenItems = false;
-                    break;
-                }
-                
+                currentNode.Subdivide(currentData.Quadrants, currentData.VerticalCut, currentData.HorizontalCut);
             }
 
-            if(!noChildrenItems)
+            // Handle items that don’t fit into any quadrant
+            HandleNonFittingItems(currentNode, currentData.SortedItems[4]);
+
+            // If no items are left outside, proceed to find the quadrant with the most items
+            if (hasChildrenItems)
             {
-                currentNode.Subdivide(currentData.Quadrants, currentData.VerticalCut, currentData.HorizontalCut);//TODO: Check if this is needed
+                InsertFromLargestQuadrant(currentNode, currentData.SortedItems);
             }
 
-            bool itemsDidntFit = currentData.SortedItems[4].Any();
+            // Continue with children nodes if necessary
+            ProcessChildrenNodes(currentNode, nodeStack, dataStack, currentData.SortedItems, portion);
+        }
+    }
 
-            // Data that doesn't fit into any quadrant
-            foreach (var item in currentData.SortedItems[4])
-            {
-                currentNode.Insert(item);
-            }
-            currentData.SortedItems[4].Clear();
-
-
-            if (!itemsDidntFit)
-            {
-                int maxIndex = int.MinValue;
-                int maxValue = int.MinValue;
-
-                for (int i = 0; i < currentData.SortedItems.Length - 1; i++)
-                {
-                    if (currentData.SortedItems[i].Count > maxValue)
-                    {
-                        maxIndex = i;
-                        maxValue = currentData.SortedItems[i].Count;
-                    }
-                }
-
-                if(maxIndex != int.MinValue)
-                {
-                    var elementToInsert = currentData.SortedItems[maxIndex][0];
-                    currentNode.Insert(elementToInsert);
-                    currentData.SortedItems[maxIndex].Remove(elementToInsert);
-                }
-            }
-
-            if (currentNode.IsLeaf()) continue;
-
+    private void ProcessChildrenNodes(
+        QuadTreeNode<K, V> currentNode,
+        Stack<QuadTreeNode<K, V>> nodeStack,
+        Stack<QuadTreeOptimalization<K, V>.SubdivisionResult> dataStack,
+        List<QuadTreeObject<K, V>>[] sortedItems,
+        int portion)
+    {
+        if (!currentNode.IsLeaf())
+        {
             for (int i = 0; i < currentNode.Children.Length; i++)
             {
                 var child = currentNode.Children[i];
-                if (currentData.SortedItems[i].Count == 0) continue;
+                if (sortedItems[i].Count == 0) continue;
 
-                var optimalization = QuadTreeOptimalization<K, V>.BestSubdivision(child.Boundary, currentData.SortedItems[i], portion);
-
+                var optimalization = QuadTreeOptimalization<K, V>.BestSubdivision(child.Boundary, sortedItems[i], portion);
                 nodeStack.Push(child);
                 dataStack.Push(optimalization);
             }
         }
     }
 
+    private void InsertFromLargestQuadrant(QuadTreeNode<K, V> currentNode, List<QuadTreeObject<K, V>>[] sortedItems)
+    {
+        int maxIndex = -1;
+        int maxCount = -1;
 
-    //public void InsertOptimalized(QuadTreeOptimalization<K, V>.SubdivisionResult optimalizationData, int portion)
-    //{
-    //    HorizontalCut = optimalizationData.HorizontalCut;
-    //    VerticalCut = optimalizationData.VerticalCut;
+        for (int i = 0; i < sortedItems.Length - 1; i++)
+        {
+            if (sortedItems[i].Count > maxCount)
+            {
+                maxIndex = i;
+                maxCount = sortedItems[i].Count;
+            }
+        }
 
-    //    Subdivide(optimalizationData.Quadrants, VerticalCut, HorizontalCut);
-        
-    //    if (IsLeaf())
-    //    {
-    //        Children = new QuadTreeNode<K, V>[QuadTree.QUADRANT_COUNT];
-    //        var boundaries = optimalizationData.Quadrants;
+        if (maxIndex >= 0)
+        {
+            // Select the last item from the most populated list
+            var lastIndex = sortedItems[maxIndex].Count - 1;
+            var elementToInsert = sortedItems[maxIndex][lastIndex];
 
-    //        for (int i = 0; i < QuadTree.QUADRANT_COUNT; i++)
-    //        {
-    //            Children[i] = new QuadTreeNode<K, V>(boundaries[i], this, QuadTree);
-    //        }
-    //        UpdateMaxSubtreeDepthAfterSubdivision();
-    //    }
+            currentNode.Insert(elementToInsert);
+            sortedItems[maxIndex].RemoveAt(lastIndex); // Remove the last item
+        }
+    }
 
-    //    //Data that doesn't fit into any quadrant
-    //    foreach (var item in optimalizationData.SortedItems[4])
-    //    {
-    //        Insert(item);
-    //    }
+    private void HandleNonFittingItems(QuadTreeNode<K, V> currentNode, List<QuadTreeObject<K, V>> nonFittingItems)
+    {
+        foreach (var item in nonFittingItems)
+        {
+            currentNode.Insert(item);
+        }
+        nonFittingItems.Clear();
+    }
 
-    //    for (int i = 0; i < Children.Length; i++)
-    //    {
-    //        var child = Children[i];
-    //        var optimalization = QuadTreeOptimalization<K, V>.BestSubdivision(child.Boundary, optimalizationData.SortedItems[i],portion);
-    //        child.InsertOptimalized(optimalization, portion);
-
-    //    }
-    //}
+    private bool HasNonEmptyQuadrants(List<QuadTreeObject<K, V>>[] sortedItems)
+    {
+        return sortedItems.Take(4).Any(quadrantItems => quadrantItems.Count > 0);
+    }
     #endregion
 
     #region Deletion
@@ -521,13 +499,13 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
     {
         if (IsLeaf() && Data.Count == 0)
         {
-            return 1;
+            throw new InvalidOperationException("DataScore cannot be calculated for an empty leaf node");
         }
 
         // Logarithmic decrease of DataScore, log base 2
         // Add 1 to the data count to prevent Math.Log(0) which is undefined
         // Adding 1 also ensures that a count of 1 will return 1
-        return 1.0 / (1 + (Math.Log(Data.Count) / Math.Log(2)) * QuadTreeOptimalization<K, V>.SCALING_FACTOR); // Adjust the divisor as needed
+        return 1.0 / (1 + (Math.Log(Data.Count) / Math.Log(2)) * QuadTreeOptimalization<K, V>.ScalingFactor); // Adjust the divisor as needed
         //return 1.0 / (1 + Math.Log(Data.Count) / Math.Log(2));
     }
 

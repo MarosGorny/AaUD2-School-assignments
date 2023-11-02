@@ -95,7 +95,7 @@ public class QuadTree<K, V> where K : IComparable<K>
         // Adjust the depth score calculation here
         // Adding a scaling factor to the logarithmic function
         var depthDifference = maxDepth - idealDepth;
-        var depthScore = (depthDifference <= 0) ? 1 : 1.0 / (1 + Math.Log(1 + depthDifference) / Math.Log(2) * QuadTreeOptimalization<K,V>.SCALING_FACTOR);
+        var depthScore = (depthDifference <= 0) ? 1 : 1.0 / (1 + Math.Log(1 + depthDifference) / Math.Log(2) * QuadTreeOptimalization<K,V>.ScalingFactor);
 
 
         double combinedScore = (dataScore + depthScore) / 2;

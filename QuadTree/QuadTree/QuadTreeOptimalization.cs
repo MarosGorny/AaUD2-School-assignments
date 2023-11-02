@@ -5,7 +5,7 @@ public class QuadTreeOptimalization<K, V> where K : IComparable<K>
 {
 
     // Somewhere in your class, define the scaling factor
-    static public double SCALING_FACTOR = 0.1; // 1 = quadratic, 2 = 4 times bigger, 0.5 = 4 times smaller
+    public static readonly double ScalingFactor = 0.1; // 1 = quadratic, 2 = 4 times bigger, 0.5 = 4 times smaller
 
     public class SubdivisionResult
     {
@@ -80,6 +80,10 @@ public class QuadTreeOptimalization<K, V> where K : IComparable<K>
         };
     }
 
+    //make method for sorting quadTreeObject by their key
+
+
+
     private static List<double> GetCutPositions(Rectangle quadrant, int portions, bool isHorizontal)
     {
         double length = isHorizontal ? quadrant.UpperRight.X - quadrant.LowerLeft.X : quadrant.UpperRight.Y - quadrant.LowerLeft.Y;
@@ -96,26 +100,10 @@ public class QuadTreeOptimalization<K, V> where K : IComparable<K>
         return positions;
     }
 
-
-    private static List<double> GetCutPositions(double length, int portions)
-    {
-        double step = length / portions;
-        List<double> positions = new List<double>();
-
-        for (int i = 1; i < portions; i++)
-        {
-            positions.Add(step * i);
-        }
-
-        return positions;
-    }
-
     private static CutData CalculateBestSubdivision(List<double> cutPositions, Rectangle quadrant, List<QuadTreeObject<K, V>> items, bool isHorizontal)
     {
         List<CutData> bestCuts = new List<CutData>();
         int bestIntersectionsCount = int.MaxValue;
-
-
 
         foreach (var cut in cutPositions)
         {
@@ -163,23 +151,38 @@ public class QuadTreeOptimalization<K, V> where K : IComparable<K>
         return bestCuts[indexToReturn];
     }
 
-
+    // Gets subdivisions for a cut, divided based on the specified orientation.
     private static List<Rectangle> GetSubdivisionsForCut(Rectangle quadrant, double cut, bool isHorizontal)
     {
-        List<Rectangle> subdivisions = new List<Rectangle>();
         if (isHorizontal)
         {
-            // Divide based on X-axis (horizontal)
-            subdivisions.Add(new Rectangle(quadrant.LowerLeft, new Point(cut, quadrant.UpperRight.Y)));
-            subdivisions.Add(new Rectangle(new Point(cut, quadrant.LowerLeft.Y), quadrant.UpperRight));
+            return new List<Rectangle>
+            {
+                new Rectangle(quadrant.LowerLeft, new Point(cut, quadrant.UpperRight.Y)),
+                new Rectangle(new Point(cut, quadrant.LowerLeft.Y), quadrant.UpperRight)
+            };
         }
         else
         {
-            // Divide based on Y-axis (vertical)
-            subdivisions.Add(new Rectangle(quadrant.LowerLeft, new Point(quadrant.UpperRight.X, cut)));
-            subdivisions.Add(new Rectangle(new Point(quadrant.LowerLeft.X, cut), quadrant.UpperRight));
+            return new List<Rectangle>
+            {
+                new Rectangle(quadrant.LowerLeft, new Point(quadrant.UpperRight.X, cut)),
+                new Rectangle(new Point(quadrant.LowerLeft.X, cut), quadrant.UpperRight)
+            };
         }
+    }
 
-        return subdivisions;
+    public static void SortByLongestSide<K, V>(List<QuadTreeObject<K, V>> items, bool descending = false)
+        where K : IComparable<K>
+    {
+        items.Sort((a, b) =>
+        {
+            // Directly call GetLongestSide, no need to check the type.
+            double longestSideA = a.Item.GetLongestSide();
+            double longestSideB = b.Item.GetLongestSide();
+
+            // If descending is true, multiply by -1 to invert the comparison
+            return descending ? longestSideB.CompareTo(longestSideA) : longestSideA.CompareTo(longestSideB);
+        });
     }
 }

@@ -20,6 +20,8 @@ public abstract class SpatialItem
     public Point LowerLeft { get; protected set; }
     public Point UpperRight { get; protected set; }
 
+    public abstract double GetLongestSide();
+
     public bool ContainsStrict(SpatialItem other)
     {
         return LowerLeft.X <= other.LowerLeft.X &&
@@ -55,7 +57,6 @@ public abstract class SpatialItem
         }
         return false;
     }
-
 }
 
 /// <summary>
@@ -74,7 +75,14 @@ public class Point : SpatialItem
         UpperRight = this;
     }
 
+
+
     #region Overrides
+    public override double GetLongestSide()
+    {
+        return 0;
+    }
+
     public static bool operator ==(Point left, Point right)
     {
         return left.X == right.X && left.Y == right.Y;
@@ -108,6 +116,12 @@ public class Rectangle : SpatialItem
         UpperRight = topRight;
     }
     #region Overrides
+    public override double GetLongestSide()
+    {
+        double width = UpperRight.X - LowerLeft.X;
+        double height = UpperRight.Y - LowerLeft.Y;
+        return System.Math.Max(width, height);
+    }
     public static bool operator ==(Rectangle left, Rectangle right)
     {
         return left.LowerLeft == right.LowerLeft && left.UpperRight == right.UpperRight;

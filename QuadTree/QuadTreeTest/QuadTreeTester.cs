@@ -334,6 +334,7 @@ class QuadTreeTester
         quadTreeObjects.Add(quadTreeObjectUpperRight);
         quadTreeObjects.Add(quadTreeObjectBigUpperRight);
         quadTreeObjects.Add(quadTreeObjectLowerSmallLeft);
+        QuadTreeOptimalization<Guid, string>.SortByLongestSide(quadTreeObjects);
 
         QuadTree<Guid, string> quadTreeOfficial = new QuadTree<Guid, string>(baseRectangle);
         quadTreeOfficial.Insert(quadTreeObjectMiddle);
