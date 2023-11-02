@@ -117,12 +117,6 @@ public class Rectangle : SpatialItem
         UpperRight = topRight;
     }
     #region Overrides
-    public override double GetLongestSide()
-    {
-        double width = UpperRight.X - LowerLeft.X;
-        double height = UpperRight.Y - LowerLeft.Y;
-        return System.Math.Max(width, height);
-    }
     public static bool operator ==(Rectangle left, Rectangle right)
     {
         return left.LowerLeft == right.LowerLeft && left.UpperRight == right.UpperRight;
