@@ -1,10 +1,14 @@
 ﻿using QuadTreeDS.SpatialItems;
+using System;
+
 namespace QuadTreeDS.QuadTree;
 
 public class QuadTreeNode<K, V> where K : IComparable<K>
 {
     #region Constructor and properties
     public Rectangle Boundary { get; }
+    public double HorizontalCut { get; private set; }
+    public double VerticalCut { get; private set; }
     public int Depth { get; }
     public int MaxSubtreeDepth { get; private set; } = 0;
     public List<QuadTreeObject<K, V>> Data { get; private set; } = new List<QuadTreeObject<K, V>>(); //TODO: Rectangle Data and point Data should be seperated
@@ -14,12 +18,22 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
     public QuadTreeNode<K, V>? Parent { get; }
     public QuadTree<K, V> QuadTree { get; private set; }
 
-    public QuadTreeNode(Rectangle boundary, QuadTreeNode<K, V>? parent, QuadTree<K, V> quadTree)
+    public QuadTreeNode(Rectangle boundary, QuadTreeNode<K, V>? parent, QuadTree<K, V> quadTree, double? newVerticalCut = null, double? newHorizontalCut =null)
     {
         Boundary = boundary;
         Parent = parent;
         Depth = parent?.Depth + 1 ?? 0;
         QuadTree = quadTree;
+
+        if(newVerticalCut is not null && newHorizontalCut is not null)
+        {
+            VerticalCut = newVerticalCut.Value;
+            HorizontalCut = newHorizontalCut.Value;
+        }
+        else
+        {
+            (VerticalCut, HorizontalCut) = CalculateMidPoints();
+        }
     }
     #endregion
 
@@ -33,6 +47,13 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
     {
         Children = null;
     }
+
+    public void ChangeCuts(double newVerticalCut, double newHorizontalCut)
+    {
+        VerticalCut = newVerticalCut;
+        HorizontalCut = newHorizontalCut;
+    }
+
 
     private bool TryMakeLeaf()
     {
@@ -49,16 +70,22 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
         return false;
     }
 
-    private void Subdivide()
+    private void Subdivide(Rectangle[] boundaries, double? verticalCut = null, double? horizontalCut = null)
     {
         if (IsLeaf())
         {
             Children = new QuadTreeNode<K, V>[QuadTree.QUADRANT_COUNT];
-            var boundaries = CalculateSubquadrantsBoundaries();
 
             for (int i = 0; i < QuadTree.QUADRANT_COUNT; i++)
             {
-                Children[i] = new QuadTreeNode<K, V>(boundaries[i], this, QuadTree);
+                if(horizontalCut.HasValue && verticalCut.HasValue)
+                {
+                    Children[i] = new QuadTreeNode<K, V>(boundaries[i], this, QuadTree, verticalCut.Value,horizontalCut.Value );
+                }
+                else
+                {
+                    Children[i] = new QuadTreeNode<K, V>(boundaries[i], this, QuadTree);
+                }
             }
             UpdateMaxSubtreeDepthAfterSubdivision();
         }
@@ -186,7 +213,7 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
 
                 if (ShouldSubdivide(currentNode, insertItem) && currentNode.Depth < currentNode.QuadTree.MaxAllowedDepth)
                 {
-                    currentNode.Subdivide();
+                    currentNode.Subdivide(CalculateSubquadrantsBoundaries());
                 }
                 else
                 {
@@ -212,6 +239,99 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
                 return;
             }
         }
+    }
+    public void InsertOptimalizedIterative(QuadTreeOptimalization<K, V>.SubdivisionResult optimalizationData, int portion)
+    {
+        var nodeStack = new Stack<QuadTreeNode<K, V>>();
+        var dataStack = new Stack<QuadTreeOptimalization<K, V>.SubdivisionResult>();
+
+        nodeStack.Push(this);
+        dataStack.Push(optimalizationData);
+
+        while (nodeStack.Count > 0)
+        {
+            var currentNode = nodeStack.Pop();
+            var currentData = dataStack.Pop();
+
+            // Check and handle non-empty quadrants
+            bool hasChildrenItems = HasNonEmptyQuadrants(currentData.SortedItems);
+            if (hasChildrenItems)
+            {
+                currentNode.Subdivide(currentData.Quadrants, currentData.VerticalCut, currentData.HorizontalCut);
+            }
+
+            // Handle items that don’t fit into any quadrant
+            HandleNonFittingItems(currentNode, currentData.SortedItems[4]);
+
+            // If no items are left outside, proceed to find the quadrant with the most items
+            if (hasChildrenItems)
+            {
+                InsertFromLargestQuadrant(currentNode, currentData.SortedItems);
+            }
+
+            // Continue with children nodes if necessary
+            ProcessChildrenNodes(currentNode, nodeStack, dataStack, currentData.SortedItems, portion);
+        }
+    }
+
+    private void ProcessChildrenNodes(
+        QuadTreeNode<K, V> currentNode,
+        Stack<QuadTreeNode<K, V>> nodeStack,
+        Stack<QuadTreeOptimalization<K, V>.SubdivisionResult> dataStack,
+        List<QuadTreeObject<K, V>>[] sortedItems,
+        int portion)
+    {
+        if (!currentNode.IsLeaf())
+        {
+            for (int i = 0; i < currentNode.Children.Length; i++)
+            {
+                var child = currentNode.Children[i];
+                if (sortedItems[i].Count == 0) continue;
+
+                var optimalization = QuadTreeOptimalization<K, V>.BestSubdivision(child.Boundary, sortedItems[i], portion);
+                nodeStack.Push(child);
+                dataStack.Push(optimalization);
+            }
+        }
+    }
+
+    private void InsertFromLargestQuadrant(QuadTreeNode<K, V> currentNode, List<QuadTreeObject<K, V>>[] sortedItems)
+    {
+        int maxIndex = -1;
+        int maxCount = -1;
+
+        for (int i = 0; i < sortedItems.Length - 1; i++)
+        {
+            if (sortedItems[i].Count > maxCount)
+            {
+                maxIndex = i;
+                maxCount = sortedItems[i].Count;
+            }
+        }
+
+        if (maxIndex >= 0)
+        {
+            // Select the last item from the most populated list
+            var lastIndex = sortedItems[maxIndex].Count - 1;
+            var elementToInsert = sortedItems[maxIndex][lastIndex];
+
+            currentNode.Insert(elementToInsert);
+            sortedItems[maxIndex].RemoveAt(lastIndex); // Remove the last item
+        }
+    }
+
+    private void HandleNonFittingItems(QuadTreeNode<K, V> currentNode, List<QuadTreeObject<K, V>> nonFittingItems)
+    {
+        foreach (var item in nonFittingItems)
+        {
+            currentNode.Insert(item);
+        }
+        nonFittingItems.Clear();
+    }
+
+    private bool HasNonEmptyQuadrants(List<QuadTreeObject<K, V>>[] sortedItems)
+    {
+        return sortedItems.Take(4).Any(quadrantItems => quadrantItems.Count > 0);
     }
     #endregion
 
@@ -372,34 +492,36 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
         return false;
     }
 
-    private (double, double) CalculateMidPoints() =>
+    private (double verticalCut, double horizontalCut) CalculateMidPoints() =>
         ((Boundary.LowerLeft.X + Boundary.UpperRight.X) / 2.0, (Boundary.LowerLeft.Y + Boundary.UpperRight.Y) / 2.0);
 
     public double DataScore()
     {
-        if(IsLeaf() && Data.Count == 0)
+        if (IsLeaf() && Data.Count == 0)
         {
-            return 1;
+            throw new InvalidOperationException("DataScore cannot be calculated for an empty leaf node");
         }
 
-        //If data count is 1, then 1 else quick decrease of DataScore
-        return 1.0 / (1 + (Data.Count - 1) * (Data.Count - 1));
+        // Logarithmic decrease of DataScore, log base 2
+        // Add 1 to the data count to prevent Math.Log(0) which is undefined
+        // Adding 1 also ensures that a count of 1 will return 1
+        return 1.0 / (1 + (Math.Log(Data.Count) / Math.Log(2)) * QuadTreeOptimalization<K, V>.ScalingFactor); // Adjust the divisor as needed
+        //return 1.0 / (1 + Math.Log(Data.Count) / Math.Log(2));
     }
 
-    private List<Rectangle> CalculateSubquadrantsBoundaries()
-    {
-        (double midX, double midY) = CalculateMidPoints();
 
-        return new List<Rectangle>
+    private Rectangle[] CalculateSubquadrantsBoundaries()
+    {
+        return new Rectangle[]
         {
             // NorthWest
-            new Rectangle(new Point(Boundary.LowerLeft.X, midY), new Point(midX, Boundary.UpperRight.Y)),
+            new Rectangle(new Point(Boundary.LowerLeft.X, HorizontalCut), new Point(VerticalCut, Boundary.UpperRight.Y)),
             // NorthEast
-            new Rectangle(new Point(midX, midY), Boundary.UpperRight),
+            new Rectangle(new Point(VerticalCut, HorizontalCut), Boundary.UpperRight),
             // SouthWest
-            new Rectangle(Boundary.LowerLeft, new Point(midX, midY)),
+            new Rectangle(Boundary.LowerLeft, new Point(VerticalCut, HorizontalCut)),
             // SouthEast
-            new Rectangle(new Point(midX, Boundary.LowerLeft.Y), new Point(Boundary.UpperRight.X, midY))
+            new Rectangle(new Point(VerticalCut, Boundary.LowerLeft.Y), new Point(Boundary.UpperRight.X, HorizontalCut))
         };
     }
 
@@ -697,6 +819,4 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
 
         Data.Add(quadTreeObject);
     }
-
-
 }

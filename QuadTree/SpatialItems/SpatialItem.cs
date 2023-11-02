@@ -20,6 +20,8 @@ public abstract class SpatialItem
     public Point LowerLeft { get; protected set; }
     public Point UpperRight { get; protected set; }
 
+    public abstract double GetLongestSide();
+
     public bool ContainsStrict(SpatialItem other)
     {
         return LowerLeft.X <= other.LowerLeft.X &&
@@ -34,6 +36,26 @@ public abstract class SpatialItem
                UpperRight.X >= other.LowerLeft.X &&
                LowerLeft.Y <= other.UpperRight.Y &&
                UpperRight.Y >= other.LowerLeft.Y;
+    }
+
+    public bool OverlapsBorder(SpatialItem other)
+    {
+        // Check if the two items intersect in general.
+        bool generalIntersection = LowerLeft.X <= other.UpperRight.X &&
+                                   UpperRight.X >= other.LowerLeft.X &&
+                                   LowerLeft.Y <= other.UpperRight.Y &&
+                                   UpperRight.Y >= other.LowerLeft.Y;
+
+        if (generalIntersection)
+        {
+            // Check if one item is fully contained within the other.
+            bool thisContainsOther = ContainsStrict(other);
+            bool otherContainsThis = other.ContainsStrict(this);
+
+            // Return true only if neither item fully contains the other (indicating a border overlap).
+            return !(thisContainsOther || otherContainsThis);
+        }
+        return false;
     }
 }
 
@@ -53,7 +75,14 @@ public class Point : SpatialItem
         UpperRight = this;
     }
 
+
+
     #region Overrides
+    public override double GetLongestSide()
+    {
+        return 0;
+    }
+
     public static bool operator ==(Point left, Point right)
     {
         return left.X == right.X && left.Y == right.Y;
@@ -87,6 +116,12 @@ public class Rectangle : SpatialItem
         UpperRight = topRight;
     }
     #region Overrides
+    public override double GetLongestSide()
+    {
+        double width = UpperRight.X - LowerLeft.X;
+        double height = UpperRight.Y - LowerLeft.Y;
+        return System.Math.Max(width, height);
+    }
     public static bool operator ==(Rectangle left, Rectangle right)
     {
         return left.LowerLeft == right.LowerLeft && left.UpperRight == right.UpperRight;
