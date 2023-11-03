@@ -12,7 +12,7 @@ class QuadTreeTester
 
     public QuadTreeTester(double insertProbability = 0.33, double deleteProbability = 0.33, double findProbability = 0.34, double pointProbability = 0.5)
     {
-        _quadTree = new QuadTree<Guid, string>(new Rectangle(new Point(0, 0), new Point(100, 100)));
+        _quadTree = new QuadTree<Guid, string>(new Rectangle(new Point(0, 0), new Point(100, 100)),10000);
         _insertedObjects = new List<QuadTreeObject<Guid, string>>();
         _random = new Random();
 
@@ -30,6 +30,7 @@ class QuadTreeTester
         Point topRight = new Point(
             _random.Next((int)bottomLeft.X, 101),
             _random.Next((int)bottomLeft.Y, 101));
+
         return new Rectangle(bottomLeft, topRight);
     }
 
@@ -39,13 +40,19 @@ class QuadTreeTester
         return new Point(_random.Next(0, 101), _random.Next(0, 101));
     }
 
-    public void InsertBatch(int count)
+    public List<QuadTreeObject<Guid, string>> InsertBatch(int count)
     {
+        List<QuadTreeObject<Guid, string>> objects = new List<QuadTreeObject<Guid, string>>();
+        objects.Capacity = count;
+
         for (int i = 0; i < count; i++)
         {
-            InsertRandomObject();
+            var randomObject = InsertRandomObject();
+            objects.Add(randomObject);
             Console.WriteLine("InsertBatch: " + i);
         }
+
+        return  objects;
     }
 
     public void RunRandomTest(int iterations)
@@ -66,7 +73,7 @@ class QuadTreeTester
         VerifyLists();
     }
 
-    public void InsertRandomObject()
+    public QuadTreeObject<Guid, string> InsertRandomObject()
     {
         double typeChoice = _random.NextDouble();
         if (typeChoice < _pointProbability)
@@ -76,6 +83,7 @@ class QuadTreeTester
             _quadTree.Insert(obj);
             _insertedObjects.Add(obj);
             Console.WriteLine($"Inserted Point: {obj.Value} at ({point.X}, {point.Y})");
+            return obj;
         }
         else
         {
@@ -84,6 +92,7 @@ class QuadTreeTester
             _quadTree.Insert(obj);
             _insertedObjects.Add(obj);
             Console.WriteLine($"Inserted Rectangle: {obj.Value} at [({rectangle.LowerLeft.X}, {rectangle.LowerLeft.Y}), ({rectangle.UpperRight.X}, {rectangle.UpperRight.Y})]");
+            return obj;
         }
     }
 
@@ -321,32 +330,102 @@ class QuadTreeTester
         //Rectangle RectangleFull = new Rectangle(new Point(0, 0), new Point(100, 100));
         //Rectangle RectangleX = new Rectangle(new Point(60, 120), new Point(70, 130));
 
-        Rectangle RectangleMiddle = new Rectangle(new Point(30, 30), new Point(60, 60));
-        Rectangle UpperRight = new Rectangle(new Point(55, 55), new Point(90, 90));
-        Rectangle BigUpperRight = new Rectangle(new Point(28, 28), new Point(95, 95));
-        Rectangle LowerSmallLeft = new Rectangle(new Point(5, 5), new Point(20, 30));
-        QuadTreeObject<Guid,string> quadTreeObjectMiddle = new QuadTreeObject<Guid, string>(Guid.NewGuid(), "Middle", RectangleMiddle);
-        QuadTreeObject<Guid, string> quadTreeObjectUpperRight = new QuadTreeObject<Guid, string>(Guid.NewGuid(), "UpperRight", UpperRight);
-        QuadTreeObject<Guid, string> quadTreeObjectBigUpperRight = new QuadTreeObject<Guid, string>(Guid.NewGuid(), "BigUpperRight", BigUpperRight);
-        QuadTreeObject<Guid, string> quadTreeObjectLowerSmallLeft = new QuadTreeObject<Guid, string>(Guid.NewGuid(), "LowerSmallLeft", LowerSmallLeft);
-        List<QuadTreeObject<Guid, string>> quadTreeObjects = new List<QuadTreeObject<Guid, string>>();
-        quadTreeObjects.Add(quadTreeObjectMiddle);
-        quadTreeObjects.Add(quadTreeObjectUpperRight);
-        quadTreeObjects.Add(quadTreeObjectBigUpperRight);
-        quadTreeObjects.Add(quadTreeObjectLowerSmallLeft);
-        QuadTreeOptimalization<Guid, string>.SortByLongestSide(quadTreeObjects);
+        //Rectangle RectangleMiddle = new Rectangle(new Point(30, 30), new Point(60, 60));
+        //Rectangle UpperRight = new Rectangle(new Point(55, 55), new Point(90, 90));
+        //Rectangle BigUpperRight = new Rectangle(new Point(28, 28), new Point(95, 95));
+        //Rectangle LowerSmallLeft = new Rectangle(new Point(5, 5), new Point(20, 30));
+        //QuadTreeObject<Guid,string> quadTreeObjectMiddle = new QuadTreeObject<Guid, string>(Guid.NewGuid(), "Middle", RectangleMiddle);
+        //QuadTreeObject<Guid, string> quadTreeObjectUpperRight = new QuadTreeObject<Guid, string>(Guid.NewGuid(), "UpperRight", UpperRight);
+        //QuadTreeObject<Guid, string> quadTreeObjectBigUpperRight = new QuadTreeObject<Guid, string>(Guid.NewGuid(), "BigUpperRight", BigUpperRight);
+        //QuadTreeObject<Guid, string> quadTreeObjectLowerSmallLeft = new QuadTreeObject<Guid, string>(Guid.NewGuid(), "LowerSmallLeft", LowerSmallLeft);
+        //List<QuadTreeObject<Guid, string>> quadTreeObjects = new List<QuadTreeObject<Guid, string>>();
+        //quadTreeObjects.Add(quadTreeObjectMiddle);
+        //quadTreeObjects.Add(quadTreeObjectUpperRight);
+        //quadTreeObjects.Add(quadTreeObjectBigUpperRight);
+        //quadTreeObjects.Add(quadTreeObjectLowerSmallLeft);
+        //QuadTreeOptimalization<Guid, string>.SortByLongestSide(quadTreeObjects);
 
-        QuadTree<Guid, string> quadTreeOfficial = new QuadTree<Guid, string>(baseRectangle);
-        quadTreeOfficial.Insert(quadTreeObjectMiddle);
-        quadTreeOfficial.Insert(quadTreeObjectUpperRight);
-        quadTreeOfficial.Insert(quadTreeObjectBigUpperRight);
-        quadTreeOfficial.Insert(quadTreeObjectLowerSmallLeft);
-        Console.WriteLine(quadTreeOfficial.CalculateTreeHealth());
+        //QuadTree<Guid, string> quadTreeOfficial = new QuadTree<Guid, string>(baseRectangle);
+        //quadTreeOfficial.Insert(quadTreeObjectMiddle);
+        //quadTreeOfficial.Insert(quadTreeObjectUpperRight);
+        //quadTreeOfficial.Insert(quadTreeObjectBigUpperRight);
+        //quadTreeOfficial.Insert(quadTreeObjectLowerSmallLeft);
+        //Console.WriteLine(quadTreeOfficial.CalculateTreeHealth());
 
-        
+        InsertBatch(10000);
+        QuadTree<Guid, string> quadTreeOne = new QuadTree<Guid, string>(baseRectangle, 10000 );
+        for (int i = 0; i < _insertedObjects.Count; i++)
+        {
+            quadTreeOne.Insert(_insertedObjects[i]);
+        }
+        Console.WriteLine(_quadTree.CalculateIdealDepth(10000));  
+        Console.WriteLine(_quadTree.CalculateTreeHealth());  
+
+        //QuadTree<Guid, string> quadTreeThree = new QuadTree<Guid, string>(baseRectangle, _insertedObjects, 10000,3);
+        //Console.WriteLine("partions 3: " + quadTreeThree.CalculateTreeHealth());
+        //QuadTree<Guid, string> quadTreeFour = new QuadTree<Guid, string>(baseRectangle, _insertedObjects, 10000,4);
+        //Console.WriteLine("partions 4: " + quadTreeFour.CalculateTreeHealth());
+        //QuadTree<Guid, string> quadTreeFive = new QuadTree<Guid, string>(baseRectangle, _insertedObjects, 10000,5);
+        //Console.WriteLine("partions 5: " + quadTreeFive.CalculateTreeHealth());
+        //QuadTree<Guid, string> quadTreeSix = new QuadTree<Guid, string>(baseRectangle, _insertedObjects, 10000,6);
+        //Console.WriteLine("partions 6: " + quadTreeSix.CalculateTreeHealth());
+        //QuadTree<Guid, string> quadTreeSeven = new QuadTree<Guid, string>(baseRectangle, _insertedObjects, 10000,7);
+        //Console.WriteLine("partions 7: " + quadTreeSeven.CalculateTreeHealth());
+        //QuadTree<Guid, string> quadTreeEight = new QuadTree<Guid, string>(baseRectangle, _insertedObjects, 10000,8);
+        //Console.WriteLine("partions 8: " + quadTreeEight.CalculateTreeHealth());
+        //QuadTree<Guid, string> quadTreeNine = new QuadTree<Guid, string>(baseRectangle, _insertedObjects, 10000,9);
+        //Console.WriteLine("partions 9: " + quadTreeNine.CalculateTreeHealth());
+        //QuadTree<Guid, string> quadTreeTen = new QuadTree<Guid, string>(baseRectangle, _insertedObjects, 10000,10);
+        //Console.WriteLine("partions 10: " + quadTreeTen.CalculateTreeHealth());
+
+        //Create 100 quadtrees but every with different portion
+        List<QuadTree<Guid, string>> quadTrees = new List<QuadTree<Guid, string>>();
+        for (int i = 2; i < 4; i++)
+        {
+            quadTrees.Add(new QuadTree<Guid, string>(baseRectangle, _insertedObjects, 10000, i));
+            quadTrees[quadTrees.Count - 1].portions = i;
+        }
+
+        foreach (var quadTreee in quadTrees)
+        {
+            Console.WriteLine(quadTreee.CalculateTreeHealth());
+        }
+
+        Console.WriteLine("sorted by the longest side");
+        QuadTreeOptimalization<Guid, string>.SortByLongestSide(_insertedObjects,false);
+        quadTrees.Clear();
+        for (int i = 2; i < 4; i++)
+        {
+            quadTrees.Add(new QuadTree<Guid, string>(baseRectangle, _insertedObjects, 10000, i));
+            quadTrees[quadTrees.Count - 1].portions = i;
+        }
+
+        foreach (var quadTreee in quadTrees)
+        {
+            Console.WriteLine(quadTreee.CalculateTreeHealth());
+        }
+
+        Console.WriteLine("ASCEDING");
+        QuadTreeOptimalization<Guid, string>.SortByLongestSide(_insertedObjects, true);
+        quadTrees.Clear();
+        for (int i = 2; i < 4; i++)
+        {
+            quadTrees.Add(new QuadTree<Guid, string>(baseRectangle, _insertedObjects, 10000, i));
+            quadTrees[quadTrees.Count - 1].portions = i;
+        }
+
+        foreach (var quadTreee in quadTrees)
+        {
+            Console.WriteLine(quadTreee.CalculateTreeHealth());
+        }
+
+        Console.WriteLine(  );
+
+
+
         //Optimalization
-        QuadTree<Guid, string> quadTreeOptimalized = new QuadTree<Guid, string>(baseRectangle, quadTreeObjects, portions:4);
-        Console.WriteLine(quadTreeOptimalized.CalculateTreeHealth());
+        //QuadTree<Guid, string> quadTreeOptimalized = new QuadTree<Guid, string>(baseRectangle, quadTreeObjects, portions:4);
+        //Console.WriteLine(quadTreeOptimalized.CalculateTreeHealth());
         //quadTreeOptimalized.Root.InOrderTraversal(node => Console.WriteLine(node.Data.Count));
 
 
