@@ -1,6 +1,6 @@
 ﻿namespace GUIAssignment1
 {
-    partial class Form1
+    partial class MainForm
     {
         /// <summary>
         ///  Required designer variable.
@@ -39,10 +39,10 @@
             FindRealtyNavButton = new Button();
             FindParcelsNavButton = new Button();
             FindPropertiesNavButton = new Button();
-            MainPanel = new Panel();
             FileTableLayoutPanel = new TableLayoutPanel();
-            ImportButton = new Button();
             ExportButton = new Button();
+            ImportButton = new Button();
+            MainPanel = new Panel();
             panel1.SuspendLayout();
             ActionsTableLayoutPanel.SuspendLayout();
             FileTableLayoutPanel.SuspendLayout();
@@ -187,14 +187,6 @@
             FindPropertiesNavButton.UseVisualStyleBackColor = true;
             FindPropertiesNavButton.Click += button2_Click;
             // 
-            // MainPanel
-            // 
-            MainPanel.Dock = DockStyle.Left;
-            MainPanel.Location = new Point(0, 0);
-            MainPanel.Name = "MainPanel";
-            MainPanel.Size = new Size(1118, 721);
-            MainPanel.TabIndex = 39;
-            // 
             // FileTableLayoutPanel
             // 
             FileTableLayoutPanel.ColumnCount = 2;
@@ -209,16 +201,6 @@
             FileTableLayoutPanel.Size = new Size(221, 67);
             FileTableLayoutPanel.TabIndex = 9;
             // 
-            // ImportButton
-            // 
-            ImportButton.Dock = DockStyle.Fill;
-            ImportButton.Location = new Point(3, 3);
-            ImportButton.Name = "ImportButton";
-            ImportButton.Size = new Size(104, 61);
-            ImportButton.TabIndex = 0;
-            ImportButton.Text = "IMPORT";
-            ImportButton.UseVisualStyleBackColor = true;
-            // 
             // ExportButton
             // 
             ExportButton.Dock = DockStyle.Fill;
@@ -229,15 +211,33 @@
             ExportButton.Text = "EXPORT";
             ExportButton.UseVisualStyleBackColor = true;
             // 
-            // Form1
+            // ImportButton
+            // 
+            ImportButton.Dock = DockStyle.Fill;
+            ImportButton.Location = new Point(3, 3);
+            ImportButton.Name = "ImportButton";
+            ImportButton.Size = new Size(104, 61);
+            ImportButton.TabIndex = 0;
+            ImportButton.Text = "IMPORT";
+            ImportButton.UseVisualStyleBackColor = true;
+            // 
+            // MainPanel
+            // 
+            MainPanel.Dock = DockStyle.Left;
+            MainPanel.Location = new Point(0, 0);
+            MainPanel.Name = "MainPanel";
+            MainPanel.Size = new Size(1118, 721);
+            MainPanel.TabIndex = 39;
+            // 
+            // MainForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1348, 721);
             Controls.Add(panel1);
             Controls.Add(MainPanel);
-            Name = "Form1";
-            Text = "Vyhladavenie nehnutelnosti";
+            Name = "MainForm";
+            Text = "Find properties";
             panel1.ResumeLayout(false);
             ActionsTableLayoutPanel.ResumeLayout(false);
             FileTableLayoutPanel.ResumeLayout(false);

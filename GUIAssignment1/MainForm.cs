@@ -4,14 +4,14 @@ using SemesterAssignment1;
 
 namespace GUIAssignment1
 {
-    public partial class Form1 : Form
+    public partial class MainForm : Form
     {
         NavigationControl _navigationControl;
         NavigationButtons _navigationButtons;
 
         Color _btnDefaultColor = Color.FromKnownColor(KnownColor.ControlLight);
         Color _btnSelectedColor = Color.FromKnownColor(KnownColor.ControlDark);
-        public Form1()
+        public MainForm()
         {
             InitializeComponent();
             InitializeNavigationControl();
@@ -56,12 +56,14 @@ namespace GUIAssignment1
         {
             _navigationControl.DisplayUserControl(0);
             _navigationButtons.HighlightButton(FindPropertiesNavButton);
+            MainForm.ActiveForm.Text = "Find Properties";
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
             _navigationControl.DisplayUserControl(1);
             _navigationButtons.HighlightButton(FindParcelsNavButton);
+            MainForm.ActiveForm.Text = "Find Parcels";
         }
 
         private void button4_Click(object sender, EventArgs e)

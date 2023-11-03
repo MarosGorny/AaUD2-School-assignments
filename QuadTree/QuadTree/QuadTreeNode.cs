@@ -416,7 +416,7 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
                 {
                     foundItems.Add(kvp);
                 }
-                if(kvp.Item is SpatialItem spatialItem && rectangle.Intersects(spatialItem))
+                else if(kvp.Item is SpatialItem spatialItem && rectangle.Intersects(spatialItem))
                 {
                     foundItems.Add(kvp);
                 }

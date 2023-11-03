@@ -31,6 +31,9 @@
             dataGridView1 = new DataGridView();
             PropertyTableID = new DataGridViewTextBoxColumn();
             PropertyTableDescription = new DataGridViewTextBoxColumn();
+            ParcelList = new DataGridViewTextBoxColumn();
+            LeftBottom = new DataGridViewTextBoxColumn();
+            RightTop = new DataGridViewTextBoxColumn();
             groupBox2 = new GroupBox();
             numericUpDown2 = new NumericUpDown();
             radioButton1 = new RadioButton();
@@ -39,7 +42,7 @@
             numericUpDown1 = new NumericUpDown();
             radioButton5 = new RadioButton();
             radioButton2 = new RadioButton();
-            button1 = new Button();
+            SearchPropertiesButton = new Button();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)numericUpDown2).BeginInit();
@@ -49,42 +52,62 @@
             // 
             // dataGridView1
             // 
+            dataGridView1.AllowUserToAddRows = false;
             dataGridView1.AllowUserToDeleteRows = false;
-            dataGridView1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView1.Columns.AddRange(new DataGridViewColumn[] { PropertyTableID, PropertyTableDescription });
-            dataGridView1.Location = new Point(341, 47);
+            dataGridView1.Columns.AddRange(new DataGridViewColumn[] { PropertyTableID, PropertyTableDescription, ParcelList, LeftBottom, RightTop });
+            dataGridView1.Location = new Point(330, 47);
             dataGridView1.Name = "dataGridView1";
             dataGridView1.ReadOnly = true;
             dataGridView1.RowHeadersWidth = 51;
             dataGridView1.RowTemplate.Height = 29;
-            dataGridView1.Size = new Size(958, 406);
+            dataGridView1.Size = new Size(758, 406);
             dataGridView1.TabIndex = 41;
+            dataGridView1.CellContentClick += dataGridView1_CellContentClick;
+            dataGridView1.CellMouseDoubleClick += dataGridView1_CellMouseDoubleClick;
             // 
             // PropertyTableID
             // 
-            PropertyTableID.Frozen = true;
             PropertyTableID.HeaderText = "Conscription Number";
             PropertyTableID.MinimumWidth = 6;
             PropertyTableID.Name = "PropertyTableID";
             PropertyTableID.ReadOnly = true;
-            PropertyTableID.Width = 180;
             // 
             // PropertyTableDescription
             // 
-            PropertyTableDescription.Frozen = true;
             PropertyTableDescription.HeaderText = "Description";
             PropertyTableDescription.MinimumWidth = 6;
             PropertyTableDescription.Name = "PropertyTableDescription";
             PropertyTableDescription.ReadOnly = true;
-            PropertyTableDescription.Width = 125;
+            // 
+            // ParcelList
+            // 
+            ParcelList.HeaderText = "Parcel List";
+            ParcelList.MinimumWidth = 6;
+            ParcelList.Name = "ParcelList";
+            ParcelList.ReadOnly = true;
+            // 
+            // LeftBottom
+            // 
+            LeftBottom.HeaderText = "Left Bottom Position";
+            LeftBottom.MinimumWidth = 6;
+            LeftBottom.Name = "LeftBottom";
+            LeftBottom.ReadOnly = true;
+            // 
+            // RightTop
+            // 
+            RightTop.HeaderText = "Right Top Position";
+            RightTop.MinimumWidth = 6;
+            RightTop.Name = "RightTop";
+            RightTop.ReadOnly = true;
             // 
             // groupBox2
             // 
             groupBox2.Controls.Add(numericUpDown2);
             groupBox2.Controls.Add(radioButton1);
             groupBox2.Controls.Add(radioButton3);
-            groupBox2.Location = new Point(69, 121);
+            groupBox2.Location = new Point(58, 121);
             groupBox2.Name = "groupBox2";
             groupBox2.Size = new Size(215, 68);
             groupBox2.TabIndex = 40;
@@ -130,7 +153,7 @@
             groupBox1.Controls.Add(numericUpDown1);
             groupBox1.Controls.Add(radioButton5);
             groupBox1.Controls.Add(radioButton2);
-            groupBox1.Location = new Point(69, 47);
+            groupBox1.Location = new Point(58, 47);
             groupBox1.Name = "groupBox1";
             groupBox1.Size = new Size(215, 68);
             groupBox1.TabIndex = 39;
@@ -171,15 +194,15 @@
             radioButton2.Text = "S";
             radioButton2.UseVisualStyleBackColor = true;
             // 
-            // button1
+            // SearchPropertiesButton
             // 
-            button1.Location = new Point(69, 227);
-            button1.Name = "button1";
-            button1.Size = new Size(94, 29);
-            button1.TabIndex = 38;
-            button1.Text = "Search";
-            button1.UseVisualStyleBackColor = true;
-            button1.Click += button1_Click;
+            SearchPropertiesButton.Location = new Point(58, 227);
+            SearchPropertiesButton.Name = "SearchPropertiesButton";
+            SearchPropertiesButton.Size = new Size(94, 29);
+            SearchPropertiesButton.TabIndex = 38;
+            SearchPropertiesButton.Text = "Search";
+            SearchPropertiesButton.UseVisualStyleBackColor = true;
+            SearchPropertiesButton.Click += button1_Click;
             // 
             // FindProperties1
             // 
@@ -189,7 +212,7 @@
             Controls.Add(dataGridView1);
             Controls.Add(groupBox2);
             Controls.Add(groupBox1);
-            Controls.Add(button1);
+            Controls.Add(SearchPropertiesButton);
             Name = "FindProperties1";
             Size = new Size(1366, 768);
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
@@ -205,8 +228,6 @@
         #endregion
 
         private DataGridView dataGridView1;
-        private DataGridViewTextBoxColumn PropertyTableID;
-        private DataGridViewTextBoxColumn PropertyTableDescription;
         private GroupBox groupBox2;
         private NumericUpDown numericUpDown2;
         private RadioButton radioButton1;
@@ -215,6 +236,11 @@
         private NumericUpDown numericUpDown1;
         private RadioButton radioButton5;
         private RadioButton radioButton2;
-        private Button button1;
+        private Button SearchPropertiesButton;
+        private DataGridViewTextBoxColumn PropertyTableID;
+        private DataGridViewTextBoxColumn PropertyTableDescription;
+        private DataGridViewTextBoxColumn ParcelList;
+        private DataGridViewTextBoxColumn LeftBottom;
+        private DataGridViewTextBoxColumn RightTop;
     }
 }

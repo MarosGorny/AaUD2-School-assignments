@@ -176,6 +176,11 @@ public class GPSPoint : Point
         X = latVal * (double)latDir;
         Y = longVal * (double)longDir;
     }
+
+    public override string ToString()
+    {
+        return $"{LatitudeDirection} {X}, {LongitudeDirection} {Y}";
+    }
 }
 
 public class GPSRectangle : Rectangle

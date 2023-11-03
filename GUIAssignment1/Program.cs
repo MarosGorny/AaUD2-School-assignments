@@ -49,7 +49,7 @@ namespace GUIAssignment1
 
             //Need to create a parcel
             Parcel parcel = new Parcel(1, "Parcel 1", gpsRectangle);
-            Property property1 = new Property(1, "Property 1", gpsRectangle1);
+            Property property1 = new Property(1, "Property dsadsadasdasdsadasdsad1", gpsRectangle1);
             Property property2 = new Property(2, "Property 2", gpsRectangle2);
             Property property3 = new Property(3, "Property 3", gpsRectangle3);
             Property property4 = new Property(4, "Property 4", gpsRectangle4);
@@ -68,7 +68,7 @@ namespace GUIAssignment1
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
-            Application.Run(new Form1());
+            Application.Run(new MainForm());
         }
     }
 }

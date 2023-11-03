@@ -49,9 +49,9 @@ public class ApplicationLogic
         return foundObjects;
     }
 
-    public List<RealtyObject> FindParcels(Point point)
+    public List<Parcel> FindParcels(Point point)
     {
-        var foundObjects = new List<RealtyObject>();
+        var foundObjects = new List<Parcel>();
 
         foreach (var foundParcel in _parcelQuadTree.Find(point))
         {
