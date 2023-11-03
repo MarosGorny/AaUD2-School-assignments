@@ -22,8 +22,8 @@ namespace GUIAssignment1
         {
             List<UserControl> userControls = new List<UserControl>()
             {
-                new FindProperties1(),
-                new FindParcels2(),
+                new FindProperties(),
+                new FindParcels(),
                 new FindAllObjects3(),
                 new AddProperty4(),
                 //Also add other user controls here
@@ -70,6 +70,7 @@ namespace GUIAssignment1
         {
             _navigationControl.DisplayUserControl(2);
             _navigationButtons.HighlightButton(FindRealtyNavButton);
+            MainForm.ActiveForm.Text = "Find Realty Objects";
         }
 
         private void button5_Click(object sender, EventArgs e)

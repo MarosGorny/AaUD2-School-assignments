@@ -1,6 +1,6 @@
 ﻿namespace GUIAssignment1.UserControls
 {
-    partial class FindProperties1
+    partial class FindProperties
     {
         /// <summary> 
         /// Required designer variable.
@@ -28,44 +28,45 @@
         /// </summary>
         private void InitializeComponent()
         {
-            dataGridView1 = new DataGridView();
+            propertyGridView = new DataGridView();
             PropertyTableID = new DataGridViewTextBoxColumn();
             PropertyTableDescription = new DataGridViewTextBoxColumn();
             ParcelList = new DataGridViewTextBoxColumn();
             LeftBottom = new DataGridViewTextBoxColumn();
             RightTop = new DataGridViewTextBoxColumn();
-            groupBox2 = new GroupBox();
-            numericUpDown2 = new NumericUpDown();
-            radioButton1 = new RadioButton();
-            radioButton3 = new RadioButton();
-            groupBox1 = new GroupBox();
-            numericUpDown1 = new NumericUpDown();
-            radioButton5 = new RadioButton();
-            radioButton2 = new RadioButton();
-            SearchPropertiesButton = new Button();
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
-            groupBox2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown2).BeginInit();
-            groupBox1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown1).BeginInit();
+            longGroupBox = new GroupBox();
+            longNumericUpDown = new NumericUpDown();
+            longERadioButton = new RadioButton();
+            longWRadioButton = new RadioButton();
+            latGroupBox = new GroupBox();
+            latNumericUpDown = new NumericUpDown();
+            latNRadioButton = new RadioButton();
+            latSRadioButton = new RadioButton();
+            searchPropertiesButton = new Button();
+            ((System.ComponentModel.ISupportInitialize)propertyGridView).BeginInit();
+            longGroupBox.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)longNumericUpDown).BeginInit();
+            latGroupBox.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)latNumericUpDown).BeginInit();
             SuspendLayout();
             // 
-            // dataGridView1
+            // propertyGridView
             // 
-            dataGridView1.AllowUserToAddRows = false;
-            dataGridView1.AllowUserToDeleteRows = false;
-            dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView1.Columns.AddRange(new DataGridViewColumn[] { PropertyTableID, PropertyTableDescription, ParcelList, LeftBottom, RightTop });
-            dataGridView1.Location = new Point(330, 47);
-            dataGridView1.Name = "dataGridView1";
-            dataGridView1.ReadOnly = true;
-            dataGridView1.RowHeadersWidth = 51;
-            dataGridView1.RowTemplate.Height = 29;
-            dataGridView1.Size = new Size(758, 406);
-            dataGridView1.TabIndex = 41;
-            dataGridView1.CellContentClick += dataGridView1_CellContentClick;
-            dataGridView1.CellMouseDoubleClick += dataGridView1_CellMouseDoubleClick;
+            propertyGridView.AllowUserToAddRows = false;
+            propertyGridView.AllowUserToDeleteRows = false;
+            propertyGridView.AllowUserToOrderColumns = true;
+            propertyGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            propertyGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            propertyGridView.Columns.AddRange(new DataGridViewColumn[] { PropertyTableID, PropertyTableDescription, ParcelList, LeftBottom, RightTop });
+            propertyGridView.Location = new Point(330, 47);
+            propertyGridView.Name = "propertyGridView";
+            propertyGridView.ReadOnly = true;
+            propertyGridView.RowHeadersWidth = 51;
+            propertyGridView.RowTemplate.Height = 29;
+            propertyGridView.Size = new Size(758, 406);
+            propertyGridView.TabIndex = 41;
+            propertyGridView.CellContentClick += dataGridView1_CellContentClick;
+            propertyGridView.CellMouseDoubleClick += dataGridView1_CellMouseDoubleClick;
             // 
             // PropertyTableID
             // 
@@ -102,141 +103,141 @@
             RightTop.Name = "RightTop";
             RightTop.ReadOnly = true;
             // 
-            // groupBox2
+            // longGroupBox
             // 
-            groupBox2.Controls.Add(numericUpDown2);
-            groupBox2.Controls.Add(radioButton1);
-            groupBox2.Controls.Add(radioButton3);
-            groupBox2.Location = new Point(58, 121);
-            groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(215, 68);
-            groupBox2.TabIndex = 40;
-            groupBox2.TabStop = false;
-            groupBox2.Text = "Longitude (decimal degrees)";
+            longGroupBox.Controls.Add(longNumericUpDown);
+            longGroupBox.Controls.Add(longERadioButton);
+            longGroupBox.Controls.Add(longWRadioButton);
+            longGroupBox.Location = new Point(58, 121);
+            longGroupBox.Name = "longGroupBox";
+            longGroupBox.Size = new Size(215, 68);
+            longGroupBox.TabIndex = 40;
+            longGroupBox.TabStop = false;
+            longGroupBox.Text = "Longitude (decimal degrees)";
             // 
-            // numericUpDown2
+            // longNumericUpDown
             // 
-            numericUpDown2.DecimalPlaces = 3;
-            numericUpDown2.Location = new Point(122, 30);
-            numericUpDown2.Maximum = new decimal(new int[] { 90, 0, 0, 0 });
-            numericUpDown2.Name = "numericUpDown2";
-            numericUpDown2.Size = new Size(77, 27);
-            numericUpDown2.TabIndex = 23;
-            numericUpDown2.Tag = "";
+            longNumericUpDown.DecimalPlaces = 3;
+            longNumericUpDown.Location = new Point(122, 30);
+            longNumericUpDown.Maximum = new decimal(new int[] { 180, 0, 0, 0 });
+            longNumericUpDown.Name = "longNumericUpDown";
+            longNumericUpDown.Size = new Size(77, 27);
+            longNumericUpDown.TabIndex = 23;
+            longNumericUpDown.Tag = "";
             // 
-            // radioButton1
+            // longERadioButton
             // 
-            radioButton1.AutoSize = true;
-            radioButton1.Checked = true;
-            radioButton1.Font = new Font("Segoe UI", 15F, FontStyle.Regular, GraphicsUnit.Point);
-            radioButton1.Location = new Point(6, 23);
-            radioButton1.Name = "radioButton1";
-            radioButton1.Size = new Size(49, 39);
-            radioButton1.TabIndex = 21;
-            radioButton1.TabStop = true;
-            radioButton1.Text = "E";
-            radioButton1.UseVisualStyleBackColor = true;
+            longERadioButton.AutoSize = true;
+            longERadioButton.Checked = true;
+            longERadioButton.Font = new Font("Segoe UI", 15F, FontStyle.Regular, GraphicsUnit.Point);
+            longERadioButton.Location = new Point(6, 23);
+            longERadioButton.Name = "longERadioButton";
+            longERadioButton.Size = new Size(49, 39);
+            longERadioButton.TabIndex = 21;
+            longERadioButton.TabStop = true;
+            longERadioButton.Text = "E";
+            longERadioButton.UseVisualStyleBackColor = true;
             // 
-            // radioButton3
+            // longWRadioButton
             // 
-            radioButton3.AutoSize = true;
-            radioButton3.Font = new Font("Segoe UI", 15F, FontStyle.Regular, GraphicsUnit.Point);
-            radioButton3.Location = new Point(65, 23);
-            radioButton3.Name = "radioButton3";
-            radioButton3.Size = new Size(59, 39);
-            radioButton3.TabIndex = 20;
-            radioButton3.Text = "W";
-            radioButton3.UseVisualStyleBackColor = true;
+            longWRadioButton.AutoSize = true;
+            longWRadioButton.Font = new Font("Segoe UI", 15F, FontStyle.Regular, GraphicsUnit.Point);
+            longWRadioButton.Location = new Point(65, 23);
+            longWRadioButton.Name = "longWRadioButton";
+            longWRadioButton.Size = new Size(59, 39);
+            longWRadioButton.TabIndex = 20;
+            longWRadioButton.Text = "W";
+            longWRadioButton.UseVisualStyleBackColor = true;
             // 
-            // groupBox1
+            // latGroupBox
             // 
-            groupBox1.Controls.Add(numericUpDown1);
-            groupBox1.Controls.Add(radioButton5);
-            groupBox1.Controls.Add(radioButton2);
-            groupBox1.Location = new Point(58, 47);
-            groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(215, 68);
-            groupBox1.TabIndex = 39;
-            groupBox1.TabStop = false;
-            groupBox1.Text = "Latitude (decimal degrees)";
+            latGroupBox.Controls.Add(latNumericUpDown);
+            latGroupBox.Controls.Add(latNRadioButton);
+            latGroupBox.Controls.Add(latSRadioButton);
+            latGroupBox.Location = new Point(58, 47);
+            latGroupBox.Name = "latGroupBox";
+            latGroupBox.Size = new Size(215, 68);
+            latGroupBox.TabIndex = 39;
+            latGroupBox.TabStop = false;
+            latGroupBox.Text = "Latitude (decimal degrees)";
             // 
-            // numericUpDown1
+            // latNumericUpDown
             // 
-            numericUpDown1.DecimalPlaces = 3;
-            numericUpDown1.Location = new Point(122, 31);
-            numericUpDown1.Maximum = new decimal(new int[] { 90, 0, 0, 0 });
-            numericUpDown1.Name = "numericUpDown1";
-            numericUpDown1.Size = new Size(77, 27);
-            numericUpDown1.TabIndex = 22;
-            numericUpDown1.Tag = "";
+            latNumericUpDown.DecimalPlaces = 3;
+            latNumericUpDown.Location = new Point(122, 31);
+            latNumericUpDown.Maximum = new decimal(new int[] { 90, 0, 0, 0 });
+            latNumericUpDown.Name = "latNumericUpDown";
+            latNumericUpDown.Size = new Size(77, 27);
+            latNumericUpDown.TabIndex = 22;
+            latNumericUpDown.Tag = "";
             // 
-            // radioButton5
+            // latNRadioButton
             // 
-            radioButton5.AutoSize = true;
-            radioButton5.Checked = true;
-            radioButton5.Font = new Font("Segoe UI", 15F, FontStyle.Regular, GraphicsUnit.Point);
-            radioButton5.Location = new Point(6, 23);
-            radioButton5.Name = "radioButton5";
-            radioButton5.Size = new Size(55, 39);
-            radioButton5.TabIndex = 21;
-            radioButton5.TabStop = true;
-            radioButton5.Text = "N";
-            radioButton5.UseVisualStyleBackColor = true;
+            latNRadioButton.AutoSize = true;
+            latNRadioButton.Checked = true;
+            latNRadioButton.Font = new Font("Segoe UI", 15F, FontStyle.Regular, GraphicsUnit.Point);
+            latNRadioButton.Location = new Point(6, 23);
+            latNRadioButton.Name = "latNRadioButton";
+            latNRadioButton.Size = new Size(55, 39);
+            latNRadioButton.TabIndex = 21;
+            latNRadioButton.TabStop = true;
+            latNRadioButton.Text = "N";
+            latNRadioButton.UseVisualStyleBackColor = true;
             // 
-            // radioButton2
+            // latSRadioButton
             // 
-            radioButton2.AutoSize = true;
-            radioButton2.Font = new Font("Segoe UI", 15F, FontStyle.Regular, GraphicsUnit.Point);
-            radioButton2.Location = new Point(65, 23);
-            radioButton2.Name = "radioButton2";
-            radioButton2.Size = new Size(49, 39);
-            radioButton2.TabIndex = 20;
-            radioButton2.Text = "S";
-            radioButton2.UseVisualStyleBackColor = true;
+            latSRadioButton.AutoSize = true;
+            latSRadioButton.Font = new Font("Segoe UI", 15F, FontStyle.Regular, GraphicsUnit.Point);
+            latSRadioButton.Location = new Point(65, 23);
+            latSRadioButton.Name = "latSRadioButton";
+            latSRadioButton.Size = new Size(49, 39);
+            latSRadioButton.TabIndex = 20;
+            latSRadioButton.Text = "S";
+            latSRadioButton.UseVisualStyleBackColor = true;
             // 
-            // SearchPropertiesButton
+            // searchPropertiesButton
             // 
-            SearchPropertiesButton.Location = new Point(58, 227);
-            SearchPropertiesButton.Name = "SearchPropertiesButton";
-            SearchPropertiesButton.Size = new Size(94, 29);
-            SearchPropertiesButton.TabIndex = 38;
-            SearchPropertiesButton.Text = "Search";
-            SearchPropertiesButton.UseVisualStyleBackColor = true;
-            SearchPropertiesButton.Click += button1_Click;
+            searchPropertiesButton.Location = new Point(58, 195);
+            searchPropertiesButton.Name = "searchPropertiesButton";
+            searchPropertiesButton.Size = new Size(215, 29);
+            searchPropertiesButton.TabIndex = 38;
+            searchPropertiesButton.Text = "Search Properties";
+            searchPropertiesButton.UseVisualStyleBackColor = true;
+            searchPropertiesButton.Click += button1_Click;
             // 
-            // FindProperties1
+            // FindProperties
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             AutoSize = true;
-            Controls.Add(dataGridView1);
-            Controls.Add(groupBox2);
-            Controls.Add(groupBox1);
-            Controls.Add(SearchPropertiesButton);
-            Name = "FindProperties1";
+            Controls.Add(propertyGridView);
+            Controls.Add(longGroupBox);
+            Controls.Add(latGroupBox);
+            Controls.Add(searchPropertiesButton);
+            Name = "FindProperties";
             Size = new Size(1366, 768);
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
-            groupBox2.ResumeLayout(false);
-            groupBox2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown2).EndInit();
-            groupBox1.ResumeLayout(false);
-            groupBox1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown1).EndInit();
+            ((System.ComponentModel.ISupportInitialize)propertyGridView).EndInit();
+            longGroupBox.ResumeLayout(false);
+            longGroupBox.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)longNumericUpDown).EndInit();
+            latGroupBox.ResumeLayout(false);
+            latGroupBox.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)latNumericUpDown).EndInit();
             ResumeLayout(false);
         }
 
         #endregion
 
-        private DataGridView dataGridView1;
-        private GroupBox groupBox2;
-        private NumericUpDown numericUpDown2;
-        private RadioButton radioButton1;
-        private RadioButton radioButton3;
-        private GroupBox groupBox1;
-        private NumericUpDown numericUpDown1;
-        private RadioButton radioButton5;
-        private RadioButton radioButton2;
-        private Button SearchPropertiesButton;
+        private DataGridView propertyGridView;
+        private GroupBox longGroupBox;
+        private NumericUpDown longNumericUpDown;
+        private RadioButton longERadioButton;
+        private RadioButton longWRadioButton;
+        private GroupBox latGroupBox;
+        private NumericUpDown latNumericUpDown;
+        private RadioButton latNRadioButton;
+        private RadioButton latSRadioButton;
+        private Button searchPropertiesButton;
         private DataGridViewTextBoxColumn PropertyTableID;
         private DataGridViewTextBoxColumn PropertyTableDescription;
         private DataGridViewTextBoxColumn ParcelList;

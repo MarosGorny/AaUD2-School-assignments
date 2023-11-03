@@ -1,48 +1,38 @@
 ﻿using QuadTreeDS.SpatialItems;
-using SemesterAssignment1.RealtyObjects;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace GUIAssignment1.UserControls
 {
-    public partial class FindProperties1 : UserControl
+    public partial class FindProperties : UserControl
     {
-        public FindProperties1()
+        public FindProperties()
         {
             InitializeComponent();
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            dataGridView1.Rows.Clear();
-            dataGridView1.Refresh();
+            propertyGridView.Rows.Clear();
+            propertyGridView.Refresh();
 
             LatitudeDirection latDir = default;
             LongitudeDirection longDir = default;
-            double lat = Convert.ToDouble(numericUpDown1.Value);
-            double lon = Convert.ToDouble(numericUpDown2.Value);
+            double lat = Convert.ToDouble(latNumericUpDown.Value);
+            double lon = Convert.ToDouble(longNumericUpDown.Value);
 
-            if (radioButton5.Checked)
+            if (latNRadioButton.Checked)
             {
                 latDir = LatitudeDirection.N;
             }
-            else if (radioButton2.Checked)
+            else if (latSRadioButton.Checked)
             {
                 latDir = LatitudeDirection.S;
             }
 
-            if (radioButton1.Checked)
+            if (longERadioButton.Checked)
             {
                 longDir = LongitudeDirection.E;
             }
-            else if (radioButton3.Checked)
+            else if (longWRadioButton.Checked)
             {
                 longDir = LongitudeDirection.W;
             }
@@ -66,8 +56,8 @@ namespace GUIAssignment1.UserControls
                 var bottomLeftString = ((GPSPoint)(foundProperty.LowerLeft)).ToString();
                 var topRightString = ((GPSPoint)(foundProperty.UpperRight)).ToString();
 
-                dataGridView1.Rows.Add(conscriptionNumber, description, listOfParcelsString, bottomLeftString, topRightString);
-                dataGridView1.Rows[dataGridView1.Rows.Count - 1].HeaderCell.Value = (dataGridView1.Rows.Count).ToString();
+                propertyGridView.Rows.Add(conscriptionNumber, description, listOfParcelsString, bottomLeftString, topRightString);
+                propertyGridView.Rows[propertyGridView.Rows.Count - 1].HeaderCell.Value = (propertyGridView.Rows.Count).ToString();
             }
         }
 
@@ -82,12 +72,11 @@ namespace GUIAssignment1.UserControls
             if (e.RowIndex >= 0 && e.ColumnIndex >= 0)
             {
                 // Optionally, get the value of the cell that was double-clicked
-                var cellValue = dataGridView1[e.ColumnIndex, e.RowIndex].Value?.ToString() ?? "N/A";
+                var cellValue = propertyGridView[e.ColumnIndex, e.RowIndex].Value?.ToString() ?? "N/A";
 
                 // Show the message box
                 MessageBox.Show($"Cell at row {e.RowIndex + 1}, column {e.ColumnIndex + 1} \nValue: {cellValue}", "Cell Double-Clicked");
             }
-            //MessageBox.Show(dataGridView1.SelectedCells[0].Value.ToString());
         }
     }
 }
