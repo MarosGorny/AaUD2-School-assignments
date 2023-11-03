@@ -29,7 +29,7 @@ namespace GUIAssignment1
                 //Also add other user controls here
             };
 
-            _navigationControl = new NavigationControl(userControls, panel2);
+            _navigationControl = new NavigationControl(userControls, MainPanel);
             _navigationControl.DisplayUserControl(0); // Default user control to display
         }
 
@@ -37,73 +37,78 @@ namespace GUIAssignment1
         {
             List<Button> buttons = new List<Button>()
             {
-                button2,
-                button3,
-                button4,
-                button5,
-                button6,
-                button7,
-                button8,
-                button9,
-                button10
+                FindPropertiesNavButton,
+                FindParcelsNavButton,
+                FindRealtyNavButton,
+                AddPropertyNavButton,
+                AddParcelNavButton,
+                EditPropertyNavButton,
+                EditParcelNavButton,
+                DeletePropertyNavButton,
+                DeleteParcelNavButton
             };
             _navigationButtons = new NavigationButtons(buttons, _btnDefaultColor, _btnSelectedColor);
-            _navigationButtons.HighlightButton(button2); // Default button to highlight
+            _navigationButtons.HighlightButton(FindPropertiesNavButton); // Default button to highlight
 
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
             _navigationControl.DisplayUserControl(0);
-            _navigationButtons.HighlightButton(button2);
+            _navigationButtons.HighlightButton(FindPropertiesNavButton);
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
             _navigationControl.DisplayUserControl(1);
-            _navigationButtons.HighlightButton(button3);
+            _navigationButtons.HighlightButton(FindParcelsNavButton);
         }
 
         private void button4_Click(object sender, EventArgs e)
         {
             _navigationControl.DisplayUserControl(2);
-            _navigationButtons.HighlightButton(button4);
+            _navigationButtons.HighlightButton(FindRealtyNavButton);
         }
 
         private void button5_Click(object sender, EventArgs e)
         {
             _navigationControl.DisplayUserControl(3);
-            _navigationButtons.HighlightButton(button5);
+            _navigationButtons.HighlightButton(AddPropertyNavButton);
         }
 
         private void button6_Click(object sender, EventArgs e)
         {
             _navigationControl.DisplayUserControl(4);
-            _navigationButtons.HighlightButton(button6);
+            _navigationButtons.HighlightButton(AddParcelNavButton);
         }
 
         private void button7_Click(object sender, EventArgs e)
         {
             _navigationControl.DisplayUserControl(5);
-            _navigationButtons.HighlightButton(button7);
+            _navigationButtons.HighlightButton(EditPropertyNavButton);
         }
 
         private void button8_Click(object sender, EventArgs e)
         {
             _navigationControl.DisplayUserControl(6);
-            _navigationButtons.HighlightButton(button8);
+            _navigationButtons.HighlightButton(EditParcelNavButton);
         }
 
         private void button9_Click(object sender, EventArgs e)
         {
             _navigationControl.DisplayUserControl(7);
-            _navigationButtons.HighlightButton(button9);
+            _navigationButtons.HighlightButton(DeletePropertyNavButton);
         }
 
         private void button10_Click(object sender, EventArgs e)
         {
             _navigationControl.DisplayUserControl(8);
-            _navigationButtons.HighlightButton(button10);
+            _navigationButtons.HighlightButton(DeleteParcelNavButton);
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

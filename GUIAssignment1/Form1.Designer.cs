@@ -29,165 +29,205 @@
         private void InitializeComponent()
         {
             panel1 = new Panel();
-            tableLayoutPanel1 = new TableLayoutPanel();
-            button10 = new Button();
-            button9 = new Button();
-            button8 = new Button();
-            button7 = new Button();
-            button6 = new Button();
-            button5 = new Button();
-            button4 = new Button();
-            button3 = new Button();
-            button2 = new Button();
-            panel2 = new Panel();
+            ActionsTableLayoutPanel = new TableLayoutPanel();
+            DeleteParcelNavButton = new Button();
+            DeletePropertyNavButton = new Button();
+            EditParcelNavButton = new Button();
+            EditPropertyNavButton = new Button();
+            AddParcelNavButton = new Button();
+            AddPropertyNavButton = new Button();
+            FindRealtyNavButton = new Button();
+            FindParcelsNavButton = new Button();
+            FindPropertiesNavButton = new Button();
+            MainPanel = new Panel();
+            FileTableLayoutPanel = new TableLayoutPanel();
+            ImportButton = new Button();
+            ExportButton = new Button();
             panel1.SuspendLayout();
-            tableLayoutPanel1.SuspendLayout();
+            ActionsTableLayoutPanel.SuspendLayout();
+            FileTableLayoutPanel.SuspendLayout();
             SuspendLayout();
             // 
             // panel1
             // 
-            panel1.Controls.Add(tableLayoutPanel1);
+            panel1.Controls.Add(ActionsTableLayoutPanel);
             panel1.Dock = DockStyle.Right;
             panel1.Location = new Point(1121, 0);
             panel1.Name = "panel1";
             panel1.Size = new Size(227, 721);
             panel1.TabIndex = 38;
             // 
-            // tableLayoutPanel1
+            // ActionsTableLayoutPanel
             // 
-            tableLayoutPanel1.ColumnCount = 1;
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            tableLayoutPanel1.Controls.Add(button10, 0, 8);
-            tableLayoutPanel1.Controls.Add(button9, 0, 7);
-            tableLayoutPanel1.Controls.Add(button8, 0, 6);
-            tableLayoutPanel1.Controls.Add(button7, 0, 5);
-            tableLayoutPanel1.Controls.Add(button6, 0, 4);
-            tableLayoutPanel1.Controls.Add(button5, 0, 3);
-            tableLayoutPanel1.Controls.Add(button4, 0, 2);
-            tableLayoutPanel1.Controls.Add(button3, 0, 1);
-            tableLayoutPanel1.Controls.Add(button2, 0, 0);
-            tableLayoutPanel1.Dock = DockStyle.Top;
-            tableLayoutPanel1.Location = new Point(0, 0);
-            tableLayoutPanel1.Name = "tableLayoutPanel1";
-            tableLayoutPanel1.RowCount = 9;
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 11.1111107F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 11.1111107F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 11.1111107F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 11.1111107F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 11.1111107F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 11.1111107F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 11.1111107F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 11.1111107F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 11.1111107F));
-            tableLayoutPanel1.Size = new Size(227, 721);
-            tableLayoutPanel1.TabIndex = 0;
+            ActionsTableLayoutPanel.ColumnCount = 1;
+            ActionsTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            ActionsTableLayoutPanel.Controls.Add(DeleteParcelNavButton, 0, 8);
+            ActionsTableLayoutPanel.Controls.Add(DeletePropertyNavButton, 0, 7);
+            ActionsTableLayoutPanel.Controls.Add(EditParcelNavButton, 0, 6);
+            ActionsTableLayoutPanel.Controls.Add(EditPropertyNavButton, 0, 5);
+            ActionsTableLayoutPanel.Controls.Add(AddParcelNavButton, 0, 4);
+            ActionsTableLayoutPanel.Controls.Add(AddPropertyNavButton, 0, 3);
+            ActionsTableLayoutPanel.Controls.Add(FindRealtyNavButton, 0, 2);
+            ActionsTableLayoutPanel.Controls.Add(FindParcelsNavButton, 0, 1);
+            ActionsTableLayoutPanel.Controls.Add(FindPropertiesNavButton, 0, 0);
+            ActionsTableLayoutPanel.Controls.Add(FileTableLayoutPanel, 0, 9);
+            ActionsTableLayoutPanel.Dock = DockStyle.Top;
+            ActionsTableLayoutPanel.Location = new Point(0, 0);
+            ActionsTableLayoutPanel.Name = "ActionsTableLayoutPanel";
+            ActionsTableLayoutPanel.RowCount = 10;
+            ActionsTableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 10.0000982F));
+            ActionsTableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 10.0001F));
+            ActionsTableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 10.0001F));
+            ActionsTableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 10.0001F));
+            ActionsTableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 10.0001F));
+            ActionsTableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 10.0001F));
+            ActionsTableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 10.0001F));
+            ActionsTableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 10.0001F));
+            ActionsTableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 10.0001F));
+            ActionsTableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 9.9991F));
+            ActionsTableLayoutPanel.Size = new Size(227, 721);
+            ActionsTableLayoutPanel.TabIndex = 0;
             // 
-            // button10
+            // DeleteParcelNavButton
             // 
-            button10.Dock = DockStyle.Fill;
-            button10.Location = new Point(3, 643);
-            button10.Name = "button10";
-            button10.Size = new Size(221, 75);
-            button10.TabIndex = 8;
-            button10.Text = "9";
-            button10.UseVisualStyleBackColor = true;
-            button10.Click += button10_Click;
+            DeleteParcelNavButton.Dock = DockStyle.Fill;
+            DeleteParcelNavButton.Location = new Point(3, 579);
+            DeleteParcelNavButton.Name = "DeleteParcelNavButton";
+            DeleteParcelNavButton.Size = new Size(221, 66);
+            DeleteParcelNavButton.TabIndex = 8;
+            DeleteParcelNavButton.Text = "9";
+            DeleteParcelNavButton.UseVisualStyleBackColor = true;
+            DeleteParcelNavButton.Click += button10_Click;
             // 
-            // button9
+            // DeletePropertyNavButton
             // 
-            button9.Dock = DockStyle.Fill;
-            button9.Location = new Point(3, 563);
-            button9.Name = "button9";
-            button9.Size = new Size(221, 74);
-            button9.TabIndex = 7;
-            button9.Text = "8";
-            button9.UseVisualStyleBackColor = true;
-            button9.Click += button9_Click;
+            DeletePropertyNavButton.Dock = DockStyle.Fill;
+            DeletePropertyNavButton.Location = new Point(3, 507);
+            DeletePropertyNavButton.Name = "DeletePropertyNavButton";
+            DeletePropertyNavButton.Size = new Size(221, 66);
+            DeletePropertyNavButton.TabIndex = 7;
+            DeletePropertyNavButton.Text = "8";
+            DeletePropertyNavButton.UseVisualStyleBackColor = true;
+            DeletePropertyNavButton.Click += button9_Click;
             // 
-            // button8
+            // EditParcelNavButton
             // 
-            button8.Dock = DockStyle.Fill;
-            button8.Location = new Point(3, 483);
-            button8.Name = "button8";
-            button8.Size = new Size(221, 74);
-            button8.TabIndex = 6;
-            button8.Text = "7";
-            button8.UseVisualStyleBackColor = true;
-            button8.Click += button8_Click;
+            EditParcelNavButton.Dock = DockStyle.Fill;
+            EditParcelNavButton.Location = new Point(3, 435);
+            EditParcelNavButton.Name = "EditParcelNavButton";
+            EditParcelNavButton.Size = new Size(221, 66);
+            EditParcelNavButton.TabIndex = 6;
+            EditParcelNavButton.Text = "7";
+            EditParcelNavButton.UseVisualStyleBackColor = true;
+            EditParcelNavButton.Click += button8_Click;
             // 
-            // button7
+            // EditPropertyNavButton
             // 
-            button7.Dock = DockStyle.Fill;
-            button7.Location = new Point(3, 403);
-            button7.Name = "button7";
-            button7.Size = new Size(221, 74);
-            button7.TabIndex = 5;
-            button7.Text = "6";
-            button7.UseVisualStyleBackColor = true;
-            button7.Click += button7_Click;
+            EditPropertyNavButton.Dock = DockStyle.Fill;
+            EditPropertyNavButton.Location = new Point(3, 363);
+            EditPropertyNavButton.Name = "EditPropertyNavButton";
+            EditPropertyNavButton.Size = new Size(221, 66);
+            EditPropertyNavButton.TabIndex = 5;
+            EditPropertyNavButton.Text = "6";
+            EditPropertyNavButton.UseVisualStyleBackColor = true;
+            EditPropertyNavButton.Click += button7_Click;
             // 
-            // button6
+            // AddParcelNavButton
             // 
-            button6.Dock = DockStyle.Fill;
-            button6.Location = new Point(3, 323);
-            button6.Name = "button6";
-            button6.Size = new Size(221, 74);
-            button6.TabIndex = 4;
-            button6.Text = "5";
-            button6.UseVisualStyleBackColor = true;
-            button6.Click += button6_Click;
+            AddParcelNavButton.Dock = DockStyle.Fill;
+            AddParcelNavButton.Location = new Point(3, 291);
+            AddParcelNavButton.Name = "AddParcelNavButton";
+            AddParcelNavButton.Size = new Size(221, 66);
+            AddParcelNavButton.TabIndex = 4;
+            AddParcelNavButton.Text = "5";
+            AddParcelNavButton.UseVisualStyleBackColor = true;
+            AddParcelNavButton.Click += button6_Click;
             // 
-            // button5
+            // AddPropertyNavButton
             // 
-            button5.Dock = DockStyle.Fill;
-            button5.Location = new Point(3, 243);
-            button5.Name = "button5";
-            button5.Size = new Size(221, 74);
-            button5.TabIndex = 3;
-            button5.Text = "4";
-            button5.UseVisualStyleBackColor = true;
-            button5.Click += button5_Click;
+            AddPropertyNavButton.Dock = DockStyle.Fill;
+            AddPropertyNavButton.Location = new Point(3, 219);
+            AddPropertyNavButton.Name = "AddPropertyNavButton";
+            AddPropertyNavButton.Size = new Size(221, 66);
+            AddPropertyNavButton.TabIndex = 3;
+            AddPropertyNavButton.Text = "4";
+            AddPropertyNavButton.UseVisualStyleBackColor = true;
+            AddPropertyNavButton.Click += button5_Click;
             // 
-            // button4
+            // FindRealtyNavButton
             // 
-            button4.Dock = DockStyle.Fill;
-            button4.Location = new Point(3, 163);
-            button4.Name = "button4";
-            button4.Size = new Size(221, 74);
-            button4.TabIndex = 2;
-            button4.Text = "3";
-            button4.UseVisualStyleBackColor = true;
-            button4.Click += button4_Click;
+            FindRealtyNavButton.Dock = DockStyle.Fill;
+            FindRealtyNavButton.Location = new Point(3, 147);
+            FindRealtyNavButton.Name = "FindRealtyNavButton";
+            FindRealtyNavButton.Size = new Size(221, 66);
+            FindRealtyNavButton.TabIndex = 2;
+            FindRealtyNavButton.Text = "3";
+            FindRealtyNavButton.UseVisualStyleBackColor = true;
+            FindRealtyNavButton.Click += button4_Click;
             // 
-            // button3
+            // FindParcelsNavButton
             // 
-            button3.Dock = DockStyle.Fill;
-            button3.Location = new Point(3, 83);
-            button3.Name = "button3";
-            button3.Size = new Size(221, 74);
-            button3.TabIndex = 1;
-            button3.Text = "2";
-            button3.UseVisualStyleBackColor = true;
-            button3.Click += button3_Click;
+            FindParcelsNavButton.Dock = DockStyle.Fill;
+            FindParcelsNavButton.Location = new Point(3, 75);
+            FindParcelsNavButton.Name = "FindParcelsNavButton";
+            FindParcelsNavButton.Size = new Size(221, 66);
+            FindParcelsNavButton.TabIndex = 1;
+            FindParcelsNavButton.Text = "2";
+            FindParcelsNavButton.UseVisualStyleBackColor = true;
+            FindParcelsNavButton.Click += button3_Click;
             // 
-            // button2
+            // FindPropertiesNavButton
             // 
-            button2.Dock = DockStyle.Fill;
-            button2.Location = new Point(3, 3);
-            button2.Name = "button2";
-            button2.Size = new Size(221, 74);
-            button2.TabIndex = 0;
-            button2.Text = "1";
-            button2.UseVisualStyleBackColor = true;
-            button2.Click += button2_Click;
+            FindPropertiesNavButton.Dock = DockStyle.Fill;
+            FindPropertiesNavButton.Location = new Point(3, 3);
+            FindPropertiesNavButton.Name = "FindPropertiesNavButton";
+            FindPropertiesNavButton.Size = new Size(221, 66);
+            FindPropertiesNavButton.TabIndex = 0;
+            FindPropertiesNavButton.Text = "1";
+            FindPropertiesNavButton.UseVisualStyleBackColor = true;
+            FindPropertiesNavButton.Click += button2_Click;
             // 
-            // panel2
+            // MainPanel
             // 
-            panel2.Dock = DockStyle.Left;
-            panel2.Location = new Point(0, 0);
-            panel2.Name = "panel2";
-            panel2.Size = new Size(1118, 721);
-            panel2.TabIndex = 39;
+            MainPanel.Dock = DockStyle.Left;
+            MainPanel.Location = new Point(0, 0);
+            MainPanel.Name = "MainPanel";
+            MainPanel.Size = new Size(1118, 721);
+            MainPanel.TabIndex = 39;
+            // 
+            // FileTableLayoutPanel
+            // 
+            FileTableLayoutPanel.ColumnCount = 2;
+            FileTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            FileTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            FileTableLayoutPanel.Controls.Add(ExportButton, 1, 0);
+            FileTableLayoutPanel.Controls.Add(ImportButton, 0, 0);
+            FileTableLayoutPanel.Location = new Point(3, 651);
+            FileTableLayoutPanel.Name = "FileTableLayoutPanel";
+            FileTableLayoutPanel.RowCount = 1;
+            FileTableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            FileTableLayoutPanel.Size = new Size(221, 67);
+            FileTableLayoutPanel.TabIndex = 9;
+            // 
+            // ImportButton
+            // 
+            ImportButton.Dock = DockStyle.Fill;
+            ImportButton.Location = new Point(3, 3);
+            ImportButton.Name = "ImportButton";
+            ImportButton.Size = new Size(104, 61);
+            ImportButton.TabIndex = 0;
+            ImportButton.Text = "IMPORT";
+            ImportButton.UseVisualStyleBackColor = true;
+            // 
+            // ExportButton
+            // 
+            ExportButton.Dock = DockStyle.Fill;
+            ExportButton.Location = new Point(113, 3);
+            ExportButton.Name = "ExportButton";
+            ExportButton.Size = new Size(105, 61);
+            ExportButton.TabIndex = 1;
+            ExportButton.Text = "EXPORT";
+            ExportButton.UseVisualStyleBackColor = true;
             // 
             // Form1
             // 
@@ -195,26 +235,30 @@
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1348, 721);
             Controls.Add(panel1);
-            Controls.Add(panel2);
+            Controls.Add(MainPanel);
             Name = "Form1";
             Text = "Vyhladavenie nehnutelnosti";
             panel1.ResumeLayout(false);
-            tableLayoutPanel1.ResumeLayout(false);
+            ActionsTableLayoutPanel.ResumeLayout(false);
+            FileTableLayoutPanel.ResumeLayout(false);
             ResumeLayout(false);
         }
 
         #endregion
         private Panel panel1;
-        private TableLayoutPanel tableLayoutPanel1;
-        private Panel panel2;
-        private Button button10;
-        private Button button9;
-        private Button button8;
-        private Button button7;
-        private Button button6;
-        private Button button5;
-        private Button button4;
-        private Button button3;
-        private Button button2;
+        private TableLayoutPanel ActionsTableLayoutPanel;
+        private Panel MainPanel;
+        private Button DeleteParcelNavButton;
+        private Button DeletePropertyNavButton;
+        private Button EditParcelNavButton;
+        private Button EditPropertyNavButton;
+        private Button AddParcelNavButton;
+        private Button AddPropertyNavButton;
+        private Button FindRealtyNavButton;
+        private Button FindParcelsNavButton;
+        private Button FindPropertiesNavButton;
+        private TableLayoutPanel FileTableLayoutPanel;
+        private Button ExportButton;
+        private Button ImportButton;
     }
 }
