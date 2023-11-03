@@ -22,9 +22,19 @@ public abstract class SpatialItem
 
     public double GetLongestSide()
     {
-        double width = UpperRight.X - LowerLeft.X;
-        double height = UpperRight.Y - LowerLeft.Y;
+        double width = GetWidth();
+        double height = GetHeight();
         return System.Math.Max(width, height);
+    }
+
+    public double GetHeight()
+    {
+        return UpperRight.Y - LowerLeft.Y;
+    }
+
+    public double GetWidth()
+    {
+        return UpperRight.X - LowerLeft.X;
     }
 
     public bool ContainsStrict(SpatialItem other)

@@ -41,6 +41,7 @@ public class Parcel : RealtyObject
 {
     public int ParcelNumber { get; set; }
     public List<Property> OccupiedByProperties { get; set; } = new List<Property>();
+    public GPSRectangle Bounds { get; set; }
 
     public Parcel(int parcelNumber, string description, GPSRectangle gpsRectangle)
         :base(description)
@@ -48,6 +49,7 @@ public class Parcel : RealtyObject
         ParcelNumber = parcelNumber;
         LowerLeft = gpsRectangle.LowerLeft;
         UpperRight = gpsRectangle.UpperRight;
+        Bounds = gpsRectangle;
     }
 
     public void AddProperty(Property property)

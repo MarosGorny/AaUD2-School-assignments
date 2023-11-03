@@ -11,26 +11,26 @@ namespace SemesterAssignment1
         {
             Console.WriteLine("Hello, World!");
 
-            GPSPoint gpsPropertyLeftBottom1 = new GPSPoint(LatitudeDirection.N, 0, LongitudeDirection.E, 0);
-            GPSPoint gpsPropertyRightTop1 = new GPSPoint(LatitudeDirection.N, 10, LongitudeDirection.E, 50);
-            GPSRectangle gpsRectangle1 = new GPSRectangle(gpsPropertyLeftBottom1, gpsPropertyRightTop1);
+            //GPSPoint gpsPropertyLeftBottom1 = new GPSPoint(LatitudeDirection.N, 0, LongitudeDirection.E, 0);
+            //GPSPoint gpsPropertyRightTop1 = new GPSPoint(LatitudeDirection.N, 10, LongitudeDirection.E, 50);
+            //GPSRectangle gpsRectangle1 = new GPSRectangle(gpsPropertyLeftBottom1, gpsPropertyRightTop1);
 
-            GPSPoint gpsBottomLeft = new GPSPoint(LatitudeDirection.S, 0, LongitudeDirection.W, 0);
-            GPSPoint gpsTopRight = new GPSPoint(LatitudeDirection.S, 50, LongitudeDirection.W, 50);
-            GPSRectangle gpsRectangle = new GPSRectangle(gpsBottomLeft, gpsTopRight);
+            //GPSPoint gpsBottomLeft = new GPSPoint(LatitudeDirection.S, 0, LongitudeDirection.W, 0);
+            //GPSPoint gpsTopRight = new GPSPoint(LatitudeDirection.S, 50, LongitudeDirection.W, 50);
+            //GPSRectangle gpsRectangle = new GPSRectangle(gpsBottomLeft, gpsTopRight);
 
-            //Need to create a parcel
-            Parcel parcel = new Parcel(1, "Parcel 1", gpsRectangle);
-            Property property1 = new Property(2, "Property 1", gpsRectangle1);
+            ////Need to create a parcel
+            //Parcel parcel = new Parcel(1, "Parcel 1", gpsRectangle);
+            //Property property1 = new Property(2, "Property 1", gpsRectangle1);
 
-            List<RealtyObject> realObjects = new List<RealtyObject>();
-            realObjects.Add(parcel);
-            realObjects.Add(property1);
+            //List<RealtyObject> realObjects = new List<RealtyObject>();
+            //realObjects.Add(parcel);
+            //realObjects.Add(property1);
 
-            RealtyObjectCSVHelper.ExportToCSV(realObjects,"file.csv");
-            var files = RealtyObjectCSVHelper.ImportFromCSV("file.csv");
-            Console.WriteLine(  );
-            //RealtyObjectTester.Test();
+            //RealtyObjectCSVHelper.ExportToCSV(realObjects,"file.csv");
+            //var files = RealtyObjectCSVHelper.ImportFromCSV("file.csv");
+            //Console.WriteLine(  );
+            RealtyObjectTester.Test();
         }
     }
 }
