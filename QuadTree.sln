@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QuadTreeDS", "QuadTree\Quad
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SemesterAssignment1", "SemesterAssignment1\SemesterAssignment1.csproj", "{19CD025D-DFE4-45A2-B114-219486192463}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GUIAssignment1", "GUIAssignment1\GUIAssignment1.csproj", "{8C077C6D-B927-4F4D-8703-6DA677AF3597}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GUIAssignment1", "GUIAssignment1\GUIAssignment1.csproj", "{8C077C6D-B927-4F4D-8703-6DA677AF3597}"
 	ProjectSection(ProjectDependencies) = postProject
 		{19CD025D-DFE4-45A2-B114-219486192463} = {19CD025D-DFE4-45A2-B114-219486192463}
 	EndProjectSection

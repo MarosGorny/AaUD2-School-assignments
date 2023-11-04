@@ -1,6 +1,7 @@
 ﻿using SemesterAssignment1.RealtyObjects;
 using QuadTreeDS.QuadTree;
 using QuadTreeDS.SpatialItems;
+using System.Globalization;
 
 namespace SemesterAssignment1;
 public class ApplicationLogic
@@ -17,6 +18,36 @@ public class ApplicationLogic
         _propertyQuadTree = new QuadTree<int, string>(new Rectangle(boundaryPointBottomLeft, boundaryPointTopRight));
         _parcelQuadTree = new QuadTree<int, string>(new Rectangle(boundaryPointBottomLeft, boundaryPointTopRight));
         _mixedQuadTree = new QuadTree<int, string>(new Rectangle(boundaryPointBottomLeft, boundaryPointTopRight));
+    }
+
+    public List<RealtyObject> GetAllRealtyObjects()
+    {
+        var allRealtyObjects = new List<RealtyObject>();
+        foreach(var nodes in _mixedQuadTree.Root.InOrderTraversal())
+        {
+            foreach(var realtyObject in nodes.Data)
+            {
+                allRealtyObjects.Add(realtyObject.Item as  RealtyObject);
+            }
+        }
+        return allRealtyObjects;
+    }
+
+    public void ClearAll()
+    {
+        _propertyQuadTree = new QuadTree<int, string>(_propertyQuadTree.Boundary);
+        _parcelQuadTree = new QuadTree<int, string>(_parcelQuadTree.Boundary);
+        _mixedQuadTree = new QuadTree<int, string>(_mixedQuadTree.Boundary);
+    }
+
+    public void ExportCSV(List<RealtyObject> realtyList, string fullPath)
+    {
+        RealtyObjectCSVHelper.ExportToCSV(realtyList, fullPath);
+    }
+
+    public List<RealtyObject> ImportCSV(string filePath)
+    {
+        return RealtyObjectCSVHelper.ImportFromCSV(filePath);
     }
 
     public List<RealtyObject> FindObjectsInArea(Rectangle area)
@@ -49,9 +80,9 @@ public class ApplicationLogic
         return foundObjects;
     }
 
-    public List<RealtyObject> FindParcels(Point point)
+    public List<Parcel> FindParcels(Point point)
     {
-        var foundObjects = new List<RealtyObject>();
+        var foundObjects = new List<Parcel>();
 
         foreach (var foundParcel in _parcelQuadTree.Find(point))
         {
@@ -96,6 +127,24 @@ public class ApplicationLogic
             }
         }
     }
+    public bool DeleteProperty(Property property)
+    {
+        var propertyQuadTreeObject = new QuadTreeObject<int, string>(property.ConscriptionNumber, property.Description, property);
+        var foundPropertyNode = _propertyQuadTree.FindNode(propertyQuadTreeObject).foundNode;
+
+        if (foundPropertyNode is not null)
+        {
+            var deletedProperty = foundPropertyNode.Delete(propertyQuadTreeObject) as Property;
+            if (deletedProperty is not null)
+            {
+                deletedProperty.ReleaseParcels();
+                _mixedQuadTree.Delete(propertyQuadTreeObject);
+                return true;
+            }
+        }
+
+        return false;
+    }
 
     public void AddParcel(Parcel parcel)
     {
@@ -113,6 +162,78 @@ public class ApplicationLogic
                 property.AddParcel(parcel);
                 parcel.AddProperty(property);
             }
+        }
+    }
+
+    public bool DeleteParcel(Parcel parcel)
+    {
+        var mixedQuadTreeKey = parcel.ParcelNumber * -1; //FIXME: Better to implement option in QuadTree to use duplicate keys
+
+        var parcelQuadTreeObject = new QuadTreeObject<int, string>(mixedQuadTreeKey, parcel.Description, parcel);
+        var foundParcelNode = _parcelQuadTree.FindNode(parcelQuadTreeObject).foundNode;
+
+        if (foundParcelNode is not null)
+        {
+            var deletedParcel = foundParcelNode.Delete(parcelQuadTreeObject) as Parcel;
+            if (deletedParcel is not null)
+            {
+                deletedParcel.ReleaseProperties(); 
+                _mixedQuadTree.Delete(parcelQuadTreeObject); 
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    //need to find spatialItem from quadtree
+    public (QuadTreeNode<int, string>? foundNode, SpatialItem? foundObject) FindObject(SpatialItem spatialItem)
+    {
+        if(spatialItem is Property property)
+        {
+            return FindProperty(property);
+        }
+        else if(spatialItem is Parcel parcel)
+        {
+            return FindParcel(parcel);
+        }
+        else
+        {
+            throw new Exception("SpatialItem is not of type Property or Parcel");
+        }
+    }
+
+    public (QuadTreeNode<int,string>? foundNode, Parcel? parcel) FindParcel(Parcel parcel)
+    {
+        QuadTreeObject<int, string> quadTreeObject = new QuadTreeObject<int, string>(parcel.ParcelNumber * -1, parcel.Description, parcel);
+        var result = _parcelQuadTree.FindNode(quadTreeObject);
+        var foundNode = result.foundNode;
+        var foundParcel=  result.foundObject?.Item as Parcel;
+        return (foundNode, foundParcel);
+    }
+
+    public (QuadTreeNode<int, string>? foundNode, Property? property) FindProperty(Property property)
+    {
+        QuadTreeObject<int, string> quadTreeObject = new QuadTreeObject<int, string>(property.ConscriptionNumber, property.Description, property);
+        var result = _propertyQuadTree.FindNode(quadTreeObject);
+        var foundNode = result.foundNode;
+        var foundProperty = result.foundObject?.Item as Property;
+        return (foundNode, foundProperty);
+    }
+
+    public bool SearchKey(RealtyObject realtyObject, int key)
+    {
+        if(realtyObject is Property property)
+        {
+            return _propertyQuadTree.SearchKey(key);
+        }
+        else if(realtyObject is Parcel parcel)
+        {
+            return _mixedQuadTree.SearchKey(key);
+        }
+        else
+        {
+            throw new Exception("SpatialItem is not of type Property or Parcel");
         }
     }
 }

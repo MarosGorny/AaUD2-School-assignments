@@ -2,11 +2,12 @@
 
 namespace SemesterAssignment1.RealtyObjects;
 
-public abstract class RealtyObject : SpatialItem
+public abstract class RealtyObject : Rectangle
 {
     public string Description { get; set; }
 
-    public RealtyObject(string description)
+    public RealtyObject(string description, GPSRectangle gpsRectangle)
+        :base(gpsRectangle.LowerLeft as GPSPoint, gpsRectangle.UpperRight as GPSPoint)
     {
         Description = description;
     }
@@ -21,7 +22,7 @@ public class Property : RealtyObject
     public List<Parcel> PositionedOnParcels { get; set; } = new List<Parcel>(); 
 
     public Property(int conscriptionNumber, string description, GPSRectangle gpsRectangle)
-        : base(description)
+        : base(description,gpsRectangle)
     {
         ConscriptionNumber = conscriptionNumber;
         LowerLeft = gpsRectangle.LowerLeft;
@@ -32,6 +33,18 @@ public class Property : RealtyObject
     {
         PositionedOnParcels.Add(parcel);
     }
+
+    public void RemoveParcel(Parcel parcel)
+    {
+        PositionedOnParcels.Remove(parcel);
+    }
+
+    public void ReleaseParcels()
+    {
+        PositionedOnParcels.ForEach(parcel => parcel.RemoveProperty(this));
+        PositionedOnParcels.Clear();
+    }
+
 }
 
 /// <summary>
@@ -44,7 +57,7 @@ public class Parcel : RealtyObject
     public GPSRectangle Bounds { get; set; }
 
     public Parcel(int parcelNumber, string description, GPSRectangle gpsRectangle)
-        :base(description)
+        :base(description, gpsRectangle)
     {
         ParcelNumber = parcelNumber;
         LowerLeft = gpsRectangle.LowerLeft;
@@ -55,5 +68,16 @@ public class Parcel : RealtyObject
     public void AddProperty(Property property)
     {
         OccupiedByProperties.Add(property);
+    }
+
+    public void RemoveProperty(Property property)
+    {
+        OccupiedByProperties.Remove(property);
+    }
+
+    public void ReleaseProperties()
+    {
+        OccupiedByProperties.ForEach(property => property.RemoveParcel(this));
+        OccupiedByProperties.Clear();
     }
 }

@@ -293,7 +293,7 @@ class QuadTreeTester
 
         //#region edge cases
         ////// Initialize a QuadTree with a specified boundary
-        //QuadTree<Guid, string> quadTree = new QuadTree<Guid, string>(new Rectangle(new Point(0, 0), new Point(100, 100)), 5);
+        QuadTree<int, string> quadTreeee = new QuadTree<int, string>(new Rectangle(new Point(0, 0), new Point(100, 100)), 5);
 
         ////// Inserting points with associated data
         //QuadTreeObject<Guid, string> quadTreeObjectA = new QuadTreeObject<Guid, string>(Guid.NewGuid(), "Point A", (SpatialItem)new Point(10, 10));
@@ -325,8 +325,15 @@ class QuadTreeTester
         //var findD = quadTree.Find(quadTreeObjectD.Item);
         //var findX = quadTree.Find(quadTreeObjectX.Item);
 
-        //Rectangle Rectangle1 = new Rectangle(new Point(20, 60), new Point(40, 80));
-        //Rectangle Rectangle2 = new Rectangle(new Point(80, 40), new Point(90, 60));
+        Rectangle Rectangle1 = new Rectangle(new Point(20, 20), new Point(40, 40));
+        Rectangle Rectangle2 = new Rectangle(new Point(60, 60), new Point(80, 80));
+        Rectangle rectangle3 = new Rectangle(new Point(0, 0), new Point(100, 100));
+        QuadTreeObject<int,string> quadTreeObject1 = new QuadTreeObject<int, string>(1, "Rectangle1", Rectangle1);
+        QuadTreeObject<int, string> quadTreeObject2 = new QuadTreeObject<int, string>(1, "Rectangle2", Rectangle2);
+        QuadTreeObject<int, string> quadTreeObject3 = new QuadTreeObject<int, string>(2, "Rectangle3", rectangle3);
+        quadTreeee.Insert(quadTreeObject3);
+        quadTreeee.Insert(quadTreeObject1);
+        quadTreeee.Insert(quadTreeObject2);
         //Rectangle RectangleFull = new Rectangle(new Point(0, 0), new Point(100, 100));
         //Rectangle RectangleX = new Rectangle(new Point(60, 120), new Point(70, 130));
 

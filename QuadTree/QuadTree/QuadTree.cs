@@ -1,4 +1,5 @@
-﻿using QuadTreeDS.SpatialItems;
+﻿using QuadTreeDS.BinarySearchTree;
+using QuadTreeDS.SpatialItems;
 
 
 namespace QuadTreeDS.QuadTree;
@@ -7,11 +8,16 @@ public class QuadTree<K, V> where K : IComparable<K>
 {
     public QuadTreeNode<K, V> Root { get; private set; }
     public int MaxAllowedDepth { get; set; }
+    public Rectangle Boundary => Root.Boundary;
     public QuadTreeOptimalization<K, V>.SubdivisionResult? OptimalizationData { get; }
 
     public int portions { get; set;}
 
     public readonly int QUADRANT_COUNT = 4;
+
+    public bool CheckKeysDuplicate { get; set; } = true;
+
+    private BinarySearchTree<K> _bst = new BinarySearchTree<K>();
 
     public QuadTree(Rectangle boundary, int maxAllowedDepth = 10)
     {
@@ -31,6 +37,15 @@ public class QuadTree<K, V> where K : IComparable<K>
         }
     }
 
+    public bool SearchKey(K key)
+    {
+        return _bst.Search(key);
+    }
+    public bool InsertKey(K key)
+    {
+        return _bst.TryInsert(key);
+    }
+
     public void Insert(QuadTreeObject<K, V> quadTreeObject)
     {
         Root.Insert(quadTreeObject);
@@ -41,9 +56,19 @@ public class QuadTree<K, V> where K : IComparable<K>
         return Root.Find(rectangle);
     }
 
-    public bool Delete(QuadTreeObject<K, V> quadTreeObject)
+    public (QuadTreeNode<K, V>? foundNode, QuadTreeObject<K, V>? foundObject) FindNode(QuadTreeObject<K, V> quadTreeObject)
+    {
+        return Root.LocateNodeAndObjectForItem(quadTreeObject.Item, quadTreeObject.Key);
+    }
+
+    public SpatialItem? Delete(QuadTreeObject<K, V> quadTreeObject)
     {
         return Root.Delete(quadTreeObject);
+    }
+
+    public bool DeleteKey(K key)
+    {
+        return _bst.Delete(key);
     }
 
     public void ChangeMaxAllowedDepth(int maxAllowedDepth)
