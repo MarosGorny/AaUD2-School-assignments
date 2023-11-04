@@ -76,14 +76,20 @@ namespace GUIAssignment1.UserControls
 
         private void dataGridView1_CellMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
         {
+            const int iconsSize = 2;
             // Check if the click is on a valid cell
-            if (e.RowIndex >= 0 && e.ColumnIndex >= 0)
+            if (e.RowIndex >= 1 && e.ColumnIndex >= 0)
             {
-                // Optionally, get the value of the cell that was double-clicked
-                var cellValue = propertyGridView[e.ColumnIndex, e.RowIndex].Value?.ToString() ?? "N/A";
+                if(e.ColumnIndex < propertyGridView.Columns.Count - iconsSize)
+                {
+                    var cellValue = propertyGridView[e.ColumnIndex, e.RowIndex].Value?.ToString() ?? "N/A";
+                    // Show the message box
+                    MessageBox.Show($"Cell at row {e.RowIndex + 1}, column {e.ColumnIndex + 1} \nValue: {cellValue}", "Cell Double-Clicked");
+                }
+                else
+                {
 
-                // Show the message box
-                MessageBox.Show($"Cell at row {e.RowIndex + 1}, column {e.ColumnIndex + 1} \nValue: {cellValue}", "Cell Double-Clicked");
+                }
             }
         }
 

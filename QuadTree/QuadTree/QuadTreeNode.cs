@@ -336,64 +336,36 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
     #endregion
 
     #region Deletion
-    public bool Delete(QuadTreeObject<K, V> quadTreeObject) //TODO: Return bool or object
+    public SpatialItem? Delete(QuadTreeObject<K, V> quadTreeObject) //TODO: Return bool or object
     {
-        SpatialItem deleteItem = quadTreeObject.Item;
-        Queue<QuadTreeNode<K, V>> nodesToCheck = new Queue<QuadTreeNode<K, V>>();
-        nodesToCheck.Enqueue(this);
-
-        while (nodesToCheck.Count > 0)
+        QuadTreeNode<K, V>? nodeContainingObject = FindNode(quadTreeObject.Item, quadTreeObject.Key);
+        if (nodeContainingObject != null)
         {
-            QuadTreeNode<K, V> currentNode = nodesToCheck.Dequeue();
-
-            if (TryRemoveDataFromNode(currentNode, quadTreeObject))
-                return true;
-
-            if (currentNode.Children is null) continue;
-
-            foreach (Quadrant quadrant in Enum.GetValues(typeof(Quadrant)))
-            {
-                var childNodeBoundary = currentNode.Children[(int)quadrant].Boundary;
-
-                if (childNodeBoundary.ContainsStrict(deleteItem))
-                {
-                    nodesToCheck.Enqueue(currentNode.Children[(int)quadrant]);
-                }
-            }
+            return TryRemoveDataFromNode(nodeContainingObject, quadTreeObject);
         }
-        return false;
+        return null;
     }
 
-    private bool TryRemoveDataFromNode(QuadTreeNode<K, V> node, QuadTreeObject<K, V> targetObject)
+    private SpatialItem? TryRemoveDataFromNode(QuadTreeNode<K, V> node, QuadTreeObject<K, V> targetObject)
     {
-        if (targetObject.Item is Point)
+        SpatialItem? removedItem = null;
+
+        if (targetObject.Item is Point && node.PointData.Remove(targetObject))
         {
-            for (int i = 0; i < node.PointData.Count; i++)
-            {
-                if (node.PointData[i] == targetObject)
-                {
-                    node.PointData.RemoveAt(i);
-                    node.Data.Remove(targetObject);
-                    node.SimplifyIfEmpty();
-                    return true;
-                }
-            }
+            removedItem = targetObject.Item;
         }
-        else if (targetObject.Item is Rectangle)
+        else if (targetObject.Item is Rectangle && node.RectangleData.Remove(targetObject))
         {
-            for (int i = 0; i < node.RectangleData.Count; i++)
-            {
-                if (node.RectangleData[i] == targetObject)
-                {
-                    node.RectangleData.RemoveAt(i);
-                    node.Data.Remove(targetObject);
-                    node.SimplifyIfEmpty();
-                    return true;
-                }
-            }
+            removedItem = targetObject.Item;
         }
 
-        return false;
+        if (removedItem != null)
+        {
+            node.Data.Remove(targetObject);
+            node.SimplifyIfEmpty();
+        }
+
+        return removedItem;
     }
     #endregion
 
@@ -437,9 +409,78 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
         }
         return foundItems;
     }
+
+    public QuadTreeNode<K, V>? FindNode(SpatialItem searchItem, K key)
+    {
+        Queue<QuadTreeNode<K, V>> nodesToCheck = new Queue<QuadTreeNode<K, V>>();
+        nodesToCheck.Enqueue(this);
+
+        while (nodesToCheck.Count > 0)
+        {
+            QuadTreeNode<K, V> currentNode = nodesToCheck.Dequeue();
+
+            if (ContainsDataItem(currentNode, searchItem, key))
+            {
+                return currentNode;
+            }
+
+            if (currentNode.Children != null)
+            {
+                foreach (Quadrant quadrant in Enum.GetValues(typeof(Quadrant)))
+                {
+                    var childNodeBoundary = currentNode.Children[(int)quadrant].Boundary;
+                    if (childNodeBoundary.ContainsStrict(searchItem) || searchItem.Intersects(childNodeBoundary))
+                    {
+                        nodesToCheck.Enqueue(currentNode.Children[(int)quadrant]);
+                    }
+                }
+            }
+        }
+        return null; 
+    }
     #endregion
 
     #region Utility and Helper Methods
+
+    //private bool ContainsDataItem(QuadTreeNode<K, V> node, QuadTreeObject<K, V> targetObject)
+    //{
+    //    if (targetObject.Item is Point && node.PointData.Contains(targetObject))
+    //    {
+    //        return true;
+    //    }
+    //    else if (targetObject.Item is Rectangle && node.RectangleData.Contains(targetObject))
+    //    {
+    //        return true;
+    //    }
+
+    //    return false;
+    //}
+
+    private bool ContainsDataItem(QuadTreeNode<K, V> node, SpatialItem searchItem, K key)
+    {
+
+        if(searchItem is Point)
+        {
+            foreach (var qto in node.PointData)
+            {
+                if (qto.Key.Equals(key))
+                    return true;
+            }
+        }
+
+        if (searchItem is Rectangle)
+        {
+            foreach (var qto in node.RectangleData)
+            {
+                if (qto.Key.Equals(key))
+                    return true;
+            }
+        }
+        return false;
+
+    }
+
+
     private bool TryAddItem(QuadTreeObject<K, V> item)
     {
         if(item.Item is Point)

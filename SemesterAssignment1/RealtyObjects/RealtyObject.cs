@@ -33,6 +33,17 @@ public class Property : RealtyObject
     {
         PositionedOnParcels.Add(parcel);
     }
+
+    public void RemoveParcel(Parcel parcel)
+    {
+        PositionedOnParcels.Remove(parcel);
+    }
+
+    public void ReleaseParcels()
+    {
+        PositionedOnParcels.ForEach(parcel => parcel.RemoveProperty(this));
+        PositionedOnParcels.Clear();
+    }
 }
 
 /// <summary>
@@ -56,5 +67,16 @@ public class Parcel : RealtyObject
     public void AddProperty(Property property)
     {
         OccupiedByProperties.Add(property);
+    }
+
+    public void RemoveProperty(Property property)
+    {
+        OccupiedByProperties.Remove(property);
+    }
+
+    public void ReleaseProperties()
+    {
+        OccupiedByProperties.ForEach(property => property.RemoveParcel(this));
+        OccupiedByProperties.Clear();
     }
 }

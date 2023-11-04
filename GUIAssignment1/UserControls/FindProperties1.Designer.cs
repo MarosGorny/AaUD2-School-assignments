@@ -28,12 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FindProperties));
             propertyGridView = new DataGridView();
-            PropertyTableID = new DataGridViewTextBoxColumn();
-            PropertyTableDescription = new DataGridViewTextBoxColumn();
-            ParcelList = new DataGridViewTextBoxColumn();
-            LeftBottom = new DataGridViewTextBoxColumn();
-            RightTop = new DataGridViewTextBoxColumn();
             longGroupBox = new GroupBox();
             longNumericUpDown = new NumericUpDown();
             longERadioButton = new RadioButton();
@@ -49,16 +45,6 @@
             conscriptionNumberTextBox = new TextBox();
             searchGroupBox = new GroupBox();
             insertPropertyGroupBox = new GroupBox();
-            insertPropertyButton = new Button();
-            gps2LatNRadioButton = new RadioButton();
-            gps2LatSRadioButton = new RadioButton();
-            gps2LatGroupBox = new GroupBox();
-            gps2LatNumericUpDown = new NumericUpDown();
-            insertGPS2GroupBox = new GroupBox();
-            gps2LongGroupBox = new GroupBox();
-            gps2LongNumericUpDown = new NumericUpDown();
-            gps2LongERadioButton = new RadioButton();
-            gps2LongWRadioButton = new RadioButton();
             insertGPS1GroupBox = new GroupBox();
             gps1LongGroupBox = new GroupBox();
             gps1LongNumericUpDown = new NumericUpDown();
@@ -68,22 +54,39 @@
             gps1LatNumericUpDown = new NumericUpDown();
             gps1LatNRadioButton = new RadioButton();
             gps1LatSRadioButton = new RadioButton();
+            insertGPS2GroupBox = new GroupBox();
+            gps2LongGroupBox = new GroupBox();
+            gps2LongNumericUpDown = new NumericUpDown();
+            gps2LongERadioButton = new RadioButton();
+            gps2LongWRadioButton = new RadioButton();
+            gps2LatGroupBox = new GroupBox();
+            gps2LatNumericUpDown = new NumericUpDown();
+            gps2LatNRadioButton = new RadioButton();
+            gps2LatSRadioButton = new RadioButton();
+            insertPropertyButton = new Button();
+            PropertyTableID = new DataGridViewTextBoxColumn();
+            PropertyTableDescription = new DataGridViewTextBoxColumn();
+            ParcelList = new DataGridViewTextBoxColumn();
+            LeftBottom = new DataGridViewTextBoxColumn();
+            RightTop = new DataGridViewTextBoxColumn();
+            Edit = new DataGridViewImageColumn();
+            Delete = new DataGridViewImageColumn();
             ((System.ComponentModel.ISupportInitialize)propertyGridView).BeginInit();
             longGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)longNumericUpDown).BeginInit();
             latGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)latNumericUpDown).BeginInit();
             insertPropertyGroupBox.SuspendLayout();
-            gps2LatGroupBox.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)gps2LatNumericUpDown).BeginInit();
-            insertGPS2GroupBox.SuspendLayout();
-            gps2LongGroupBox.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)gps2LongNumericUpDown).BeginInit();
             insertGPS1GroupBox.SuspendLayout();
             gps1LongGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)gps1LongNumericUpDown).BeginInit();
             gps1LatGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)gps1LatNumericUpDown).BeginInit();
+            insertGPS2GroupBox.SuspendLayout();
+            gps2LongGroupBox.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)gps2LongNumericUpDown).BeginInit();
+            gps2LatGroupBox.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)gps2LatNumericUpDown).BeginInit();
             SuspendLayout();
             // 
             // propertyGridView
@@ -93,7 +96,7 @@
             propertyGridView.AllowUserToOrderColumns = true;
             propertyGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             propertyGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            propertyGridView.Columns.AddRange(new DataGridViewColumn[] { PropertyTableID, PropertyTableDescription, ParcelList, LeftBottom, RightTop });
+            propertyGridView.Columns.AddRange(new DataGridViewColumn[] { PropertyTableID, PropertyTableDescription, ParcelList, LeftBottom, RightTop, Edit, Delete });
             propertyGridView.Location = new Point(330, 18);
             propertyGridView.Name = "propertyGridView";
             propertyGridView.ReadOnly = true;
@@ -103,41 +106,6 @@
             propertyGridView.TabIndex = 41;
             propertyGridView.CellContentClick += dataGridView1_CellContentClick;
             propertyGridView.CellMouseDoubleClick += dataGridView1_CellMouseDoubleClick;
-            // 
-            // PropertyTableID
-            // 
-            PropertyTableID.HeaderText = "Conscription Number";
-            PropertyTableID.MinimumWidth = 6;
-            PropertyTableID.Name = "PropertyTableID";
-            PropertyTableID.ReadOnly = true;
-            // 
-            // PropertyTableDescription
-            // 
-            PropertyTableDescription.HeaderText = "Description";
-            PropertyTableDescription.MinimumWidth = 6;
-            PropertyTableDescription.Name = "PropertyTableDescription";
-            PropertyTableDescription.ReadOnly = true;
-            // 
-            // ParcelList
-            // 
-            ParcelList.HeaderText = "Parcel List";
-            ParcelList.MinimumWidth = 6;
-            ParcelList.Name = "ParcelList";
-            ParcelList.ReadOnly = true;
-            // 
-            // LeftBottom
-            // 
-            LeftBottom.HeaderText = "Left Bottom Position";
-            LeftBottom.MinimumWidth = 6;
-            LeftBottom.Name = "LeftBottom";
-            LeftBottom.ReadOnly = true;
-            // 
-            // RightTop
-            // 
-            RightTop.HeaderText = "Right Top Position";
-            RightTop.MinimumWidth = 6;
-            RightTop.Name = "RightTop";
-            RightTop.ReadOnly = true;
             // 
             // longGroupBox
             // 
@@ -288,6 +256,8 @@
             // 
             // insertPropertyGroupBox
             // 
+            insertPropertyGroupBox.Anchor = AnchorStyles.Left;
+            insertPropertyGroupBox.Controls.Add(insertGPS1GroupBox);
             insertPropertyGroupBox.Controls.Add(insertGPS2GroupBox);
             insertPropertyGroupBox.Controls.Add(insertPropertyButton);
             insertPropertyGroupBox.Controls.Add(conscriptionNumberLabel);
@@ -300,123 +270,11 @@
             insertPropertyGroupBox.TabStop = false;
             insertPropertyGroupBox.Text = "Insert property";
             // 
-            // insertPropertyButton
-            // 
-            insertPropertyButton.Location = new Point(11, 481);
-            insertPropertyButton.Name = "insertPropertyButton";
-            insertPropertyButton.Size = new Size(286, 29);
-            insertPropertyButton.TabIndex = 50;
-            insertPropertyButton.Text = "Insert Propety";
-            insertPropertyButton.UseVisualStyleBackColor = true;
-            insertPropertyButton.Click += insertPropertyButton_Click;
-            // 
-            // gps2LatNRadioButton
-            // 
-            gps2LatNRadioButton.Checked = true;
-            gps2LatNRadioButton.Font = new Font("Segoe UI", 15F, FontStyle.Regular, GraphicsUnit.Point);
-            gps2LatNRadioButton.Location = new Point(6, 23);
-            gps2LatNRadioButton.Name = "gps2LatNRadioButton";
-            gps2LatNRadioButton.Size = new Size(43, 39);
-            gps2LatNRadioButton.TabIndex = 21;
-            gps2LatNRadioButton.TabStop = true;
-            gps2LatNRadioButton.Text = "N";
-            gps2LatNRadioButton.UseVisualStyleBackColor = true;
-            // 
-            // gps2LatSRadioButton
-            // 
-            gps2LatSRadioButton.Font = new Font("Segoe UI", 15F, FontStyle.Regular, GraphicsUnit.Point);
-            gps2LatSRadioButton.Location = new Point(55, 23);
-            gps2LatSRadioButton.Name = "gps2LatSRadioButton";
-            gps2LatSRadioButton.Size = new Size(39, 39);
-            gps2LatSRadioButton.TabIndex = 20;
-            gps2LatSRadioButton.Text = "S";
-            gps2LatSRadioButton.UseVisualStyleBackColor = true;
-            // 
-            // gps2LatGroupBox
-            // 
-            gps2LatGroupBox.Controls.Add(gps2LatNumericUpDown);
-            gps2LatGroupBox.Controls.Add(gps2LatNRadioButton);
-            gps2LatGroupBox.Controls.Add(gps2LatSRadioButton);
-            gps2LatGroupBox.Location = new Point(15, 22);
-            gps2LatGroupBox.Name = "gps2LatGroupBox";
-            gps2LatGroupBox.Size = new Size(260, 68);
-            gps2LatGroupBox.TabIndex = 50;
-            gps2LatGroupBox.TabStop = false;
-            gps2LatGroupBox.Text = "Latitude (decimal degrees)";
-            // 
-            // gps2LatNumericUpDown
-            // 
-            gps2LatNumericUpDown.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            gps2LatNumericUpDown.DecimalPlaces = 13;
-            gps2LatNumericUpDown.Location = new Point(110, 32);
-            gps2LatNumericUpDown.Maximum = new decimal(new int[] { 90, 0, 0, 0 });
-            gps2LatNumericUpDown.Name = "gps2LatNumericUpDown";
-            gps2LatNumericUpDown.Size = new Size(140, 27);
-            gps2LatNumericUpDown.TabIndex = 22;
-            gps2LatNumericUpDown.Tag = "";
-            // 
-            // insertGPS2GroupBox
-            // 
-            insertGPS2GroupBox.Controls.Add(gps2LongGroupBox);
-            insertGPS2GroupBox.Controls.Add(gps2LatGroupBox);
-            insertGPS2GroupBox.Location = new Point(11, 199);
-            insertGPS2GroupBox.Name = "insertGPS2GroupBox";
-            insertGPS2GroupBox.Size = new Size(286, 179);
-            insertGPS2GroupBox.TabIndex = 51;
-            insertGPS2GroupBox.TabStop = false;
-            insertGPS2GroupBox.Text = "Right Top GPS Point";
-            insertGPS2GroupBox.Enter += groupBox4_Enter;
-            // 
-            // gps2LongGroupBox
-            // 
-            gps2LongGroupBox.Controls.Add(gps2LongNumericUpDown);
-            gps2LongGroupBox.Controls.Add(gps2LongERadioButton);
-            gps2LongGroupBox.Controls.Add(gps2LongWRadioButton);
-            gps2LongGroupBox.Location = new Point(15, 96);
-            gps2LongGroupBox.Name = "gps2LongGroupBox";
-            gps2LongGroupBox.Size = new Size(260, 68);
-            gps2LongGroupBox.TabIndex = 48;
-            gps2LongGroupBox.TabStop = false;
-            gps2LongGroupBox.Text = "Longitude (decimal degrees)";
-            // 
-            // gps2LongNumericUpDown
-            // 
-            gps2LongNumericUpDown.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            gps2LongNumericUpDown.DecimalPlaces = 14;
-            gps2LongNumericUpDown.Location = new Point(110, 30);
-            gps2LongNumericUpDown.Maximum = new decimal(new int[] { 180, 0, 0, 0 });
-            gps2LongNumericUpDown.Name = "gps2LongNumericUpDown";
-            gps2LongNumericUpDown.Size = new Size(140, 27);
-            gps2LongNumericUpDown.TabIndex = 23;
-            gps2LongNumericUpDown.Tag = "";
-            // 
-            // gps2LongERadioButton
-            // 
-            gps2LongERadioButton.Checked = true;
-            gps2LongERadioButton.Font = new Font("Segoe UI", 15F, FontStyle.Regular, GraphicsUnit.Point);
-            gps2LongERadioButton.Location = new Point(6, 23);
-            gps2LongERadioButton.Name = "gps2LongERadioButton";
-            gps2LongERadioButton.Size = new Size(43, 39);
-            gps2LongERadioButton.TabIndex = 21;
-            gps2LongERadioButton.TabStop = true;
-            gps2LongERadioButton.Text = "E";
-            gps2LongERadioButton.UseVisualStyleBackColor = true;
-            // 
-            // gps2LongWRadioButton
-            // 
-            gps2LongWRadioButton.Font = new Font("Segoe UI", 15F, FontStyle.Regular, GraphicsUnit.Point);
-            gps2LongWRadioButton.Location = new Point(55, 23);
-            gps2LongWRadioButton.Name = "gps2LongWRadioButton";
-            gps2LongWRadioButton.Size = new Size(54, 39);
-            gps2LongWRadioButton.TabIndex = 20;
-            gps2LongWRadioButton.Text = "W";
-            gps2LongWRadioButton.UseVisualStyleBackColor = true;
-            // 
             // insertGPS1GroupBox
             // 
             insertGPS1GroupBox.Controls.Add(gps1LongGroupBox);
             insertGPS1GroupBox.Controls.Add(gps1LatGroupBox);
-            insertGPS1GroupBox.Location = new Point(19, 264);
+            insertGPS1GroupBox.Location = new Point(11, 22);
             insertGPS1GroupBox.Name = "insertGPS1GroupBox";
             insertGPS1GroupBox.Size = new Size(286, 179);
             insertGPS1GroupBox.TabIndex = 52;
@@ -513,12 +371,181 @@
             gps1LatSRadioButton.Text = "S";
             gps1LatSRadioButton.UseVisualStyleBackColor = true;
             // 
+            // insertGPS2GroupBox
+            // 
+            insertGPS2GroupBox.Controls.Add(gps2LongGroupBox);
+            insertGPS2GroupBox.Controls.Add(gps2LatGroupBox);
+            insertGPS2GroupBox.Location = new Point(11, 199);
+            insertGPS2GroupBox.Name = "insertGPS2GroupBox";
+            insertGPS2GroupBox.Size = new Size(286, 179);
+            insertGPS2GroupBox.TabIndex = 51;
+            insertGPS2GroupBox.TabStop = false;
+            insertGPS2GroupBox.Text = "Right Top GPS Point";
+            insertGPS2GroupBox.Enter += groupBox4_Enter;
+            // 
+            // gps2LongGroupBox
+            // 
+            gps2LongGroupBox.Controls.Add(gps2LongNumericUpDown);
+            gps2LongGroupBox.Controls.Add(gps2LongERadioButton);
+            gps2LongGroupBox.Controls.Add(gps2LongWRadioButton);
+            gps2LongGroupBox.Location = new Point(15, 96);
+            gps2LongGroupBox.Name = "gps2LongGroupBox";
+            gps2LongGroupBox.Size = new Size(260, 68);
+            gps2LongGroupBox.TabIndex = 48;
+            gps2LongGroupBox.TabStop = false;
+            gps2LongGroupBox.Text = "Longitude (decimal degrees)";
+            // 
+            // gps2LongNumericUpDown
+            // 
+            gps2LongNumericUpDown.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            gps2LongNumericUpDown.DecimalPlaces = 14;
+            gps2LongNumericUpDown.Location = new Point(110, 30);
+            gps2LongNumericUpDown.Maximum = new decimal(new int[] { 180, 0, 0, 0 });
+            gps2LongNumericUpDown.Name = "gps2LongNumericUpDown";
+            gps2LongNumericUpDown.Size = new Size(140, 27);
+            gps2LongNumericUpDown.TabIndex = 23;
+            gps2LongNumericUpDown.Tag = "";
+            // 
+            // gps2LongERadioButton
+            // 
+            gps2LongERadioButton.Checked = true;
+            gps2LongERadioButton.Font = new Font("Segoe UI", 15F, FontStyle.Regular, GraphicsUnit.Point);
+            gps2LongERadioButton.Location = new Point(6, 23);
+            gps2LongERadioButton.Name = "gps2LongERadioButton";
+            gps2LongERadioButton.Size = new Size(43, 39);
+            gps2LongERadioButton.TabIndex = 21;
+            gps2LongERadioButton.TabStop = true;
+            gps2LongERadioButton.Text = "E";
+            gps2LongERadioButton.UseVisualStyleBackColor = true;
+            // 
+            // gps2LongWRadioButton
+            // 
+            gps2LongWRadioButton.Font = new Font("Segoe UI", 15F, FontStyle.Regular, GraphicsUnit.Point);
+            gps2LongWRadioButton.Location = new Point(55, 23);
+            gps2LongWRadioButton.Name = "gps2LongWRadioButton";
+            gps2LongWRadioButton.Size = new Size(54, 39);
+            gps2LongWRadioButton.TabIndex = 20;
+            gps2LongWRadioButton.Text = "W";
+            gps2LongWRadioButton.UseVisualStyleBackColor = true;
+            // 
+            // gps2LatGroupBox
+            // 
+            gps2LatGroupBox.Controls.Add(gps2LatNumericUpDown);
+            gps2LatGroupBox.Controls.Add(gps2LatNRadioButton);
+            gps2LatGroupBox.Controls.Add(gps2LatSRadioButton);
+            gps2LatGroupBox.Location = new Point(15, 22);
+            gps2LatGroupBox.Name = "gps2LatGroupBox";
+            gps2LatGroupBox.Size = new Size(260, 68);
+            gps2LatGroupBox.TabIndex = 50;
+            gps2LatGroupBox.TabStop = false;
+            gps2LatGroupBox.Text = "Latitude (decimal degrees)";
+            // 
+            // gps2LatNumericUpDown
+            // 
+            gps2LatNumericUpDown.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            gps2LatNumericUpDown.DecimalPlaces = 13;
+            gps2LatNumericUpDown.Location = new Point(110, 32);
+            gps2LatNumericUpDown.Maximum = new decimal(new int[] { 90, 0, 0, 0 });
+            gps2LatNumericUpDown.Name = "gps2LatNumericUpDown";
+            gps2LatNumericUpDown.Size = new Size(140, 27);
+            gps2LatNumericUpDown.TabIndex = 22;
+            gps2LatNumericUpDown.Tag = "";
+            // 
+            // gps2LatNRadioButton
+            // 
+            gps2LatNRadioButton.Checked = true;
+            gps2LatNRadioButton.Font = new Font("Segoe UI", 15F, FontStyle.Regular, GraphicsUnit.Point);
+            gps2LatNRadioButton.Location = new Point(6, 23);
+            gps2LatNRadioButton.Name = "gps2LatNRadioButton";
+            gps2LatNRadioButton.Size = new Size(43, 39);
+            gps2LatNRadioButton.TabIndex = 21;
+            gps2LatNRadioButton.TabStop = true;
+            gps2LatNRadioButton.Text = "N";
+            gps2LatNRadioButton.UseVisualStyleBackColor = true;
+            // 
+            // gps2LatSRadioButton
+            // 
+            gps2LatSRadioButton.Font = new Font("Segoe UI", 15F, FontStyle.Regular, GraphicsUnit.Point);
+            gps2LatSRadioButton.Location = new Point(55, 23);
+            gps2LatSRadioButton.Name = "gps2LatSRadioButton";
+            gps2LatSRadioButton.Size = new Size(39, 39);
+            gps2LatSRadioButton.TabIndex = 20;
+            gps2LatSRadioButton.Text = "S";
+            gps2LatSRadioButton.UseVisualStyleBackColor = true;
+            // 
+            // insertPropertyButton
+            // 
+            insertPropertyButton.Location = new Point(11, 481);
+            insertPropertyButton.Name = "insertPropertyButton";
+            insertPropertyButton.Size = new Size(286, 29);
+            insertPropertyButton.TabIndex = 50;
+            insertPropertyButton.Text = "Insert Propety";
+            insertPropertyButton.UseVisualStyleBackColor = true;
+            insertPropertyButton.Click += insertPropertyButton_Click;
+            // 
+            // PropertyTableID
+            // 
+            PropertyTableID.FillWeight = 87.28442F;
+            PropertyTableID.HeaderText = "Conscription Number";
+            PropertyTableID.MinimumWidth = 6;
+            PropertyTableID.Name = "PropertyTableID";
+            PropertyTableID.ReadOnly = true;
+            // 
+            // PropertyTableDescription
+            // 
+            PropertyTableDescription.FillWeight = 87.28442F;
+            PropertyTableDescription.HeaderText = "Description";
+            PropertyTableDescription.MinimumWidth = 6;
+            PropertyTableDescription.Name = "PropertyTableDescription";
+            PropertyTableDescription.ReadOnly = true;
+            // 
+            // ParcelList
+            // 
+            ParcelList.FillWeight = 87.28442F;
+            ParcelList.HeaderText = "Parcel List";
+            ParcelList.MinimumWidth = 6;
+            ParcelList.Name = "ParcelList";
+            ParcelList.ReadOnly = true;
+            // 
+            // LeftBottom
+            // 
+            LeftBottom.FillWeight = 87.28442F;
+            LeftBottom.HeaderText = "Left Bottom Position";
+            LeftBottom.MinimumWidth = 6;
+            LeftBottom.Name = "LeftBottom";
+            LeftBottom.ReadOnly = true;
+            // 
+            // RightTop
+            // 
+            RightTop.FillWeight = 87.28442F;
+            RightTop.HeaderText = "Right Top Position";
+            RightTop.MinimumWidth = 6;
+            RightTop.Name = "RightTop";
+            RightTop.ReadOnly = true;
+            // 
+            // Edit
+            // 
+            Edit.FillWeight = 25F;
+            Edit.HeaderText = "";
+            Edit.Image = (Image)resources.GetObject("Edit.Image");
+            Edit.MinimumWidth = 6;
+            Edit.Name = "Edit";
+            Edit.ReadOnly = true;
+            // 
+            // Delete
+            // 
+            Delete.FillWeight = 25F;
+            Delete.HeaderText = "";
+            Delete.Image = (Image)resources.GetObject("Delete.Image");
+            Delete.MinimumWidth = 6;
+            Delete.Name = "Delete";
+            Delete.ReadOnly = true;
+            // 
             // FindProperties
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             AutoSize = true;
-            Controls.Add(insertGPS1GroupBox);
             Controls.Add(conscriptionNumberTextBox);
             Controls.Add(propertyGridView);
             Controls.Add(longGroupBox);
@@ -537,16 +564,16 @@
             ((System.ComponentModel.ISupportInitialize)latNumericUpDown).EndInit();
             insertPropertyGroupBox.ResumeLayout(false);
             insertPropertyGroupBox.PerformLayout();
-            gps2LatGroupBox.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)gps2LatNumericUpDown).EndInit();
-            insertGPS2GroupBox.ResumeLayout(false);
-            gps2LongGroupBox.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)gps2LongNumericUpDown).EndInit();
             insertGPS1GroupBox.ResumeLayout(false);
             gps1LongGroupBox.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)gps1LongNumericUpDown).EndInit();
             gps1LatGroupBox.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)gps1LatNumericUpDown).EndInit();
+            insertGPS2GroupBox.ResumeLayout(false);
+            gps2LongGroupBox.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)gps2LongNumericUpDown).EndInit();
+            gps2LatGroupBox.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)gps2LatNumericUpDown).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -563,11 +590,6 @@
         private RadioButton latNRadioButton;
         private RadioButton latSRadioButton;
         private Button searchPropertiesButton;
-        private DataGridViewTextBoxColumn PropertyTableID;
-        private DataGridViewTextBoxColumn PropertyTableDescription;
-        private DataGridViewTextBoxColumn ParcelList;
-        private DataGridViewTextBoxColumn LeftBottom;
-        private DataGridViewTextBoxColumn RightTop;
         private Label descriptionLabel;
         private TextBox descriptionTextBox;
         private Label conscriptionNumberLabel;
@@ -593,5 +615,12 @@
         private NumericUpDown gps1LatNumericUpDown;
         private RadioButton gps1LatNRadioButton;
         private RadioButton gps1LatSRadioButton;
+        private DataGridViewTextBoxColumn PropertyTableID;
+        private DataGridViewTextBoxColumn PropertyTableDescription;
+        private DataGridViewTextBoxColumn ParcelList;
+        private DataGridViewTextBoxColumn LeftBottom;
+        private DataGridViewTextBoxColumn RightTop;
+        private DataGridViewImageColumn Edit;
+        private DataGridViewImageColumn Delete;
     }
 }

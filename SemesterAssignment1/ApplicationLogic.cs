@@ -115,4 +115,44 @@ public class ApplicationLogic
             }
         }
     }
+
+    public bool DeleteParcel(Parcel parcel)
+    {
+        var mixedQuadTreeKey = parcel.ParcelNumber * -1; //FIXME: Better to implement option in QuadTree to use duplicate keys
+
+        var parcelQuadTreeObject = new QuadTreeObject<int, string>(mixedQuadTreeKey, parcel.Description, parcel);
+        var foundParcelNode = _parcelQuadTree.FindNode(parcelQuadTreeObject);
+
+        if (foundParcelNode is not null)
+        {
+            var deletedParcel = foundParcelNode.Delete(parcelQuadTreeObject) as Parcel;
+            if (deletedParcel is not null)
+            {
+                deletedParcel.ReleaseProperties(); 
+                _mixedQuadTree.Delete(parcelQuadTreeObject); 
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public bool DeleteProperty(Property property)
+    {
+        var propertyQuadTreeObject = new QuadTreeObject<int, string>(property.ConscriptionNumber, property.Description, property);
+        var foundPropertyNode = _propertyQuadTree.FindNode(propertyQuadTreeObject);
+
+        if (foundPropertyNode is not null)
+        {
+            var deletedProperty = foundPropertyNode.Delete(propertyQuadTreeObject) as Property;
+            if (deletedProperty is not null)
+            {
+                deletedProperty.ReleaseParcels();
+                _mixedQuadTree.Delete(propertyQuadTreeObject);
+                return true;
+            }
+        }
+
+        return false;
+    }
 }
