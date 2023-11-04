@@ -360,10 +360,12 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
             return null;
         }
 
-        QuadTreeNode<K, V>? nodeContainingObject = LocateNodeAndObjectForItem(quadTreeObject.Item, quadTreeObject.Key).foundNode;
+        var result = LocateNodeAndObjectForItem(quadTreeObject.Item, quadTreeObject.Key);
+        QuadTreeNode<K, V>? nodeContainingObject = result.foundNode;
+        var foundQuadTreeObject = result.foundObject;
         if (nodeContainingObject != null)
         {
-            return TryRemoveDataFromNode(nodeContainingObject, quadTreeObject);
+            return TryRemoveDataFromNode(nodeContainingObject, foundQuadTreeObject);
         }
         return null;
     }
