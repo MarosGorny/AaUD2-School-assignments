@@ -115,5 +115,44 @@ namespace GUIAssignment1
         {
 
         }
+
+        private void ImportButton_Click(object sender, EventArgs e)
+        {
+            //FolderBrowserDialog dialog = new FolderBrowserDialog();
+            //dialog.ShowDialog();
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.Filter = "CSV files (*.csv)|*.csv";
+            if (ofd.ShowDialog() == DialogResult.OK)
+            {
+                string filePath = ofd.FileName;
+            }
+        }
+
+        private void ExportButton_Click(object sender, EventArgs e)
+        {
+            FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
+            if(folderBrowserDialog.ShowDialog() == DialogResult.OK)
+            {
+                string folderPath = folderBrowserDialog.SelectedPath;
+                string fileName = ShowInputBox("Enter file name", "Export as CSV", "export.csv");
+                if(!string.IsNullOrEmpty(fileName))
+                {
+                    string fullPath = Path.Combine(folderPath, fileName);
+                    try
+                    {
+                        Program.ApplicationLogic.ExportCSV(Program.ApplicationLogic.GetAllRealtyObjects(), fullPath);
+                        MessageBox.Show("Exported");
+                    } catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message);
+                    }
+                }
+            }
+        }
+
+        static string ShowInputBox(string title, string promptText, string defaultValue)
+        {
+            return Microsoft.VisualBasic.Interaction.InputBox(promptText, title, defaultValue);
+        }
     }
 }

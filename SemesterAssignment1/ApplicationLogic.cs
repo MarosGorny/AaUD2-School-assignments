@@ -1,6 +1,7 @@
 ﻿using SemesterAssignment1.RealtyObjects;
 using QuadTreeDS.QuadTree;
 using QuadTreeDS.SpatialItems;
+using System.Globalization;
 
 namespace SemesterAssignment1;
 public class ApplicationLogic
@@ -17,6 +18,29 @@ public class ApplicationLogic
         _propertyQuadTree = new QuadTree<int, string>(new Rectangle(boundaryPointBottomLeft, boundaryPointTopRight));
         _parcelQuadTree = new QuadTree<int, string>(new Rectangle(boundaryPointBottomLeft, boundaryPointTopRight));
         _mixedQuadTree = new QuadTree<int, string>(new Rectangle(boundaryPointBottomLeft, boundaryPointTopRight));
+    }
+
+    public List<RealtyObject> GetAllRealtyObjects()
+    {
+        var allRealtyObjects = new List<RealtyObject>();
+        foreach(var nodes in _mixedQuadTree.Root.InOrderTraversal())
+        {
+            foreach(var realtyObject in nodes.Data)
+            {
+                allRealtyObjects.Add(realtyObject.Item as  RealtyObject);
+            }
+        }
+        return allRealtyObjects;
+    }
+
+    public void ExportCSV(List<RealtyObject> realtyList, string fullPath)
+    {
+        RealtyObjectCSVHelper.ExportToCSV(realtyList, fullPath);
+    }
+
+    public List<RealtyObject> ImportCSV(string filePath)
+    {
+        return RealtyObjectCSVHelper.ImportFromCSV(filePath);
     }
 
     public List<RealtyObject> FindObjectsInArea(Rectangle area)

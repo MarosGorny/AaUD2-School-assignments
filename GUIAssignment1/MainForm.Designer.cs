@@ -210,6 +210,7 @@
             ExportButton.TabIndex = 1;
             ExportButton.Text = "EXPORT";
             ExportButton.UseVisualStyleBackColor = true;
+            ExportButton.Click += ExportButton_Click;
             // 
             // ImportButton
             // 
@@ -220,6 +221,7 @@
             ImportButton.TabIndex = 0;
             ImportButton.Text = "IMPORT";
             ImportButton.UseVisualStyleBackColor = true;
+            ImportButton.Click += ImportButton_Click;
             // 
             // MainPanel
             // 
