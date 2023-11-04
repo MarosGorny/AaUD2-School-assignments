@@ -74,22 +74,34 @@ namespace GUIAssignment1.UserControls
 
         }
 
-        private void dataGridView1_CellMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
-        {
-            const int iconsSize = 2;
-            // Check if the click is on a valid cell
-            if (e.RowIndex >= 1 && e.ColumnIndex >= 0)
-            {
-                if(e.ColumnIndex < propertyGridView.Columns.Count - iconsSize)
-                {
-                    var cellValue = propertyGridView[e.ColumnIndex, e.RowIndex].Value?.ToString() ?? "N/A";
-                    // Show the message box
-                    MessageBox.Show($"Cell at row {e.RowIndex + 1}, column {e.ColumnIndex + 1} \nValue: {cellValue}", "Cell Double-Clicked");
-                }
-                else
-                {
 
-                }
+
+        public static bool TryParseCoordinates(string coordinates, out LatitudeDirection latitudeDirection, out double latitude, out LongitudeDirection longitudeDirection, out double longitude)
+        {
+            // Initialize out parameters
+            latitudeDirection = default;
+            latitude = 0;
+            longitudeDirection = default;
+            longitude = 0;
+
+
+            try
+            {
+                string[] parts = coordinates.Split(',');
+                // Split the first part by spaces to get latitude info
+                string[] latParts = parts[0].Trim().Split(' ');
+                Enum.TryParse(latParts[0], out latitudeDirection); // Get the direction (N/S)
+
+                // Split the second part by spaces to get longitude info
+                string[] lonParts = parts[1].Trim().Split(' ');
+                Enum.TryParse(lonParts[0], out longitudeDirection); // Get the direction (E/W)
+
+                return true;
+            }
+            catch (Exception)
+            {
+
+                return false;
             }
         }
 
@@ -117,7 +129,7 @@ namespace GUIAssignment1.UserControls
 
             GPSRectangle area = new GPSRectangle(leftPoint, rightPoint);
 
-            int conscriptionNumber = int.Parse(conscriptionNumberTextBox.Text);
+            int conscriptionNumber = (int)conscriptionNumberNumericUpDown.Value;
             string description = descriptionTextBox.Text;
 
             Property property = new Property(conscriptionNumber, description, area);
@@ -133,7 +145,7 @@ namespace GUIAssignment1.UserControls
             gps1LongNumericUpDown.Value = 0;
             gps2LatNumericUpDown.Value = 0;
             gps2LongNumericUpDown.Value = 0;
-            conscriptionNumberTextBox.Text = "";
+            conscriptionNumberNumericUpDown.Value = 0;
             descriptionTextBox.Text = "";
         }
 
@@ -154,5 +166,63 @@ namespace GUIAssignment1.UserControls
             // Return a new GPSPoint with the specified values.
             return new GPSPoint(latitudeDirection, latitude, longitudeDirection, longitude);
         }
+
+        // Class level constants
+        const int IconsSize = 2;
+
+        private string GetCellValue(DataGridView gridView, int columnIndex, int rowIndex)
+        {
+            return gridView[columnIndex, rowIndex].Value?.ToString() ?? "N/A";
+        }
+
+        private GPSPoint ParseGPSPointFromCell(DataGridView gridView, int columnIndex, int rowIndex)
+        {
+            var pointString = GetCellValue(gridView, columnIndex, rowIndex);
+            if (TryParseCoordinates(pointString, out LatitudeDirection latitudeDirection, out double latitude, out LongitudeDirection longitudeDirection, out double longitude))
+            {
+                return new GPSPoint(latitudeDirection, latitude, longitudeDirection, longitude);
+            }
+            throw new FormatException("Invalid GPS data");
+        }
+
+        private void dataGridView1_CellMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            // Check if the click is on a valid cell
+            if (e.RowIndex >= 0 && e.ColumnIndex >= 0 && e.ColumnIndex < propertyGridView.Columns.Count - IconsSize)
+            {
+                var cellValue = GetCellValue(propertyGridView, e.ColumnIndex, e.RowIndex);
+                // Show the message box
+                MessageBox.Show($"Cell at row {e.RowIndex + 1}, column {e.ColumnIndex + 1} \nValue: {cellValue}", "Cell Double-Clicked");
+            }
+        }
+
+        private void propertyGridView_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            // Check if the click is on a valid cell
+            if (e.RowIndex >= 0 && e.ColumnIndex >= 0 && e.ColumnIndex == propertyGridView.Columns.Count - 1)
+            {
+                int conscriptionNumber = int.Parse(GetCellValue(propertyGridView, 0, e.RowIndex));
+
+                DialogResult dialogResult = MessageBox.Show($"Are you sure you want to delete Property {conscriptionNumber}?", "Delete Property", MessageBoxButtons.YesNo);
+
+                if (dialogResult == DialogResult.No)
+                {
+                    return;
+                }
+
+                // Parse GPS points from cells
+                GPSPoint leftGPSPoint = ParseGPSPointFromCell(propertyGridView, 3, e.RowIndex);
+                GPSPoint rightGPSPoint = ParseGPSPointFromCell(propertyGridView, 4, e.RowIndex);
+
+                GPSRectangle area = new GPSRectangle(leftGPSPoint, rightGPSPoint);
+
+                string description = GetCellValue(propertyGridView, 1, e.RowIndex);
+                Property property = new Property(conscriptionNumber, description, area);
+
+                if (Program.ApplicationLogic.DeleteProperty(property))
+                    propertyGridView.Rows.RemoveAt(e.RowIndex);
+            }
+        }
+
     }
 }

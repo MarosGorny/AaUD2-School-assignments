@@ -96,6 +96,24 @@ public class ApplicationLogic
             }
         }
     }
+    public bool DeleteProperty(Property property)
+    {
+        var propertyQuadTreeObject = new QuadTreeObject<int, string>(property.ConscriptionNumber, property.Description, property);
+        var foundPropertyNode = _propertyQuadTree.FindNode(propertyQuadTreeObject);
+
+        if (foundPropertyNode is not null)
+        {
+            var deletedProperty = foundPropertyNode.Delete(propertyQuadTreeObject) as Property;
+            if (deletedProperty is not null)
+            {
+                deletedProperty.ReleaseParcels();
+                _mixedQuadTree.Delete(propertyQuadTreeObject);
+                return true;
+            }
+        }
+
+        return false;
+    }
 
     public void AddParcel(Parcel parcel)
     {
@@ -130,25 +148,6 @@ public class ApplicationLogic
             {
                 deletedParcel.ReleaseProperties(); 
                 _mixedQuadTree.Delete(parcelQuadTreeObject); 
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public bool DeleteProperty(Property property)
-    {
-        var propertyQuadTreeObject = new QuadTreeObject<int, string>(property.ConscriptionNumber, property.Description, property);
-        var foundPropertyNode = _propertyQuadTree.FindNode(propertyQuadTreeObject);
-
-        if (foundPropertyNode is not null)
-        {
-            var deletedProperty = foundPropertyNode.Delete(propertyQuadTreeObject) as Property;
-            if (deletedProperty is not null)
-            {
-                deletedProperty.ReleaseParcels();
-                _mixedQuadTree.Delete(propertyQuadTreeObject);
                 return true;
             }
         }

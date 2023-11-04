@@ -39,12 +39,11 @@
             latNRadioButton = new RadioButton();
             latSRadioButton = new RadioButton();
             searchPropertiesButton = new Button();
-            descriptionLabel = new Label();
             descriptionTextBox = new TextBox();
-            conscriptionNumberLabel = new Label();
-            conscriptionNumberTextBox = new TextBox();
             searchGroupBox = new GroupBox();
             insertPropertyGroupBox = new GroupBox();
+            label1 = new Label();
+            conscriptionNumberNumericUpDown = new NumericUpDown();
             insertGPS1GroupBox = new GroupBox();
             gps1LongGroupBox = new GroupBox();
             gps1LongNumericUpDown = new NumericUpDown();
@@ -77,6 +76,7 @@
             latGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)latNumericUpDown).BeginInit();
             insertPropertyGroupBox.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)conscriptionNumberNumericUpDown).BeginInit();
             insertGPS1GroupBox.SuspendLayout();
             gps1LongGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)gps1LongNumericUpDown).BeginInit();
@@ -105,6 +105,7 @@
             propertyGridView.Size = new Size(758, 740);
             propertyGridView.TabIndex = 41;
             propertyGridView.CellContentClick += dataGridView1_CellContentClick;
+            propertyGridView.CellMouseClick += propertyGridView_CellMouseClick;
             propertyGridView.CellMouseDoubleClick += dataGridView1_CellMouseDoubleClick;
             // 
             // longGroupBox
@@ -209,41 +210,14 @@
             searchPropertiesButton.UseVisualStyleBackColor = true;
             searchPropertiesButton.Click += button1_Click;
             // 
-            // descriptionLabel
-            // 
-            descriptionLabel.AutoSize = true;
-            descriptionLabel.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            descriptionLabel.Location = new Point(14, 423);
-            descriptionLabel.Name = "descriptionLabel";
-            descriptionLabel.Size = new Size(121, 28);
-            descriptionLabel.TabIndex = 45;
-            descriptionLabel.Text = "Description";
-            // 
             // descriptionTextBox
             // 
-            descriptionTextBox.Location = new Point(11, 451);
+            descriptionTextBox.Location = new Point(11, 434);
             descriptionTextBox.Multiline = true;
             descriptionTextBox.Name = "descriptionTextBox";
+            descriptionTextBox.PlaceholderText = "Description of Property";
             descriptionTextBox.Size = new Size(286, 27);
             descriptionTextBox.TabIndex = 44;
-            // 
-            // conscriptionNumberLabel
-            // 
-            conscriptionNumberLabel.AutoSize = true;
-            conscriptionNumberLabel.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            conscriptionNumberLabel.Location = new Point(14, 372);
-            conscriptionNumberLabel.Name = "conscriptionNumberLabel";
-            conscriptionNumberLabel.Size = new Size(214, 28);
-            conscriptionNumberLabel.TabIndex = 43;
-            conscriptionNumberLabel.Text = "Conscription Number";
-            conscriptionNumberLabel.Click += label1_Click;
-            // 
-            // conscriptionNumberTextBox
-            // 
-            conscriptionNumberTextBox.Location = new Point(19, 644);
-            conscriptionNumberTextBox.Name = "conscriptionNumberTextBox";
-            conscriptionNumberTextBox.Size = new Size(286, 27);
-            conscriptionNumberTextBox.TabIndex = 42;
             // 
             // searchGroupBox
             // 
@@ -256,12 +230,11 @@
             // 
             // insertPropertyGroupBox
             // 
-            insertPropertyGroupBox.Anchor = AnchorStyles.Left;
+            insertPropertyGroupBox.Controls.Add(label1);
+            insertPropertyGroupBox.Controls.Add(conscriptionNumberNumericUpDown);
             insertPropertyGroupBox.Controls.Add(insertGPS1GroupBox);
             insertPropertyGroupBox.Controls.Add(insertGPS2GroupBox);
             insertPropertyGroupBox.Controls.Add(insertPropertyButton);
-            insertPropertyGroupBox.Controls.Add(conscriptionNumberLabel);
-            insertPropertyGroupBox.Controls.Add(descriptionLabel);
             insertPropertyGroupBox.Controls.Add(descriptionTextBox);
             insertPropertyGroupBox.Location = new Point(8, 243);
             insertPropertyGroupBox.Name = "insertPropertyGroupBox";
@@ -269,6 +242,24 @@
             insertPropertyGroupBox.TabIndex = 49;
             insertPropertyGroupBox.TabStop = false;
             insertPropertyGroupBox.Text = "Insert property";
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
+            label1.Location = new Point(11, 403);
+            label1.Name = "label1";
+            label1.Size = new Size(165, 20);
+            label1.TabIndex = 54;
+            label1.Text = "Conscription number: ";
+            // 
+            // conscriptionNumberNumericUpDown
+            // 
+            conscriptionNumberNumericUpDown.Location = new Point(177, 401);
+            conscriptionNumberNumericUpDown.Maximum = new decimal(new int[] { int.MaxValue, 0, 0, 0 });
+            conscriptionNumberNumericUpDown.Name = "conscriptionNumberNumericUpDown";
+            conscriptionNumberNumericUpDown.Size = new Size(120, 27);
+            conscriptionNumberNumericUpDown.TabIndex = 53;
             // 
             // insertGPS1GroupBox
             // 
@@ -375,7 +366,7 @@
             // 
             insertGPS2GroupBox.Controls.Add(gps2LongGroupBox);
             insertGPS2GroupBox.Controls.Add(gps2LatGroupBox);
-            insertGPS2GroupBox.Location = new Point(11, 199);
+            insertGPS2GroupBox.Location = new Point(11, 216);
             insertGPS2GroupBox.Name = "insertGPS2GroupBox";
             insertGPS2GroupBox.Size = new Size(286, 179);
             insertGPS2GroupBox.TabIndex = 51;
@@ -531,6 +522,7 @@
             Edit.MinimumWidth = 6;
             Edit.Name = "Edit";
             Edit.ReadOnly = true;
+            Edit.ToolTipText = "Edit";
             // 
             // Delete
             // 
@@ -546,7 +538,6 @@
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             AutoSize = true;
-            Controls.Add(conscriptionNumberTextBox);
             Controls.Add(propertyGridView);
             Controls.Add(longGroupBox);
             Controls.Add(latGroupBox);
@@ -564,6 +555,7 @@
             ((System.ComponentModel.ISupportInitialize)latNumericUpDown).EndInit();
             insertPropertyGroupBox.ResumeLayout(false);
             insertPropertyGroupBox.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)conscriptionNumberNumericUpDown).EndInit();
             insertGPS1GroupBox.ResumeLayout(false);
             gps1LongGroupBox.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)gps1LongNumericUpDown).EndInit();
@@ -575,7 +567,6 @@
             gps2LatGroupBox.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)gps2LatNumericUpDown).EndInit();
             ResumeLayout(false);
-            PerformLayout();
         }
 
         #endregion
@@ -590,10 +581,7 @@
         private RadioButton latNRadioButton;
         private RadioButton latSRadioButton;
         private Button searchPropertiesButton;
-        private Label descriptionLabel;
         private TextBox descriptionTextBox;
-        private Label conscriptionNumberLabel;
-        private TextBox conscriptionNumberTextBox;
         private GroupBox searchGroupBox;
         private GroupBox insertPropertyGroupBox;
         private Button insertPropertyButton;
@@ -615,6 +603,8 @@
         private NumericUpDown gps1LatNumericUpDown;
         private RadioButton gps1LatNRadioButton;
         private RadioButton gps1LatSRadioButton;
+        private NumericUpDown conscriptionNumberNumericUpDown;
+        private Label label1;
         private DataGridViewTextBoxColumn PropertyTableID;
         private DataGridViewTextBoxColumn PropertyTableDescription;
         private DataGridViewTextBoxColumn ParcelList;
