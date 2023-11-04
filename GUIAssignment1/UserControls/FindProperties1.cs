@@ -118,35 +118,43 @@ namespace GUIAssignment1.UserControls
 
         private void insertPropertyButton_Click(object sender, EventArgs e)
         {
-            GPSPoint leftPoint = CreateGPSPointFromInputs(
-                gps1LatNumericUpDown, gps1LongNumericUpDown,
-                gps1LatNRadioButton, gps1LongERadioButton
-            );
+            try
+            {
+                GPSPoint leftPoint = CreateGPSPointFromInputs(
+                    gps1LatNumericUpDown, gps1LongNumericUpDown,
+                    gps1LatNRadioButton, gps1LongERadioButton
+                );
 
-            GPSPoint rightPoint = CreateGPSPointFromInputs(
-                gps2LatNumericUpDown, gps2LongNumericUpDown,
-                gps2LatNRadioButton, gps2LongERadioButton
-            );
+                GPSPoint rightPoint = CreateGPSPointFromInputs(
+                    gps2LatNumericUpDown, gps2LongNumericUpDown,
+                    gps2LatNRadioButton, gps2LongERadioButton
+                );
 
-            GPSRectangle area = new GPSRectangle(leftPoint, rightPoint);
+                GPSRectangle area = new GPSRectangle(leftPoint, rightPoint);
 
-            int conscriptionNumber = (int)conscriptionNumberNumericUpDown.Value;
-            string description = descriptionTextBox.Text;
+                int conscriptionNumber = (int)conscriptionNumberNumericUpDown.Value;
+                string description = descriptionTextBox.Text;
 
-            Property property = new Property(conscriptionNumber, description, area);
-            Program.ApplicationLogic.AddProperty(property);
+                Property property = new Property(conscriptionNumber, description, area);
+                Program.ApplicationLogic.AddProperty(property);
 
-            ResetInputFields();
+                ResetInputFields();
+            }
+            catch (ArgumentException ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
         }
 
         // Resets the numeric up/downs and textboxes to their default values.
         private void ResetInputFields()
         {
-            gps1LatNumericUpDown.Value = 0;
-            gps1LongNumericUpDown.Value = 0;
-            gps2LatNumericUpDown.Value = 0;
-            gps2LongNumericUpDown.Value = 0;
-            conscriptionNumberNumericUpDown.Value = 0;
+            gps1LatNumericUpDown.Value = conscriptionNumberNumericUpDown.Minimum;
+            gps1LongNumericUpDown.Value = conscriptionNumberNumericUpDown.Minimum;
+            gps2LatNumericUpDown.Value = conscriptionNumberNumericUpDown.Minimum;
+            gps2LongNumericUpDown.Value = conscriptionNumberNumericUpDown.Minimum;
+            conscriptionNumberNumericUpDown.Value = conscriptionNumberNumericUpDown.Minimum;
             descriptionTextBox.Text = "";
         }
 
