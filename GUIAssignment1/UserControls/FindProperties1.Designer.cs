@@ -308,6 +308,7 @@
             insertPropertyButton.TabIndex = 50;
             insertPropertyButton.Text = "Insert Propety";
             insertPropertyButton.UseVisualStyleBackColor = true;
+            insertPropertyButton.Click += insertPropertyButton_Click;
             // 
             // gps2LatNRadioButton
             // 
