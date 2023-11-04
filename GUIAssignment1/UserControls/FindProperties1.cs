@@ -1,5 +1,6 @@
 ﻿using QuadTreeDS.SpatialItems;
 using SemesterAssignment1.RealtyObjects;
+using static GUIAssignment1.RealtyEditForm;
 
 namespace GUIAssignment1.UserControls
 {
@@ -221,6 +222,47 @@ namespace GUIAssignment1.UserControls
 
                 if (Program.ApplicationLogic.DeleteProperty(property))
                     propertyGridView.Rows.RemoveAt(e.RowIndex);
+            }
+            else if (e.RowIndex >= 0 && e.ColumnIndex >= 0 && e.ColumnIndex == propertyGridView.Columns.Count - 2)
+            {
+                int conscriptionNumber = int.Parse(GetCellValue(propertyGridView, 0, e.RowIndex));
+                string description = GetCellValue(propertyGridView, 1, e.RowIndex);
+
+                // Parse GPS points from cells
+                GPSPoint leftGPSPoint = ParseGPSPointFromCell(propertyGridView, 3, e.RowIndex);
+                GPSPoint rightGPSPoint = ParseGPSPointFromCell(propertyGridView, 4, e.RowIndex);
+                GPSRectangle area = new GPSRectangle(leftGPSPoint, rightGPSPoint);
+
+                Property property = new Property(conscriptionNumber, description, area);
+                var result = Program.ApplicationLogic.FindObject(property);
+                var foundProperty = result.foundObject as Property;
+
+                if (foundProperty is null)
+                {
+                    MessageBox.Show($"Property {conscriptionNumber} does not exist", "Property not found");
+                    return;
+                }
+                RealtyEditForm editForm = new RealtyEditForm(foundProperty);
+                editForm.RealtyObjectUpdated += EditForm_RealtyObjectUpdated;
+                editForm.Show();
+            }
+        }
+
+        private void EditForm_RealtyObjectUpdated(object sender, RealtyObjectEventArgs e)
+        {
+            // Handle the updated RealtyObject, e.g., update the grid view or internal list
+            var oldRealtyObject = e.OldRealtyObject;
+            var updatedRealtyObject = e.UpdatedRealtyObject;
+
+            if(oldRealtyObject is Property oldProperty && updatedRealtyObject is Property updatedProperty)
+            {
+                //check if key is the same
+                //check if gps points are the same
+                //check if the description is the same
+            }
+            else if(oldRealtyObject is Parcel oldParcel && updatedRealtyObject is Parcel updatedParcel)
+            {
+
             }
         }
 

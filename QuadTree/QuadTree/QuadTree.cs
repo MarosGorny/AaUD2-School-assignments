@@ -41,9 +41,9 @@ public class QuadTree<K, V> where K : IComparable<K>
         return Root.Find(rectangle);
     }
 
-    public QuadTreeNode<K, V>? FindNode(QuadTreeObject<K, V> quadTreeObject)
+    public (QuadTreeNode<K, V>? foundNode, QuadTreeObject<K, V>? foundObject) FindNode(QuadTreeObject<K, V> quadTreeObject)
     {
-        return Root.FindNode(quadTreeObject.Item, quadTreeObject.Key);
+        return Root.LocateNodeAndObjectForItem(quadTreeObject.Item, quadTreeObject.Key);
     }
 
     public SpatialItem? Delete(QuadTreeObject<K, V> quadTreeObject)

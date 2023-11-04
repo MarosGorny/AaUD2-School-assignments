@@ -99,7 +99,7 @@ public class ApplicationLogic
     public bool DeleteProperty(Property property)
     {
         var propertyQuadTreeObject = new QuadTreeObject<int, string>(property.ConscriptionNumber, property.Description, property);
-        var foundPropertyNode = _propertyQuadTree.FindNode(propertyQuadTreeObject);
+        var foundPropertyNode = _propertyQuadTree.FindNode(propertyQuadTreeObject).foundNode;
 
         if (foundPropertyNode is not null)
         {
@@ -139,7 +139,7 @@ public class ApplicationLogic
         var mixedQuadTreeKey = parcel.ParcelNumber * -1; //FIXME: Better to implement option in QuadTree to use duplicate keys
 
         var parcelQuadTreeObject = new QuadTreeObject<int, string>(mixedQuadTreeKey, parcel.Description, parcel);
-        var foundParcelNode = _parcelQuadTree.FindNode(parcelQuadTreeObject);
+        var foundParcelNode = _parcelQuadTree.FindNode(parcelQuadTreeObject).foundNode;
 
         if (foundParcelNode is not null)
         {
@@ -153,5 +153,40 @@ public class ApplicationLogic
         }
 
         return false;
+    }
+
+    //need to find spatialItem from quadtree
+    public (QuadTreeNode<int, string>? foundNode, SpatialItem? foundObject) FindObject(SpatialItem spatialItem)
+    {
+        if(spatialItem is Property property)
+        {
+            return FindProperty(property);
+        }
+        else if(spatialItem is Parcel parcel)
+        {
+            return FindParcel(parcel);
+        }
+        else
+        {
+            throw new Exception("SpatialItem is not of type Property or Parcel");
+        }
+    }
+
+    public (QuadTreeNode<int,string>? foundNode, Parcel? parcel) FindParcel(Parcel parcel)
+    {
+        QuadTreeObject<int, string> quadTreeObject = new QuadTreeObject<int, string>(parcel.ParcelNumber, parcel.Description, parcel);
+        var result = _parcelQuadTree.FindNode(quadTreeObject);
+        var foundNode = result.foundNode;
+        var foundParcel=  result.foundObject?.Item as Parcel;
+        return (foundNode, foundParcel);
+    }
+
+    public (QuadTreeNode<int, string>? foundNode, Property? property) FindProperty(Property property)
+    {
+        QuadTreeObject<int, string> quadTreeObject = new QuadTreeObject<int, string>(property.ConscriptionNumber, property.Description, property);
+        var result = _propertyQuadTree.FindNode(quadTreeObject);
+        var foundNode = result.foundNode;
+        var foundProperty = result.foundObject?.Item as Property;
+        return (foundNode, foundProperty);
     }
 }

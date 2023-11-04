@@ -30,6 +30,13 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FindProperties));
             propertyGridView = new DataGridView();
+            PropertyTableID = new DataGridViewTextBoxColumn();
+            PropertyTableDescription = new DataGridViewTextBoxColumn();
+            ParcelList = new DataGridViewTextBoxColumn();
+            LeftBottom = new DataGridViewTextBoxColumn();
+            RightTop = new DataGridViewTextBoxColumn();
+            Edit = new DataGridViewImageColumn();
+            Delete = new DataGridViewImageColumn();
             longGroupBox = new GroupBox();
             longNumericUpDown = new NumericUpDown();
             longERadioButton = new RadioButton();
@@ -63,13 +70,6 @@
             gps2LatNRadioButton = new RadioButton();
             gps2LatSRadioButton = new RadioButton();
             insertPropertyButton = new Button();
-            PropertyTableID = new DataGridViewTextBoxColumn();
-            PropertyTableDescription = new DataGridViewTextBoxColumn();
-            ParcelList = new DataGridViewTextBoxColumn();
-            LeftBottom = new DataGridViewTextBoxColumn();
-            RightTop = new DataGridViewTextBoxColumn();
-            Edit = new DataGridViewImageColumn();
-            Delete = new DataGridViewImageColumn();
             ((System.ComponentModel.ISupportInitialize)propertyGridView).BeginInit();
             longGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)longNumericUpDown).BeginInit();
@@ -107,6 +107,65 @@
             propertyGridView.CellContentClick += dataGridView1_CellContentClick;
             propertyGridView.CellMouseClick += propertyGridView_CellMouseClick;
             propertyGridView.CellMouseDoubleClick += dataGridView1_CellMouseDoubleClick;
+            // 
+            // PropertyTableID
+            // 
+            PropertyTableID.FillWeight = 87.28442F;
+            PropertyTableID.HeaderText = "Conscription Number";
+            PropertyTableID.MinimumWidth = 6;
+            PropertyTableID.Name = "PropertyTableID";
+            PropertyTableID.ReadOnly = true;
+            // 
+            // PropertyTableDescription
+            // 
+            PropertyTableDescription.FillWeight = 87.28442F;
+            PropertyTableDescription.HeaderText = "Description";
+            PropertyTableDescription.MinimumWidth = 6;
+            PropertyTableDescription.Name = "PropertyTableDescription";
+            PropertyTableDescription.ReadOnly = true;
+            // 
+            // ParcelList
+            // 
+            ParcelList.FillWeight = 87.28442F;
+            ParcelList.HeaderText = "Parcel List";
+            ParcelList.MinimumWidth = 6;
+            ParcelList.Name = "ParcelList";
+            ParcelList.ReadOnly = true;
+            // 
+            // LeftBottom
+            // 
+            LeftBottom.FillWeight = 87.28442F;
+            LeftBottom.HeaderText = "Left Bottom Position";
+            LeftBottom.MinimumWidth = 6;
+            LeftBottom.Name = "LeftBottom";
+            LeftBottom.ReadOnly = true;
+            // 
+            // RightTop
+            // 
+            RightTop.FillWeight = 87.28442F;
+            RightTop.HeaderText = "Right Top Position";
+            RightTop.MinimumWidth = 6;
+            RightTop.Name = "RightTop";
+            RightTop.ReadOnly = true;
+            // 
+            // Edit
+            // 
+            Edit.FillWeight = 25F;
+            Edit.HeaderText = "";
+            Edit.Image = (Image)resources.GetObject("Edit.Image");
+            Edit.MinimumWidth = 6;
+            Edit.Name = "Edit";
+            Edit.ReadOnly = true;
+            Edit.ToolTipText = "Edit";
+            // 
+            // Delete
+            // 
+            Delete.FillWeight = 25F;
+            Delete.HeaderText = "";
+            Delete.Image = (Image)resources.GetObject("Delete.Image");
+            Delete.MinimumWidth = 6;
+            Delete.Name = "Delete";
+            Delete.ReadOnly = true;
             // 
             // longGroupBox
             // 
@@ -257,9 +316,11 @@
             // 
             conscriptionNumberNumericUpDown.Location = new Point(177, 401);
             conscriptionNumberNumericUpDown.Maximum = new decimal(new int[] { int.MaxValue, 0, 0, 0 });
+            conscriptionNumberNumericUpDown.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             conscriptionNumberNumericUpDown.Name = "conscriptionNumberNumericUpDown";
             conscriptionNumberNumericUpDown.Size = new Size(120, 27);
             conscriptionNumberNumericUpDown.TabIndex = 53;
+            conscriptionNumberNumericUpDown.Value = new decimal(new int[] { 1, 0, 0, 0 });
             // 
             // insertGPS1GroupBox
             // 
@@ -473,65 +534,6 @@
             insertPropertyButton.Text = "Insert Propety";
             insertPropertyButton.UseVisualStyleBackColor = true;
             insertPropertyButton.Click += insertPropertyButton_Click;
-            // 
-            // PropertyTableID
-            // 
-            PropertyTableID.FillWeight = 87.28442F;
-            PropertyTableID.HeaderText = "Conscription Number";
-            PropertyTableID.MinimumWidth = 6;
-            PropertyTableID.Name = "PropertyTableID";
-            PropertyTableID.ReadOnly = true;
-            // 
-            // PropertyTableDescription
-            // 
-            PropertyTableDescription.FillWeight = 87.28442F;
-            PropertyTableDescription.HeaderText = "Description";
-            PropertyTableDescription.MinimumWidth = 6;
-            PropertyTableDescription.Name = "PropertyTableDescription";
-            PropertyTableDescription.ReadOnly = true;
-            // 
-            // ParcelList
-            // 
-            ParcelList.FillWeight = 87.28442F;
-            ParcelList.HeaderText = "Parcel List";
-            ParcelList.MinimumWidth = 6;
-            ParcelList.Name = "ParcelList";
-            ParcelList.ReadOnly = true;
-            // 
-            // LeftBottom
-            // 
-            LeftBottom.FillWeight = 87.28442F;
-            LeftBottom.HeaderText = "Left Bottom Position";
-            LeftBottom.MinimumWidth = 6;
-            LeftBottom.Name = "LeftBottom";
-            LeftBottom.ReadOnly = true;
-            // 
-            // RightTop
-            // 
-            RightTop.FillWeight = 87.28442F;
-            RightTop.HeaderText = "Right Top Position";
-            RightTop.MinimumWidth = 6;
-            RightTop.Name = "RightTop";
-            RightTop.ReadOnly = true;
-            // 
-            // Edit
-            // 
-            Edit.FillWeight = 25F;
-            Edit.HeaderText = "";
-            Edit.Image = (Image)resources.GetObject("Edit.Image");
-            Edit.MinimumWidth = 6;
-            Edit.Name = "Edit";
-            Edit.ReadOnly = true;
-            Edit.ToolTipText = "Edit";
-            // 
-            // Delete
-            // 
-            Delete.FillWeight = 25F;
-            Delete.HeaderText = "";
-            Delete.Image = (Image)resources.GetObject("Delete.Image");
-            Delete.MinimumWidth = 6;
-            Delete.Name = "Delete";
-            Delete.ReadOnly = true;
             // 
             // FindProperties
             // 

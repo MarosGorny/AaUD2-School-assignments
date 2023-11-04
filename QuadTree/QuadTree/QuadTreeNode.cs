@@ -338,7 +338,7 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
     #region Deletion
     public SpatialItem? Delete(QuadTreeObject<K, V> quadTreeObject) //TODO: Return bool or object
     {
-        QuadTreeNode<K, V>? nodeContainingObject = FindNode(quadTreeObject.Item, quadTreeObject.Key);
+        QuadTreeNode<K, V>? nodeContainingObject = LocateNodeAndObjectForItem(quadTreeObject.Item, quadTreeObject.Key).foundNode;
         if (nodeContainingObject != null)
         {
             return TryRemoveDataFromNode(nodeContainingObject, quadTreeObject);
@@ -410,7 +410,7 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
         return foundItems;
     }
 
-    public QuadTreeNode<K, V>? FindNode(SpatialItem searchItem, K key)
+    public (QuadTreeNode<K, V>? foundNode, QuadTreeObject<K,V>? foundObject) LocateNodeAndObjectForItem(SpatialItem searchItem, K key)
     {
         Queue<QuadTreeNode<K, V>> nodesToCheck = new Queue<QuadTreeNode<K, V>>();
         nodesToCheck.Enqueue(this);
@@ -419,9 +419,10 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
         {
             QuadTreeNode<K, V> currentNode = nodesToCheck.Dequeue();
 
-            if (ContainsDataItem(currentNode, searchItem, key))
+            var quadTreeOject = ContainsDataItem(currentNode, searchItem, key);
+            if (quadTreeOject is not null)
             {
-                return currentNode;
+                return (currentNode, quadTreeOject);
             }
 
             if (currentNode.Children != null)
@@ -436,7 +437,7 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
                 }
             }
         }
-        return null; 
+        return (null,null); 
     }
     #endregion
 
@@ -456,7 +457,7 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
     //    return false;
     //}
 
-    private bool ContainsDataItem(QuadTreeNode<K, V> node, SpatialItem searchItem, K key)
+    private QuadTreeObject<K,V>? ContainsDataItem(QuadTreeNode<K, V> node, SpatialItem searchItem, K key)
     {
 
         if(searchItem is Point)
@@ -464,7 +465,7 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
             foreach (var qto in node.PointData)
             {
                 if (qto.Key.Equals(key))
-                    return true;
+                    return qto;
             }
         }
 
@@ -473,10 +474,10 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
             foreach (var qto in node.RectangleData)
             {
                 if (qto.Key.Equals(key))
-                    return true;
+                    return qto;
             }
         }
-        return false;
+        return null;
 
     }
 

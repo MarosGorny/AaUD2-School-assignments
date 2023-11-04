@@ -173,8 +173,8 @@ public class GPSPoint : Point
         LongitudeDirection = longDir;
 
         // Compute the relative coordinates 
-        X = latVal * (double)latDir;
-        Y = longVal * (double)longDir;
+        X = latVal * Math.Abs((double)latDir);
+        Y = longVal * Math.Abs((double)longDir);
     }
 
     public override string ToString()

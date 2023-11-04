@@ -44,6 +44,7 @@ public class Property : RealtyObject
         PositionedOnParcels.ForEach(parcel => parcel.RemoveProperty(this));
         PositionedOnParcels.Clear();
     }
+
 }
 
 /// <summary>
