@@ -54,6 +54,7 @@
             latNumericUpDown2 = new NumericUpDown();
             latNRadioButton2 = new RadioButton();
             latSRadioButton2 = new RadioButton();
+            showAllButton = new Button();
             ((System.ComponentModel.ISupportInitialize)allObjectsGridView).BeginInit();
             longGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)longNumericUpDown).BeginInit();
@@ -341,10 +342,21 @@
             latSRadioButton2.Text = "S";
             latSRadioButton2.UseVisualStyleBackColor = true;
             // 
+            // showAllButton
+            // 
+            showAllButton.Location = new Point(587, 228);
+            showAllButton.Name = "showAllButton";
+            showAllButton.Size = new Size(493, 28);
+            showAllButton.TabIndex = 57;
+            showAllButton.Text = "Show All Properties And Parcels";
+            showAllButton.UseVisualStyleBackColor = true;
+            showAllButton.Click += showAllButton_Click;
+            // 
             // FindAllObjects3
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
+            Controls.Add(showAllButton);
             Controls.Add(longGroupBox2);
             Controls.Add(latGroupBox2);
             Controls.Add(rightTopGPSLabel);
@@ -400,5 +412,6 @@
         private DataGridViewTextBoxColumn ParcelList;
         private DataGridViewTextBoxColumn LeftBottom;
         private DataGridViewTextBoxColumn RightTop;
+        private Button showAllButton;
     }
 }

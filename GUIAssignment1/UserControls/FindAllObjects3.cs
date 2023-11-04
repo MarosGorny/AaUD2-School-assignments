@@ -14,15 +14,31 @@ namespace GUIAssignment1.UserControls
         }
 
 
-
-        private void button1_Click(object sender, EventArgs e)
+        private void label1_Click(object sender, EventArgs e)
         {
 
         }
 
-        private void label1_Click(object sender, EventArgs e)
+        private void showAllButton_Click(object sender, EventArgs e)
         {
+            allObjectsGridView.Rows.Clear();
+            allObjectsGridView.Refresh();
 
+            var foundObjects = Program.ApplicationLogic.GetAllRealtyObjects();
+
+            foreach (var foundObject in foundObjects)
+            {
+                if (foundObject is Property foundProperty)
+                {
+                    AddPropertyToGrid(foundProperty);
+                }
+                else if (foundObject is Parcel foundParcel)
+                {
+                    AddParcelToGrid(foundParcel);
+                }
+
+                UpdateRowHeader();
+            }
         }
 
         private void searchAllObjectsButton_Click(object sender, EventArgs e)
@@ -114,6 +130,7 @@ namespace GUIAssignment1.UserControls
             int lastRowIndex = allObjectsGridView.Rows.Count - 1;
             allObjectsGridView.Rows[lastRowIndex].HeaderCell.Value = (lastRowIndex + 1).ToString();
         }
+
 
     }
 }

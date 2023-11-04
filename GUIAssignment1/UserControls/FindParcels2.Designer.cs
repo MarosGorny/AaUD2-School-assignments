@@ -28,13 +28,17 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FindParcels));
             parcelGridView = new DataGridView();
             ParcelTableID = new DataGridViewTextBoxColumn();
             PropertyTableDescription = new DataGridViewTextBoxColumn();
             PropertyList = new DataGridViewTextBoxColumn();
             LeftBottom = new DataGridViewTextBoxColumn();
             RightTop = new DataGridViewTextBoxColumn();
+            Edit = new DataGridViewImageColumn();
+            Delete = new DataGridViewImageColumn();
             searchGroupBox = new GroupBox();
+            searchPropertiesButton = new Button();
             longGroupBox = new GroupBox();
             longNumericUpDown = new NumericUpDown();
             longERadioButton = new RadioButton();
@@ -43,8 +47,9 @@
             latNumericUpDown = new NumericUpDown();
             latNRadioButton = new RadioButton();
             latSRadioButton = new RadioButton();
-            searchParcelsButoon = new Button();
-            insertParcelGroupBox = new GroupBox();
+            insertGroupBox = new GroupBox();
+            parcelNumberLabel = new Label();
+            parcelNumberNumericUpDown = new NumericUpDown();
             insertGPS1GroupBox = new GroupBox();
             gps1LongGroupBox = new GroupBox();
             gps1LongNumericUpDown = new NumericUpDown();
@@ -54,7 +59,6 @@
             gps1LatNumericUpDown = new NumericUpDown();
             gps1LatNRadioButton = new RadioButton();
             gps1LatSRadioButton = new RadioButton();
-            parcelNumberTextBox = new TextBox();
             insertGPS2GroupBox = new GroupBox();
             gps2LongGroupBox = new GroupBox();
             gps2LongNumericUpDown = new NumericUpDown();
@@ -65,8 +69,6 @@
             gps2LatNRadioButton = new RadioButton();
             gps2LatSRadioButton = new RadioButton();
             insertParcelButton = new Button();
-            parcelNumberLabel = new Label();
-            descriptionLabel = new Label();
             descriptionTextBox = new TextBox();
             ((System.ComponentModel.ISupportInitialize)parcelGridView).BeginInit();
             searchGroupBox.SuspendLayout();
@@ -74,7 +76,8 @@
             ((System.ComponentModel.ISupportInitialize)longNumericUpDown).BeginInit();
             latGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)latNumericUpDown).BeginInit();
-            insertParcelGroupBox.SuspendLayout();
+            insertGroupBox.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)parcelNumberNumericUpDown).BeginInit();
             insertGPS1GroupBox.SuspendLayout();
             gps1LongGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)gps1LongNumericUpDown).BeginInit();
@@ -94,19 +97,21 @@
             parcelGridView.AllowUserToOrderColumns = true;
             parcelGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             parcelGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            parcelGridView.Columns.AddRange(new DataGridViewColumn[] { ParcelTableID, PropertyTableDescription, PropertyList, LeftBottom, RightTop });
-            parcelGridView.Location = new Point(339, 25);
+            parcelGridView.Columns.AddRange(new DataGridViewColumn[] { ParcelTableID, PropertyTableDescription, PropertyList, LeftBottom, RightTop, Edit, Delete });
+            parcelGridView.Location = new Point(339, 21);
             parcelGridView.Name = "parcelGridView";
             parcelGridView.ReadOnly = true;
             parcelGridView.RowHeadersWidth = 51;
             parcelGridView.RowTemplate.Height = 29;
-            parcelGridView.Size = new Size(749, 737);
+            parcelGridView.Size = new Size(749, 741);
             parcelGridView.TabIndex = 45;
-            parcelGridView.CellContentClick += propertyGridView_CellContentClick;
+            parcelGridView.CellContentClick += parcelGridView_CellContentClick;
+            parcelGridView.CellMouseClick += parcelGridView_CellMouseClick;
             parcelGridView.CellMouseDoubleClick += parcelGridView_CellMouseDoubleClick;
             // 
             // ParcelTableID
             // 
+            ParcelTableID.FillWeight = 88.1550751F;
             ParcelTableID.HeaderText = "Parcel Number";
             ParcelTableID.MinimumWidth = 6;
             ParcelTableID.Name = "ParcelTableID";
@@ -114,6 +119,7 @@
             // 
             // PropertyTableDescription
             // 
+            PropertyTableDescription.FillWeight = 88.1550751F;
             PropertyTableDescription.HeaderText = "Description";
             PropertyTableDescription.MinimumWidth = 6;
             PropertyTableDescription.Name = "PropertyTableDescription";
@@ -121,6 +127,7 @@
             // 
             // PropertyList
             // 
+            PropertyList.FillWeight = 88.1550751F;
             PropertyList.HeaderText = "Property List";
             PropertyList.MinimumWidth = 6;
             PropertyList.Name = "PropertyList";
@@ -128,6 +135,7 @@
             // 
             // LeftBottom
             // 
+            LeftBottom.FillWeight = 88.1550751F;
             LeftBottom.HeaderText = "Left Bottom Position";
             LeftBottom.MinimumWidth = 6;
             LeftBottom.Name = "LeftBottom";
@@ -135,32 +143,61 @@
             // 
             // RightTop
             // 
+            RightTop.FillWeight = 88.1550751F;
             RightTop.HeaderText = "Right Top Position";
             RightTop.MinimumWidth = 6;
             RightTop.Name = "RightTop";
             RightTop.ReadOnly = true;
             // 
+            // Edit
+            // 
+            Edit.FillWeight = 25F;
+            Edit.HeaderText = "";
+            Edit.Image = (Image)resources.GetObject("Edit.Image");
+            Edit.MinimumWidth = 6;
+            Edit.Name = "Edit";
+            Edit.ReadOnly = true;
+            // 
+            // Delete
+            // 
+            Delete.FillWeight = 25F;
+            Delete.HeaderText = "";
+            Delete.Image = (Image)resources.GetObject("Delete.Image");
+            Delete.MinimumWidth = 6;
+            Delete.Name = "Delete";
+            Delete.ReadOnly = true;
+            // 
             // searchGroupBox
             // 
+            searchGroupBox.Controls.Add(searchPropertiesButton);
             searchGroupBox.Controls.Add(longGroupBox);
             searchGroupBox.Controls.Add(latGroupBox);
-            searchGroupBox.Controls.Add(searchParcelsButoon);
-            searchGroupBox.Location = new Point(17, 15);
+            searchGroupBox.Location = new Point(13, 12);
             searchGroupBox.Name = "searchGroupBox";
-            searchGroupBox.Size = new Size(316, 228);
-            searchGroupBox.TabIndex = 50;
+            searchGroupBox.Size = new Size(316, 219);
+            searchGroupBox.TabIndex = 49;
             searchGroupBox.TabStop = false;
             searchGroupBox.Text = "Search parcels by GPS point";
+            // 
+            // searchPropertiesButton
+            // 
+            searchPropertiesButton.Location = new Point(15, 174);
+            searchPropertiesButton.Name = "searchPropertiesButton";
+            searchPropertiesButton.Size = new Size(286, 29);
+            searchPropertiesButton.TabIndex = 50;
+            searchPropertiesButton.Text = "Search Parcels";
+            searchPropertiesButton.UseVisualStyleBackColor = true;
+            searchPropertiesButton.Click += searchPropertiesButton_Click;
             // 
             // longGroupBox
             // 
             longGroupBox.Controls.Add(longNumericUpDown);
             longGroupBox.Controls.Add(longERadioButton);
             longGroupBox.Controls.Add(longWRadioButton);
-            longGroupBox.Location = new Point(15, 118);
+            longGroupBox.Location = new Point(15, 100);
             longGroupBox.Name = "longGroupBox";
             longGroupBox.Size = new Size(286, 68);
-            longGroupBox.TabIndex = 43;
+            longGroupBox.TabIndex = 51;
             longGroupBox.TabStop = false;
             longGroupBox.Text = "Longitude (decimal degrees)";
             // 
@@ -203,10 +240,10 @@
             latGroupBox.Controls.Add(latNumericUpDown);
             latGroupBox.Controls.Add(latNRadioButton);
             latGroupBox.Controls.Add(latSRadioButton);
-            latGroupBox.Location = new Point(15, 44);
+            latGroupBox.Location = new Point(15, 26);
             latGroupBox.Name = "latGroupBox";
             latGroupBox.Size = new Size(286, 68);
-            latGroupBox.TabIndex = 42;
+            latGroupBox.TabIndex = 50;
             latGroupBox.TabStop = false;
             latGroupBox.Text = "Latitude (decimal degrees)";
             // 
@@ -244,32 +281,40 @@
             latSRadioButton.Text = "S";
             latSRadioButton.UseVisualStyleBackColor = true;
             // 
-            // searchParcelsButoon
+            // insertGroupBox
             // 
-            searchParcelsButoon.Location = new Point(15, 192);
-            searchParcelsButoon.Name = "searchParcelsButoon";
-            searchParcelsButoon.Size = new Size(286, 29);
-            searchParcelsButoon.TabIndex = 41;
-            searchParcelsButoon.Text = "Search Parcels";
-            searchParcelsButoon.UseVisualStyleBackColor = true;
-            searchParcelsButoon.Click += searchParcelsButoon_Click;
+            insertGroupBox.Controls.Add(parcelNumberLabel);
+            insertGroupBox.Controls.Add(parcelNumberNumericUpDown);
+            insertGroupBox.Controls.Add(insertGPS1GroupBox);
+            insertGroupBox.Controls.Add(insertGPS2GroupBox);
+            insertGroupBox.Controls.Add(insertParcelButton);
+            insertGroupBox.Controls.Add(descriptionTextBox);
+            insertGroupBox.Location = new Point(13, 237);
+            insertGroupBox.Name = "insertGroupBox";
+            insertGroupBox.Size = new Size(316, 515);
+            insertGroupBox.TabIndex = 50;
+            insertGroupBox.TabStop = false;
+            insertGroupBox.Text = "Insert parcel";
             // 
-            // insertParcelGroupBox
+            // parcelNumberLabel
             // 
-            insertParcelGroupBox.Anchor = AnchorStyles.Left;
-            insertParcelGroupBox.Controls.Add(insertGPS1GroupBox);
-            insertParcelGroupBox.Controls.Add(parcelNumberTextBox);
-            insertParcelGroupBox.Controls.Add(insertGPS2GroupBox);
-            insertParcelGroupBox.Controls.Add(insertParcelButton);
-            insertParcelGroupBox.Controls.Add(parcelNumberLabel);
-            insertParcelGroupBox.Controls.Add(descriptionLabel);
-            insertParcelGroupBox.Controls.Add(descriptionTextBox);
-            insertParcelGroupBox.Location = new Point(17, 249);
-            insertParcelGroupBox.Name = "insertParcelGroupBox";
-            insertParcelGroupBox.Size = new Size(316, 515);
-            insertParcelGroupBox.TabIndex = 51;
-            insertParcelGroupBox.TabStop = false;
-            insertParcelGroupBox.Text = "Insert parcel";
+            parcelNumberLabel.AutoSize = true;
+            parcelNumberLabel.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
+            parcelNumberLabel.Location = new Point(11, 403);
+            parcelNumberLabel.Name = "parcelNumberLabel";
+            parcelNumberLabel.Size = new Size(115, 20);
+            parcelNumberLabel.TabIndex = 54;
+            parcelNumberLabel.Text = "Parcel number:";
+            // 
+            // parcelNumberNumericUpDown
+            // 
+            parcelNumberNumericUpDown.Location = new Point(177, 401);
+            parcelNumberNumericUpDown.Maximum = new decimal(new int[] { int.MaxValue, 0, 0, 0 });
+            parcelNumberNumericUpDown.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+            parcelNumberNumericUpDown.Name = "parcelNumberNumericUpDown";
+            parcelNumberNumericUpDown.Size = new Size(120, 27);
+            parcelNumberNumericUpDown.TabIndex = 53;
+            parcelNumberNumericUpDown.Value = new decimal(new int[] { 1, 0, 0, 0 });
             // 
             // insertGPS1GroupBox
             // 
@@ -278,7 +323,7 @@
             insertGPS1GroupBox.Location = new Point(11, 22);
             insertGPS1GroupBox.Name = "insertGPS1GroupBox";
             insertGPS1GroupBox.Size = new Size(286, 179);
-            insertGPS1GroupBox.TabIndex = 53;
+            insertGPS1GroupBox.TabIndex = 52;
             insertGPS1GroupBox.TabStop = false;
             insertGPS1GroupBox.Text = "Left Bottom GPS Point";
             // 
@@ -343,7 +388,7 @@
             // 
             gps1LatNumericUpDown.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             gps1LatNumericUpDown.DecimalPlaces = 13;
-            gps1LatNumericUpDown.Location = new Point(115, 32);
+            gps1LatNumericUpDown.Location = new Point(114, 32);
             gps1LatNumericUpDown.Maximum = new decimal(new int[] { 90, 0, 0, 0 });
             gps1LatNumericUpDown.Name = "gps1LatNumericUpDown";
             gps1LatNumericUpDown.Size = new Size(140, 27);
@@ -372,18 +417,11 @@
             gps1LatSRadioButton.Text = "S";
             gps1LatSRadioButton.UseVisualStyleBackColor = true;
             // 
-            // parcelNumberTextBox
-            // 
-            parcelNumberTextBox.Location = new Point(15, 403);
-            parcelNumberTextBox.Name = "parcelNumberTextBox";
-            parcelNumberTextBox.Size = new Size(286, 27);
-            parcelNumberTextBox.TabIndex = 52;
-            // 
             // insertGPS2GroupBox
             // 
             insertGPS2GroupBox.Controls.Add(gps2LongGroupBox);
             insertGPS2GroupBox.Controls.Add(gps2LatGroupBox);
-            insertGPS2GroupBox.Location = new Point(11, 199);
+            insertGPS2GroupBox.Location = new Point(11, 216);
             insertGPS2GroupBox.Name = "insertGPS2GroupBox";
             insertGPS2GroupBox.Size = new Size(286, 179);
             insertGPS2GroupBox.TabIndex = 51;
@@ -406,7 +444,7 @@
             // 
             gps2LongNumericUpDown.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             gps2LongNumericUpDown.DecimalPlaces = 14;
-            gps2LongNumericUpDown.Location = new Point(115, 30);
+            gps2LongNumericUpDown.Location = new Point(114, 30);
             gps2LongNumericUpDown.Maximum = new decimal(new int[] { 180, 0, 0, 0 });
             gps2LongNumericUpDown.Name = "gps2LongNumericUpDown";
             gps2LongNumericUpDown.Size = new Size(140, 27);
@@ -488,33 +526,14 @@
             insertParcelButton.TabIndex = 50;
             insertParcelButton.Text = "Insert Parcel";
             insertParcelButton.UseVisualStyleBackColor = true;
-            insertParcelButton.Click += insertParcelButton_Click;
-            // 
-            // parcelNumberLabel
-            // 
-            parcelNumberLabel.AutoSize = true;
-            parcelNumberLabel.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            parcelNumberLabel.Location = new Point(14, 372);
-            parcelNumberLabel.Name = "parcelNumberLabel";
-            parcelNumberLabel.Size = new Size(153, 28);
-            parcelNumberLabel.TabIndex = 43;
-            parcelNumberLabel.Text = "Parcel Number";
-            // 
-            // descriptionLabel
-            // 
-            descriptionLabel.AutoSize = true;
-            descriptionLabel.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            descriptionLabel.Location = new Point(14, 423);
-            descriptionLabel.Name = "descriptionLabel";
-            descriptionLabel.Size = new Size(121, 28);
-            descriptionLabel.TabIndex = 45;
-            descriptionLabel.Text = "Description";
+            insertParcelButton.Click += insertPropertyButton_Click;
             // 
             // descriptionTextBox
             // 
-            descriptionTextBox.Location = new Point(11, 451);
+            descriptionTextBox.Location = new Point(11, 434);
             descriptionTextBox.Multiline = true;
             descriptionTextBox.Name = "descriptionTextBox";
+            descriptionTextBox.PlaceholderText = "Description of Parcel";
             descriptionTextBox.Size = new Size(286, 27);
             descriptionTextBox.TabIndex = 44;
             // 
@@ -522,8 +541,8 @@
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
+            Controls.Add(insertGroupBox);
             Controls.Add(searchGroupBox);
-            Controls.Add(insertParcelGroupBox);
             Controls.Add(parcelGridView);
             Name = "FindParcels";
             Size = new Size(1366, 768);
@@ -535,8 +554,9 @@
             latGroupBox.ResumeLayout(false);
             latGroupBox.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)latNumericUpDown).EndInit();
-            insertParcelGroupBox.ResumeLayout(false);
-            insertParcelGroupBox.PerformLayout();
+            insertGroupBox.ResumeLayout(false);
+            insertGroupBox.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)parcelNumberNumericUpDown).EndInit();
             insertGPS1GroupBox.ResumeLayout(false);
             gps1LongGroupBox.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)gps1LongNumericUpDown).EndInit();
@@ -553,13 +573,28 @@
         #endregion
 
         private DataGridView parcelGridView;
-        private DataGridViewTextBoxColumn ParcelTableID;
-        private DataGridViewTextBoxColumn PropertyTableDescription;
-        private DataGridViewTextBoxColumn PropertyList;
-        private DataGridViewTextBoxColumn LeftBottom;
-        private DataGridViewTextBoxColumn RightTop;
         private GroupBox searchGroupBox;
-        private GroupBox insertParcelGroupBox;
+        private GroupBox longGroupBox;
+        private NumericUpDown longNumericUpDown;
+        private RadioButton longERadioButton;
+        private RadioButton longWRadioButton;
+        private GroupBox latGroupBox;
+        private NumericUpDown latNumericUpDown;
+        private RadioButton latNRadioButton;
+        private RadioButton latSRadioButton;
+        private Button searchPropertiesButton;
+        private GroupBox insertGroupBox;
+        private Label parcelNumberLabel;
+        private NumericUpDown parcelNumberNumericUpDown;
+        private GroupBox insertGPS1GroupBox;
+        private GroupBox gps1LongGroupBox;
+        private NumericUpDown gps1LongNumericUpDown;
+        private RadioButton gps1LongERadioButton;
+        private RadioButton gps1LongWRadioButton;
+        private GroupBox gps1LatGroupBox;
+        private NumericUpDown gps1LatNumericUpDown;
+        private RadioButton gps1LatNRadioButton;
+        private RadioButton gps1LatSRadioButton;
         private GroupBox insertGPS2GroupBox;
         private GroupBox gps2LongGroupBox;
         private NumericUpDown gps2LongNumericUpDown;
@@ -570,27 +605,13 @@
         private RadioButton gps2LatNRadioButton;
         private RadioButton gps2LatSRadioButton;
         private Button insertParcelButton;
-        private Label parcelNumberLabel;
-        private Label descriptionLabel;
         private TextBox descriptionTextBox;
-        private TextBox parcelNumberTextBox;
-        private GroupBox insertGPS1GroupBox;
-        private GroupBox gps1LongGroupBox;
-        private NumericUpDown gps1LongNumericUpDown;
-        private RadioButton gps1LongERadioButton;
-        private RadioButton gps1LongWRadioButton;
-        private GroupBox gps1LatGroupBox;
-        private NumericUpDown gps1LatNumericUpDown;
-        private RadioButton gps1LatNRadioButton;
-        private RadioButton gps1LatSRadioButton;
-        private GroupBox longGroupBox;
-        private NumericUpDown longNumericUpDown;
-        private RadioButton longERadioButton;
-        private RadioButton longWRadioButton;
-        private GroupBox latGroupBox;
-        private NumericUpDown latNumericUpDown;
-        private RadioButton latNRadioButton;
-        private RadioButton latSRadioButton;
-        private Button searchParcelsButoon;
+        private DataGridViewTextBoxColumn ParcelTableID;
+        private DataGridViewTextBoxColumn PropertyTableDescription;
+        private DataGridViewTextBoxColumn PropertyList;
+        private DataGridViewTextBoxColumn LeftBottom;
+        private DataGridViewTextBoxColumn RightTop;
+        private DataGridViewImageColumn Edit;
+        private DataGridViewImageColumn Delete;
     }
 }

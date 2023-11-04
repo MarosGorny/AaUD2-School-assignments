@@ -205,7 +205,7 @@ public class ApplicationLogic
 
     public (QuadTreeNode<int,string>? foundNode, Parcel? parcel) FindParcel(Parcel parcel)
     {
-        QuadTreeObject<int, string> quadTreeObject = new QuadTreeObject<int, string>(parcel.ParcelNumber, parcel.Description, parcel);
+        QuadTreeObject<int, string> quadTreeObject = new QuadTreeObject<int, string>(parcel.ParcelNumber * -1, parcel.Description, parcel);
         var result = _parcelQuadTree.FindNode(quadTreeObject);
         var foundNode = result.foundNode;
         var foundParcel=  result.foundObject?.Item as Parcel;
