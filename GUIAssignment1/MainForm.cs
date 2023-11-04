@@ -77,12 +77,14 @@ namespace GUIAssignment1
         {
             _navigationControl.DisplayUserControl(3);
             _navigationButtons.HighlightButton(AddPropertyNavButton);
+            MainForm.ActiveForm.Text = "Add Property";
         }
 
         private void button6_Click(object sender, EventArgs e)
         {
             _navigationControl.DisplayUserControl(4);
             _navigationButtons.HighlightButton(AddParcelNavButton);
+            MainForm.ActiveForm.Text = "Add Parcel";
         }
 
         private void button7_Click(object sender, EventArgs e)
