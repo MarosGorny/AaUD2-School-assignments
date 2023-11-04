@@ -8,6 +8,7 @@ public class QuadTree<K, V> where K : IComparable<K>
 {
     public QuadTreeNode<K, V> Root { get; private set; }
     public int MaxAllowedDepth { get; set; }
+    public Rectangle Boundary => Root.Boundary;
     public QuadTreeOptimalization<K, V>.SubdivisionResult? OptimalizationData { get; }
 
     public int portions { get; set;}

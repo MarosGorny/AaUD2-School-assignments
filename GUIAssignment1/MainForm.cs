@@ -118,35 +118,50 @@ namespace GUIAssignment1
 
         private void ImportButton_Click(object sender, EventArgs e)
         {
-            //FolderBrowserDialog dialog = new FolderBrowserDialog();
-            //dialog.ShowDialog();
-            OpenFileDialog ofd = new OpenFileDialog();
-            ofd.Filter = "CSV files (*.csv)|*.csv";
-            if (ofd.ShowDialog() == DialogResult.OK)
+            try
             {
-                string filePath = ofd.FileName;
+                OpenFileDialog ofd = new OpenFileDialog();
+                ofd.Filter = "CSV files (*.csv)|*.csv";
+                if (ofd.ShowDialog() == DialogResult.OK)
+                {
+                    string filePath = ofd.FileName;
+                    var realtyObjects = Program.ApplicationLogic.ImportCSV(filePath);
+                    Program.ApplicationLogic.ClearAll();
+                    foreach (var realtyObject in realtyObjects)
+                    {
+                        Program.ApplicationLogic.AddObject(realtyObject);
+                    }
+                }
+                MessageBox.Show("Imported");
+            } catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
             }
+
         }
 
         private void ExportButton_Click(object sender, EventArgs e)
         {
-            FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
-            if(folderBrowserDialog.ShowDialog() == DialogResult.OK)
+            try
             {
-                string folderPath = folderBrowserDialog.SelectedPath;
-                string fileName = ShowInputBox("Enter file name", "Export as CSV", "export.csv");
-                if(!string.IsNullOrEmpty(fileName))
+                FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
+                if(folderBrowserDialog.ShowDialog() == DialogResult.OK)
                 {
-                    string fullPath = Path.Combine(folderPath, fileName);
-                    try
+                    string folderPath = folderBrowserDialog.SelectedPath;
+                    string fileName = ShowInputBox("Enter file name", "Export as CSV", "export.csv");
+                    if(!string.IsNullOrEmpty(fileName))
                     {
-                        Program.ApplicationLogic.ExportCSV(Program.ApplicationLogic.GetAllRealtyObjects(), fullPath);
-                        MessageBox.Show("Exported");
-                    } catch (Exception ex)
-                    {
-                        MessageBox.Show(ex.Message);
+                        string fullPath = Path.Combine(folderPath, fileName);
+
+                            Program.ApplicationLogic.ExportCSV(Program.ApplicationLogic.GetAllRealtyObjects(), fullPath);
+                            MessageBox.Show("Exported");
+                        } 
                     }
                 }
+
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
             }
         }
 

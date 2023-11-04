@@ -33,6 +33,13 @@ public class ApplicationLogic
         return allRealtyObjects;
     }
 
+    public void ClearAll()
+    {
+        _propertyQuadTree = new QuadTree<int, string>(_propertyQuadTree.Boundary);
+        _parcelQuadTree = new QuadTree<int, string>(_parcelQuadTree.Boundary);
+        _mixedQuadTree = new QuadTree<int, string>(_mixedQuadTree.Boundary);
+    }
+
     public void ExportCSV(List<RealtyObject> realtyList, string fullPath)
     {
         RealtyObjectCSVHelper.ExportToCSV(realtyList, fullPath);
