@@ -36,6 +36,10 @@ public class QuadTree<K, V> where K : IComparable<K>
         }
     }
 
+    public bool SearchKey(K key)
+    {
+        return _bst.Search(key);
+    }
     public bool InsertKey(K key)
     {
         return _bst.TryInsert(key);

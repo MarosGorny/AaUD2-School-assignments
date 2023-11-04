@@ -250,20 +250,94 @@ namespace GUIAssignment1.UserControls
 
         private void EditForm_RealtyObjectUpdated(object sender, RealtyObjectEventArgs e)
         {
-            // Handle the updated RealtyObject, e.g., update the grid view or internal list
-            var oldRealtyObject = e.OldRealtyObject;
-            var updatedRealtyObject = e.UpdatedRealtyObject;
+            if (UpdatePropertyIfValid(e.OldRealtyObject, e.UpdatedRealtyObject)) return;
+            UpdateParcelIfValid(e.OldRealtyObject, e.UpdatedRealtyObject);
+        }
 
-            if(oldRealtyObject is Property oldProperty && updatedRealtyObject is Property updatedProperty)
-            {
-                //check if key is the same
-                //check if gps points are the same
-                //check if the description is the same
-            }
-            else if(oldRealtyObject is Parcel oldParcel && updatedRealtyObject is Parcel updatedParcel)
-            {
+        private bool UpdatePropertyIfValid(RealtyObject oldRealtyObject, RealtyObject updatedRealtyObject)
+        {
+            if (!(oldRealtyObject is Property oldProperty) || !(updatedRealtyObject is Property updatedProperty))
+                return false;
 
+            if (!ValidateConscriptionNumberChange(oldProperty, updatedProperty)) return true;
+
+            if (HasBoundaryChanged(oldProperty, updatedProperty) || oldProperty.Description != updatedProperty.Description)
+            {
+                UpdatePropertyData(oldProperty, updatedProperty);
             }
+
+            return true;
+        }
+
+        private void UpdateParcelIfValid(RealtyObject oldRealtyObject, RealtyObject updatedRealtyObject)
+        {
+            if (!(oldRealtyObject is Parcel oldParcel) || !(updatedRealtyObject is Parcel updatedParcel))
+                return;
+
+            if (!ValidateParcelNumberChange(oldParcel, updatedParcel)) return;
+
+            if (HasBoundaryChanged(oldParcel, updatedParcel) || oldParcel.Description != updatedParcel.Description)
+            {
+                UpdateParcelData(oldParcel, updatedParcel);
+            }
+        }
+
+        private bool ValidateConscriptionNumberChange(Property oldProperty, Property updatedProperty)
+        {
+            if (oldProperty.ConscriptionNumber == updatedProperty.ConscriptionNumber)
+                return true;
+
+            if (Program.ApplicationLogic.SearchKey(oldProperty, updatedProperty.ConscriptionNumber))
+            {
+                MessageBox.Show("Consription number cannot be changed");
+                return false;
+            }
+
+            UpdatePropertyData(oldProperty, updatedProperty);
+            return true;
+        }
+
+        private bool ValidateParcelNumberChange(Parcel oldParcel, Parcel updatedParcel)
+        {
+            if (oldParcel.ParcelNumber == updatedParcel.ParcelNumber)
+                return true;
+
+            if (Program.ApplicationLogic.SearchKey(oldParcel, updatedParcel.ParcelNumber))
+            {
+                MessageBox.Show("Parcel number cannot be changed");
+                return false;
+            }
+
+            UpdateParcelData(oldParcel, updatedParcel);
+            return true;
+        }
+
+        private bool HasBoundaryChanged(RealtyObject oldRealtyObject, RealtyObject updatedRealtyObject)
+        {
+            return oldRealtyObject.LowerLeft != updatedRealtyObject.LowerLeft ||
+                   oldRealtyObject.UpperRight != updatedRealtyObject.UpperRight;
+        }
+
+        private void UpdatePropertyData(Property oldProperty, Property updatedProperty)
+        {
+            Program.ApplicationLogic.DeleteProperty(oldProperty);
+            Program.ApplicationLogic.AddProperty(updatedProperty);
+            RefreshPropertyDisplay();
+        }
+
+        private void UpdateParcelData(Parcel oldParcel, Parcel updatedParcel)
+        {
+            Program.ApplicationLogic.DeleteParcel(oldParcel);
+            Program.ApplicationLogic.AddParcel(updatedParcel);
+            RefreshPropertyDisplay();
+        }
+
+        private void RefreshPropertyDisplay()
+        {
+            ClearPropertyGridView();
+            GPSPoint searchPoint = CreateSearchPointFromInputs();
+            var foundProperties = Program.ApplicationLogic.FindProperties(searchPoint);
+            DisplayFoundProperties(foundProperties);
         }
 
     }

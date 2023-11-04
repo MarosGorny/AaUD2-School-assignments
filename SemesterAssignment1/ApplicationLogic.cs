@@ -189,4 +189,20 @@ public class ApplicationLogic
         var foundProperty = result.foundObject?.Item as Property;
         return (foundNode, foundProperty);
     }
+
+    public bool SearchKey(RealtyObject realtyObject, int key)
+    {
+        if(realtyObject is Property property)
+        {
+            return _propertyQuadTree.SearchKey(key);
+        }
+        else if(realtyObject is Parcel parcel)
+        {
+            return _mixedQuadTree.SearchKey(key);
+        }
+        else
+        {
+            throw new Exception("SpatialItem is not of type Property or Parcel");
+        }
+    }
 }
