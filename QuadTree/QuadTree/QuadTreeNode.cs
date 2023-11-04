@@ -196,6 +196,17 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
     #region Insertion
     public void Insert(QuadTreeObject<K, V> quadTreeObject)
     {
+        var insertedKey = true;
+        if(QuadTree.CheckKeysDuplicate)
+        {
+            insertedKey = QuadTree.InsertKey(quadTreeObject.Key);
+        }
+
+        if(!insertedKey)
+        {
+            throw new ArgumentException($"Key {quadTreeObject.Key} already exists in QuadTree");
+        }
+
         QuadTreeNode<K, V> currentNode = this;
         var insertItem = quadTreeObject.Item;
 
@@ -338,6 +349,17 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
     #region Deletion
     public SpatialItem? Delete(QuadTreeObject<K, V> quadTreeObject) //TODO: Return bool or object
     {
+        var deletedKey = true;
+        if(QuadTree.CheckKeysDuplicate)
+        {
+            deletedKey = QuadTree.DeleteKey(quadTreeObject.Key);
+        }
+
+        if(!deletedKey)
+        {
+            return null;
+        }
+
         QuadTreeNode<K, V>? nodeContainingObject = LocateNodeAndObjectForItem(quadTreeObject.Item, quadTreeObject.Key).foundNode;
         if (nodeContainingObject != null)
         {

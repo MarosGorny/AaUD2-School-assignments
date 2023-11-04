@@ -1,4 +1,5 @@
-﻿using QuadTreeDS.SpatialItems;
+﻿using QuadTreeDS.BinarySearchTree;
+using QuadTreeDS.SpatialItems;
 
 
 namespace QuadTreeDS.QuadTree;
@@ -12,6 +13,10 @@ public class QuadTree<K, V> where K : IComparable<K>
     public int portions { get; set;}
 
     public readonly int QUADRANT_COUNT = 4;
+
+    public bool CheckKeysDuplicate { get; set; } = true;
+
+    private BinarySearchTree<K> _bst = new BinarySearchTree<K>();
 
     public QuadTree(Rectangle boundary, int maxAllowedDepth = 10)
     {
@@ -29,6 +34,11 @@ public class QuadTree<K, V> where K : IComparable<K>
             Root = new QuadTreeNode<K, V>(boundary, null, this, subdivisionResult.VerticalCut, subdivisionResult.HorizontalCut );
             Root.InsertOptimalizedIterative(subdivisionResult, portions);
         }
+    }
+
+    public bool InsertKey(K key)
+    {
+        return _bst.TryInsert(key);
     }
 
     public void Insert(QuadTreeObject<K, V> quadTreeObject)
@@ -49,6 +59,11 @@ public class QuadTree<K, V> where K : IComparable<K>
     public SpatialItem? Delete(QuadTreeObject<K, V> quadTreeObject)
     {
         return Root.Delete(quadTreeObject);
+    }
+
+    public bool DeleteKey(K key)
+    {
+        return _bst.Delete(key);
     }
 
     public void ChangeMaxAllowedDepth(int maxAllowedDepth)
