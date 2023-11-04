@@ -179,7 +179,13 @@ public class GPSPoint : Point
 
     public override string ToString()
     {
-        return $"{LatitudeDirection} {X}, {LongitudeDirection} {Y}";
+        string xString = X.ToString("F13").TrimEnd('0');
+        xString = xString.TrimEnd(',');
+
+        string yString = Y.ToString("F13").TrimEnd('0');
+        yString = yString.TrimEnd(',');
+
+        return $"{LatitudeDirection} {xString}, {LongitudeDirection} {yString}";
     }
 }
 

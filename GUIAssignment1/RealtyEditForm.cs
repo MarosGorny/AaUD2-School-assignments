@@ -34,7 +34,10 @@ namespace GUIAssignment1
         private void SetupPropertyFields(Property property)
         {
             titleLabel.Text = $"Edit Property: {property.ConscriptionNumber}";
-            descriptionTextBox.Text = property.Description; // Assuming you meant to use Description here.
+            descriptionTextBox.Text = property.Description;
+            if (string.IsNullOrEmpty(descriptionTextBox.Text))
+                descriptionTextBox.PlaceholderText = "Description of property";
+
             idNumberNumericUpDown.Value = property.ConscriptionNumber;
 
             SetupGpsFields(gps1LatNumericUpDown, gps1LongNumericUpDown, gps1LatSRadioButton, gps1LongWRadioButton, property.LowerLeft as GPSPoint);
@@ -45,6 +48,8 @@ namespace GUIAssignment1
         {
             titleLabel.Text = $"Edit Parcel: {parcel.ParcelNumber}";
             descriptionTextBox.Text = parcel.Description;
+            if (string.IsNullOrEmpty(descriptionTextBox.Text))
+                descriptionTextBox.PlaceholderText = "Description of parcel";
             idNumberNumericUpDown.Value = parcel.ParcelNumber;
 
             // Assuming Parcel also has GPSPoint LowerLeft and UpperRight fields or similar.

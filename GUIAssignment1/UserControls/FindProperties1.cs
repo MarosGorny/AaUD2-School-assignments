@@ -150,10 +150,10 @@ namespace GUIAssignment1.UserControls
         // Resets the numeric up/downs and textboxes to their default values.
         private void ResetInputFields()
         {
-            gps1LatNumericUpDown.Value = conscriptionNumberNumericUpDown.Minimum;
-            gps1LongNumericUpDown.Value = conscriptionNumberNumericUpDown.Minimum;
-            gps2LatNumericUpDown.Value = conscriptionNumberNumericUpDown.Minimum;
-            gps2LongNumericUpDown.Value = conscriptionNumberNumericUpDown.Minimum;
+            gps1LatNumericUpDown.Value = gps1LatNumericUpDown.Minimum;
+            gps1LongNumericUpDown.Value = gps1LongNumericUpDown.Minimum;
+            gps2LatNumericUpDown.Value = gps2LatNumericUpDown.Minimum;
+            gps2LongNumericUpDown.Value = gps2LongNumericUpDown.Minimum;
             conscriptionNumberNumericUpDown.Value = conscriptionNumberNumericUpDown.Minimum;
             descriptionTextBox.Text = "";
         }

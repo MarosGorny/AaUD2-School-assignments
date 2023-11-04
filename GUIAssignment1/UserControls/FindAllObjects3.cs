@@ -68,8 +68,13 @@ namespace GUIAssignment1.UserControls
             var latDirRight = latNRadioButton2.Checked ? LatitudeDirection.N : LatitudeDirection.S;
             var longDirRight = longERadioButton2.Checked ? LongitudeDirection.E : LongitudeDirection.W;
 
-            var gpsPoint1 = new GPSPoint(latDirLeft, Convert.ToDouble(latNumericUpDown.Value), longDirLeft, Convert.ToDouble(longNumericUpDown.Value));
-            var gpsPoint2 = new GPSPoint(latDirRight, Convert.ToDouble(latNumericUpDown2.Value), longDirRight, Convert.ToDouble(longNumericUpDown2.Value));
+            var latLeftPoint = latNumericUpDown.Value * (int)latDirLeft;
+            var longLeftPoint = longNumericUpDown.Value * (int)longDirLeft;
+            var latRightPoint = latNumericUpDown2.Value * (int)latDirRight;
+            var longRightPoint = longNumericUpDown2.Value * (int)longDirRight;
+
+            var gpsPoint1 = new GPSPoint(latDirLeft, Convert.ToDouble(latLeftPoint), longDirLeft, Convert.ToDouble(longLeftPoint));
+            var gpsPoint2 = new GPSPoint(latDirRight, Convert.ToDouble(latRightPoint), longDirRight, Convert.ToDouble(longRightPoint));
 
             return new Rectangle(gpsPoint1, gpsPoint2);
         }
