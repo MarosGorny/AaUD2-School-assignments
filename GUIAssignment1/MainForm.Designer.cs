@@ -77,7 +77,6 @@
             ActionsTableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 9.9991F));
             ActionsTableLayoutPanel.Size = new Size(227, 721);
             ActionsTableLayoutPanel.TabIndex = 0;
-            ActionsTableLayoutPanel.Paint += ActionsTableLayoutPanel_Paint;
             // 
             // FindRealtyNavButton
             // 
@@ -88,7 +87,7 @@
             FindRealtyNavButton.TabIndex = 2;
             FindRealtyNavButton.Text = "Search Realty Objects";
             FindRealtyNavButton.UseVisualStyleBackColor = true;
-            FindRealtyNavButton.Click += button4_Click;
+            FindRealtyNavButton.Click += SwitchToAllObjects_Click;
             // 
             // FindParcelsNavButton
             // 
@@ -99,7 +98,7 @@
             FindParcelsNavButton.TabIndex = 1;
             FindParcelsNavButton.Text = "Parcels";
             FindParcelsNavButton.UseVisualStyleBackColor = true;
-            FindParcelsNavButton.Click += button3_Click;
+            FindParcelsNavButton.Click += SwitchToParcels_Click;
             // 
             // FindPropertiesNavButton
             // 
@@ -110,7 +109,7 @@
             FindPropertiesNavButton.TabIndex = 0;
             FindPropertiesNavButton.Text = "Properties";
             FindPropertiesNavButton.UseVisualStyleBackColor = true;
-            FindPropertiesNavButton.Click += button2_Click;
+            FindPropertiesNavButton.Click += SwitchToProperties_Click;
             // 
             // FileTableLayoutPanel
             // 
@@ -135,7 +134,7 @@
             ExportButton.TabIndex = 1;
             ExportButton.Text = "EXPORT";
             ExportButton.UseVisualStyleBackColor = true;
-            ExportButton.Click += ExportButton_Click_1;
+            ExportButton.Click += ExportButton_Click;
             // 
             // ImportButton
             // 
@@ -146,7 +145,7 @@
             ImportButton.TabIndex = 0;
             ImportButton.Text = "IMPORT";
             ImportButton.UseVisualStyleBackColor = true;
-            ImportButton.Click += ImportButton_Click_1;
+            ImportButton.Click += ImportButton_Click;
             // 
             // generateDataButton
             // 

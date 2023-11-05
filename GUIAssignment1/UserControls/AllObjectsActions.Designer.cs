@@ -1,6 +1,6 @@
 ﻿namespace GUIAssignment1.UserControls
 {
-    partial class FindAllObjects3
+    partial class FindAllObjects
     {
         /// <summary> 
         /// Required designer variable.
