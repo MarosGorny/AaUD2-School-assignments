@@ -251,6 +251,7 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
             }
         }
     }
+
     public void InsertOptimalizedIterative(QuadTreeOptimalization<K, V>.SubdivisionResult optimalizationData, int portion)
     {
         var nodeStack = new Stack<QuadTreeNode<K, V>>();

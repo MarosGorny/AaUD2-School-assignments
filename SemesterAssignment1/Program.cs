@@ -9,7 +9,6 @@ namespace SemesterAssignment1
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello, World!");
 
             //GPSPoint gpsPropertyLeftBottom1 = new GPSPoint(LatitudeDirection.N, 0, LongitudeDirection.E, 0);
             //GPSPoint gpsPropertyRightTop1 = new GPSPoint(LatitudeDirection.N, 10, LongitudeDirection.E, 50);
@@ -30,7 +29,9 @@ namespace SemesterAssignment1
             //RealtyObjectCSVHelper.ExportToCSV(realObjects,"file.csv");
             //var files = RealtyObjectCSVHelper.ImportFromCSV("file.csv");
             //Console.WriteLine(  );
-            RealtyObjectTester.Test();
+            //RealtyObjectTester.Test();
+
+            OptimalizationTest optimalizationTest = new OptimalizationTest(2000, 8000);
         }
     }
 }

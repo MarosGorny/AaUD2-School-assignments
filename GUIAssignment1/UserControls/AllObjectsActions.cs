@@ -6,9 +6,9 @@ using Rectangle = QuadTreeDS.SpatialItems.Rectangle;
 
 namespace GUIAssignment1.UserControls
 {
-    public partial class FindAllObjects3 : UserControl
+    public partial class FindAllObjects : UserControl
     {
-        public FindAllObjects3()
+        public FindAllObjects()
         {
             InitializeComponent();
         }

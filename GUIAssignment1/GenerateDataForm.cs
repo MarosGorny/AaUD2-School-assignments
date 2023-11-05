@@ -18,11 +18,6 @@ namespace GUIAssignment1
             InitializeComponent();
         }
 
-        private void titleLabel_Click(object sender, EventArgs e)
-        {
-
-        }
-
         private void generateButton_Click(object sender, EventArgs e)
         {
             try

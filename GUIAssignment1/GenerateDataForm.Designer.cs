@@ -75,7 +75,6 @@
             titleLabel.Size = new Size(421, 41);
             titleLabel.TabIndex = 68;
             titleLabel.Text = "Area of New Generated Data";
-            titleLabel.Click += titleLabel_Click;
             // 
             // parcelsCountLabel
             // 

@@ -1,0 +1,88 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="GUIAssignment1.GenerateDataForm">
+    <Position X="0.75" Y="0.5" Width="2.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>JAhAAACAgCQABBRAAAiEgAACAAGAACAgIAAQAgAAAgA=</HashCode>
+      <FileName>GenerateDataForm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GUIAssignment1.MainForm">
+    <Position X="3.5" Y="0.5" Width="2.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>JoAMAAQAIDAAggAAiACACAACAAEEAAAQAACAAwAAAAA=</HashCode>
+      <FileName>MainForm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GUIAssignment1.RealtyEditForm">
+    <Position X="6.5" Y="0.5" Width="2.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+      <Compartment Name="Events" Collapsed="true" />
+    </Compartments>
+    <NestedTypes>
+      <Class Name="GUIAssignment1.RealtyEditForm.RealtyObjectEventArgs" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>RealtyEditForm.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAwAAACAgCQERBRAAAmEwAACAAGAgCFkAEAAAAAAIgA=</HashCode>
+      <FileName>RealtyEditForm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GUIAssignment1.UserControls.FindParcels" Collapsed="true">
+    <Position X="7.5" Y="4.5" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AggCAYOoiKQAZDVAAozFiDhGAAkIESCjgATBAAAKIwA=</HashCode>
+      <FileName>UserControls\ParcelsActions.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GUIAssignment1.UserControls.FindProperties" Collapsed="true">
+    <Position X="7.5" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgjAAYepgKQAZDVAAg3EiDBGIEkgASAjgEWBAAAIIgI=</HashCode>
+      <FileName>UserControls\PropertiesActions.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GUIAssignment1.UserControls.FindAllObjects" Collapsed="true">
+    <Position X="7.5" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gSBAAQYAAiAARBBghADACCBGIAgBESAAEQAAAAAooAA=</HashCode>
+      <FileName>UserControls\AllObjectsActions.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GUIAssignment1.NavigationButtons">
+    <Position X="1.75" Y="4.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAwAAAAAAACAAAAAABAAAIAAAAAAAAAAA=</HashCode>
+      <FileName>NavigationButtons.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GUIAssignment1.NavigationControl">
+    <Position X="3.75" Y="4.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAEAAAAAAAAAAIAAAAAAAAAQAAAAAAAAAABAAAA=</HashCode>
+      <FileName>NavigationControl.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GUIAssignment1.Program">
+    <Position X="5.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAABAAAAAA=</HashCode>
+      <FileName>Program.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
