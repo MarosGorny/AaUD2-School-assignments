@@ -111,11 +111,16 @@ public class ApplicationLogic
         }
     }
     
-    public void AddProperty(Property property)
+    public void AddProperty(Property property, bool linkParcels = true)
     {
         var newItem = new QuadTreeObject<int, string>(property.ConscriptionNumber, property.Description, property);
         _propertyQuadTree.Insert(newItem);
         _mixedQuadTree.Insert(newItem);
+
+        if(!linkParcels)
+        {
+            return;
+        }
 
         var foundParcels = _parcelQuadTree.Find(new Rectangle(property.LowerLeft, property.UpperRight));
         foreach (var foundParcel in foundParcels)
@@ -146,13 +151,18 @@ public class ApplicationLogic
         return false;
     }
 
-    public void AddParcel(Parcel parcel)
+    public void AddParcel(Parcel parcel, bool linkProperties = true)
     {
         var mixedQuadTreeKey = parcel.ParcelNumber * -1; //FIXME: Better to implement option in QuadTree to use duplicate keys
 
         var newItem = new QuadTreeObject<int, string>(mixedQuadTreeKey, parcel.Description, parcel);
         _parcelQuadTree.Insert(newItem); //FIXME: Don't forgot that the key is negative
         _mixedQuadTree.Insert(newItem); //FIXME: Don't forgot that the key is negative
+
+        if (!linkProperties)
+        {
+            return;
+        }
 
         var foundProperties = _propertyQuadTree.Find(new Rectangle(parcel.LowerLeft, parcel.UpperRight));
         foreach (var foundProperty in foundProperties)
@@ -184,6 +194,24 @@ public class ApplicationLogic
         }
 
         return false;
+    }
+
+    public void GenerateNewData(int propertyCount, int parcelCount, GPSRectangle boundary)
+    {
+        var realtyObjectsGenerator = new RealtyObjectsGenerator();
+        var (parcels, properties) = realtyObjectsGenerator.GenerateRealtyObjects(propertyCount, parcelCount, boundary);
+
+        ClearAll();
+
+        foreach (var property in properties)
+        {
+            AddProperty(property, true);
+        }
+
+        foreach (var parcel in parcels)
+        {
+            AddParcel(parcel, true);
+        }
     }
 
     //need to find spatialItem from quadtree

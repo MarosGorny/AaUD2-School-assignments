@@ -174,7 +174,9 @@ namespace GUIAssignment1
 
         private void generateDataButton_Click(object sender, EventArgs e)
         {
-            RealtyObjectsGenerator generator = new RealtyObjectsGenerator();
+            GenerateDataForm generateDataForm = new GenerateDataForm();
+            generateDataForm.ShowDialog();
+
             
         }
     }

@@ -11,7 +11,7 @@ public class RealtyObjectsGenerator
     public (List<Parcel> parcels, List<Property> properties) GenerateRealtyObjects(int parcelCount, int propertyCount, GPSRectangle boundary)
     {
         var parcels = GenerateParcels(parcelCount, boundary);
-        var propertisWithinParcels = GeneratePropertiesWithinParcels(propertyCount, parcels, true);
+        var propertisWithinParcels = GeneratePropertiesWithinParcels(propertyCount, parcels, false);
         //var properties = GenerateProperties(propertyCount, boundary);
 
         return (parcels, propertisWithinParcels);
@@ -95,6 +95,7 @@ public class RealtyObjectsGenerator
             if (linkToParcels)
             {
                 selectedParcel.AddProperty(property);
+                property.AddParcel(selectedParcel);
             }
 
             properties.Add(property);
