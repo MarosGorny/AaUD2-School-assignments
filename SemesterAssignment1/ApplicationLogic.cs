@@ -12,8 +12,8 @@ public class ApplicationLogic
 
     public ApplicationLogic()
     {
-        var boundaryPointBottomLeft = new Point(-90, -90);
-        var boundaryPointTopRight = new Point(90, 90);
+        var boundaryPointBottomLeft = new GPSPoint(LatitudeDirection.S, 90, LongitudeDirection.W, 180);
+        var boundaryPointTopRight = new GPSPoint(LatitudeDirection.N, 90, LongitudeDirection.E, 180);
 
         _propertyQuadTree = new QuadTree<int, string>(new Rectangle(boundaryPointBottomLeft, boundaryPointTopRight));
         _parcelQuadTree = new QuadTree<int, string>(new Rectangle(boundaryPointBottomLeft, boundaryPointTopRight));

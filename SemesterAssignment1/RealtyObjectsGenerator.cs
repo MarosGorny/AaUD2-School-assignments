@@ -1,7 +1,5 @@
 ﻿using QuadTreeDS.SpatialItems;
 using SemesterAssignment1.RealtyObjects;
-using System;
-using System.Collections.Generic;
 
 namespace SemesterAssignment1;
 public class RealtyObjectsGenerator

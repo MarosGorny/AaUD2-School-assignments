@@ -30,7 +30,9 @@ namespace SemesterAssignment1
             //RealtyObjectCSVHelper.ExportToCSV(realObjects,"file.csv");
             //var files = RealtyObjectCSVHelper.ImportFromCSV("file.csv");
             //Console.WriteLine(  );
-            RealtyObjectTester.Test();
+            //RealtyObjectTester.Test();
+
+            OptimalizationTest optimalizationTest = new OptimalizationTest(2000, 8000);
         }
     }
 }
