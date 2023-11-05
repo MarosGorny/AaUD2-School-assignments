@@ -30,18 +30,13 @@
         {
             panel1 = new Panel();
             ActionsTableLayoutPanel = new TableLayoutPanel();
-            DeleteParcelNavButton = new Button();
-            DeletePropertyNavButton = new Button();
-            EditParcelNavButton = new Button();
-            EditPropertyNavButton = new Button();
-            AddParcelNavButton = new Button();
-            AddPropertyNavButton = new Button();
             FindRealtyNavButton = new Button();
             FindParcelsNavButton = new Button();
             FindPropertiesNavButton = new Button();
             FileTableLayoutPanel = new TableLayoutPanel();
             ExportButton = new Button();
             ImportButton = new Button();
+            generateDataButton = new Button();
             MainPanel = new Panel();
             panel1.SuspendLayout();
             ActionsTableLayoutPanel.SuspendLayout();
@@ -61,16 +56,11 @@
             // 
             ActionsTableLayoutPanel.ColumnCount = 1;
             ActionsTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            ActionsTableLayoutPanel.Controls.Add(DeleteParcelNavButton, 0, 8);
-            ActionsTableLayoutPanel.Controls.Add(DeletePropertyNavButton, 0, 7);
-            ActionsTableLayoutPanel.Controls.Add(EditParcelNavButton, 0, 6);
-            ActionsTableLayoutPanel.Controls.Add(EditPropertyNavButton, 0, 5);
-            ActionsTableLayoutPanel.Controls.Add(AddParcelNavButton, 0, 4);
-            ActionsTableLayoutPanel.Controls.Add(AddPropertyNavButton, 0, 3);
             ActionsTableLayoutPanel.Controls.Add(FindRealtyNavButton, 0, 2);
             ActionsTableLayoutPanel.Controls.Add(FindParcelsNavButton, 0, 1);
             ActionsTableLayoutPanel.Controls.Add(FindPropertiesNavButton, 0, 0);
-            ActionsTableLayoutPanel.Controls.Add(FileTableLayoutPanel, 0, 9);
+            ActionsTableLayoutPanel.Controls.Add(FileTableLayoutPanel, 0, 3);
+            ActionsTableLayoutPanel.Controls.Add(generateDataButton, 0, 4);
             ActionsTableLayoutPanel.Dock = DockStyle.Top;
             ActionsTableLayoutPanel.Location = new Point(0, 0);
             ActionsTableLayoutPanel.Name = "ActionsTableLayoutPanel";
@@ -87,72 +77,7 @@
             ActionsTableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 9.9991F));
             ActionsTableLayoutPanel.Size = new Size(227, 721);
             ActionsTableLayoutPanel.TabIndex = 0;
-            // 
-            // DeleteParcelNavButton
-            // 
-            DeleteParcelNavButton.Dock = DockStyle.Fill;
-            DeleteParcelNavButton.Location = new Point(3, 579);
-            DeleteParcelNavButton.Name = "DeleteParcelNavButton";
-            DeleteParcelNavButton.Size = new Size(221, 66);
-            DeleteParcelNavButton.TabIndex = 8;
-            DeleteParcelNavButton.Text = "9";
-            DeleteParcelNavButton.UseVisualStyleBackColor = true;
-            DeleteParcelNavButton.Click += button10_Click;
-            // 
-            // DeletePropertyNavButton
-            // 
-            DeletePropertyNavButton.Dock = DockStyle.Fill;
-            DeletePropertyNavButton.Location = new Point(3, 507);
-            DeletePropertyNavButton.Name = "DeletePropertyNavButton";
-            DeletePropertyNavButton.Size = new Size(221, 66);
-            DeletePropertyNavButton.TabIndex = 7;
-            DeletePropertyNavButton.Text = "8";
-            DeletePropertyNavButton.UseVisualStyleBackColor = true;
-            DeletePropertyNavButton.Click += button9_Click;
-            // 
-            // EditParcelNavButton
-            // 
-            EditParcelNavButton.Dock = DockStyle.Fill;
-            EditParcelNavButton.Location = new Point(3, 435);
-            EditParcelNavButton.Name = "EditParcelNavButton";
-            EditParcelNavButton.Size = new Size(221, 66);
-            EditParcelNavButton.TabIndex = 6;
-            EditParcelNavButton.Text = "7";
-            EditParcelNavButton.UseVisualStyleBackColor = true;
-            EditParcelNavButton.Click += button8_Click;
-            // 
-            // EditPropertyNavButton
-            // 
-            EditPropertyNavButton.Dock = DockStyle.Fill;
-            EditPropertyNavButton.Location = new Point(3, 363);
-            EditPropertyNavButton.Name = "EditPropertyNavButton";
-            EditPropertyNavButton.Size = new Size(221, 66);
-            EditPropertyNavButton.TabIndex = 5;
-            EditPropertyNavButton.Text = "6";
-            EditPropertyNavButton.UseVisualStyleBackColor = true;
-            EditPropertyNavButton.Click += button7_Click;
-            // 
-            // AddParcelNavButton
-            // 
-            AddParcelNavButton.Dock = DockStyle.Fill;
-            AddParcelNavButton.Location = new Point(3, 291);
-            AddParcelNavButton.Name = "AddParcelNavButton";
-            AddParcelNavButton.Size = new Size(221, 66);
-            AddParcelNavButton.TabIndex = 4;
-            AddParcelNavButton.Text = "5";
-            AddParcelNavButton.UseVisualStyleBackColor = true;
-            AddParcelNavButton.Click += button6_Click;
-            // 
-            // AddPropertyNavButton
-            // 
-            AddPropertyNavButton.Dock = DockStyle.Fill;
-            AddPropertyNavButton.Location = new Point(3, 219);
-            AddPropertyNavButton.Name = "AddPropertyNavButton";
-            AddPropertyNavButton.Size = new Size(221, 66);
-            AddPropertyNavButton.TabIndex = 3;
-            AddPropertyNavButton.Text = "4";
-            AddPropertyNavButton.UseVisualStyleBackColor = true;
-            AddPropertyNavButton.Click += button5_Click;
+            ActionsTableLayoutPanel.Paint += ActionsTableLayoutPanel_Paint;
             // 
             // FindRealtyNavButton
             // 
@@ -161,7 +86,7 @@
             FindRealtyNavButton.Name = "FindRealtyNavButton";
             FindRealtyNavButton.Size = new Size(221, 66);
             FindRealtyNavButton.TabIndex = 2;
-            FindRealtyNavButton.Text = "3";
+            FindRealtyNavButton.Text = "Search Realty Objects";
             FindRealtyNavButton.UseVisualStyleBackColor = true;
             FindRealtyNavButton.Click += button4_Click;
             // 
@@ -172,7 +97,7 @@
             FindParcelsNavButton.Name = "FindParcelsNavButton";
             FindParcelsNavButton.Size = new Size(221, 66);
             FindParcelsNavButton.TabIndex = 1;
-            FindParcelsNavButton.Text = "2";
+            FindParcelsNavButton.Text = "Parcels";
             FindParcelsNavButton.UseVisualStyleBackColor = true;
             FindParcelsNavButton.Click += button3_Click;
             // 
@@ -183,7 +108,7 @@
             FindPropertiesNavButton.Name = "FindPropertiesNavButton";
             FindPropertiesNavButton.Size = new Size(221, 66);
             FindPropertiesNavButton.TabIndex = 0;
-            FindPropertiesNavButton.Text = "1";
+            FindPropertiesNavButton.Text = "Properties";
             FindPropertiesNavButton.UseVisualStyleBackColor = true;
             FindPropertiesNavButton.Click += button2_Click;
             // 
@@ -194,34 +119,45 @@
             FileTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
             FileTableLayoutPanel.Controls.Add(ExportButton, 1, 0);
             FileTableLayoutPanel.Controls.Add(ImportButton, 0, 0);
-            FileTableLayoutPanel.Location = new Point(3, 651);
+            FileTableLayoutPanel.Location = new Point(3, 219);
             FileTableLayoutPanel.Name = "FileTableLayoutPanel";
             FileTableLayoutPanel.RowCount = 1;
             FileTableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            FileTableLayoutPanel.Size = new Size(221, 67);
-            FileTableLayoutPanel.TabIndex = 9;
+            FileTableLayoutPanel.Size = new Size(221, 66);
+            FileTableLayoutPanel.TabIndex = 11;
             // 
             // ExportButton
             // 
             ExportButton.Dock = DockStyle.Fill;
             ExportButton.Location = new Point(113, 3);
             ExportButton.Name = "ExportButton";
-            ExportButton.Size = new Size(105, 61);
+            ExportButton.Size = new Size(105, 60);
             ExportButton.TabIndex = 1;
             ExportButton.Text = "EXPORT";
             ExportButton.UseVisualStyleBackColor = true;
-            ExportButton.Click += ExportButton_Click;
+            ExportButton.Click += ExportButton_Click_1;
             // 
             // ImportButton
             // 
             ImportButton.Dock = DockStyle.Fill;
             ImportButton.Location = new Point(3, 3);
             ImportButton.Name = "ImportButton";
-            ImportButton.Size = new Size(104, 61);
+            ImportButton.Size = new Size(104, 60);
             ImportButton.TabIndex = 0;
             ImportButton.Text = "IMPORT";
             ImportButton.UseVisualStyleBackColor = true;
-            ImportButton.Click += ImportButton_Click;
+            ImportButton.Click += ImportButton_Click_1;
+            // 
+            // generateDataButton
+            // 
+            generateDataButton.Dock = DockStyle.Fill;
+            generateDataButton.Location = new Point(3, 291);
+            generateDataButton.Name = "generateDataButton";
+            generateDataButton.Size = new Size(221, 66);
+            generateDataButton.TabIndex = 12;
+            generateDataButton.Text = "Generate New Data";
+            generateDataButton.UseVisualStyleBackColor = true;
+            generateDataButton.Click += generateDataButton_Click;
             // 
             // MainPanel
             // 
@@ -250,17 +186,12 @@
         private Panel panel1;
         private TableLayoutPanel ActionsTableLayoutPanel;
         private Panel MainPanel;
-        private Button DeleteParcelNavButton;
-        private Button DeletePropertyNavButton;
-        private Button EditParcelNavButton;
-        private Button EditPropertyNavButton;
-        private Button AddParcelNavButton;
-        private Button AddPropertyNavButton;
         private Button FindRealtyNavButton;
         private Button FindParcelsNavButton;
         private Button FindPropertiesNavButton;
         private TableLayoutPanel FileTableLayoutPanel;
         private Button ExportButton;
         private Button ImportButton;
+        private Button generateDataButton;
     }
 }
