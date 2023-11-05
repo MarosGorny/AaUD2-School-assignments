@@ -8,7 +8,7 @@ namespace GUIAssignment1.UserControls
     {
         public AddProperty4()
         {
-            InitializeComponent();
+            //InitializeComponent();
         }
 
         private void reset()
