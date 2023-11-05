@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="GUIAssignment1.GenerateDataForm" Collapsed="true">
+    <Position X="0.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>JAhAAACAgCQABBRAAAiEgAACAAGAACAhIAAQAgAAAgA=</HashCode>
+      <FileName>GenerateDataForm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GUIAssignment1.MainForm" Collapsed="true">
+    <Position X="2.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>JoAMAAQAICAAggAAgACCCAACAAAkAAAQEDAIAwAAAAA=</HashCode>
+      <FileName>MainForm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GUIAssignment1.RealtyEditForm" Collapsed="true">
+    <Position X="1.5" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAwAAACAgCQERBRAAAmEwAACAAGAgCFkAEAAAAAAIgA=</HashCode>
+      <FileName>RealtyEditForm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

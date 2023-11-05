@@ -1,0 +1,87 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="NameAndType">
+  <Class Name="SemesterAssignment1.ApplicationLogic">
+    <Position X="1" Y="2.25" Width="2.5" />
+    <AssociationLine Name="_mixedQuadTree" Type="QuadTreeDS.QuadTree.QuadTree&lt;K, V&gt;">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="0.223" Y="0.277" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <AssociationLine Name="_parcelQuadTree" Type="QuadTreeDS.QuadTree.QuadTree&lt;K, V&gt;" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="3.031" Y="2.25" />
+        <Point X="3.031" Y="1.875" />
+        <Point X="3.083" Y="1.875" />
+        <Point X="3.083" Y="1.062" />
+      </Path>
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="-0.7" Y="0.729" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <AssociationLine Name="_propertyQuadTree" Type="QuadTreeDS.QuadTree.QuadTree&lt;K, V&gt;" FixedToPoint="true">
+      <Path>
+        <Point X="1.5" Y="2.25" />
+        <Point X="1.5" Y="1.062" />
+      </Path>
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="-1.492" Y="0.484" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAIACAQAgACHAAEAAAAAMBAAhAQgIACAAAABQAAA=</HashCode>
+      <FileName>ApplicationLogic.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_mixedQuadTree" />
+      <Field Name="_parcelQuadTree" />
+      <Field Name="_propertyQuadTree" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="SemesterAssignment1.RealtyObjectsGenerator">
+    <Position X="3.75" Y="3.75" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAABEAAAAAAAAAAAAAAAAAIAAAAAAAAAADEAE=</HashCode>
+      <FileName>RealtyObjectsGenerator.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SemesterAssignment1.Program">
+    <Position X="6.75" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAA=</HashCode>
+      <FileName>Program.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="QuadTreeDS.QuadTree.QuadTree&lt;K, V&gt;" Collapsed="true">
+    <Position X="1" Y="0.5" Width="2.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="SemesterAssignment1.RealtyObjects.RealtyObjectCSVHelper">
+    <Position X="6.75" Y="5.25" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAA=</HashCode>
+      <FileName>RealtyObjects\RealtyObjectCSVHelper.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SemesterAssignment1.RealtyObjects.RealtyObject" Collapsed="true">
+    <Position X="5" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>RealtyObjects\RealtyObject.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SemesterAssignment1.RealtyObjects.Property" Collapsed="true">
+    <Position X="6" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAAACAAAQAAAABAAAAAAAACAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>RealtyObjects\RealtyObject.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SemesterAssignment1.RealtyObjects.Parcel" Collapsed="true">
+    <Position X="3.75" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAAAAAAAAAAAAAAACAAAAAAAAAAAAAYAAAAEAAAAgA=</HashCode>
+      <FileName>RealtyObjects\RealtyObject.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
