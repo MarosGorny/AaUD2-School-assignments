@@ -2,6 +2,7 @@
 using QuadTreeDS.QuadTree;
 using QuadTreeDS.SpatialItems;
 using System.Globalization;
+using System.Runtime.InteropServices;
 
 namespace SemesterAssignment1;
 public class ApplicationLogic
@@ -9,28 +10,60 @@ public class ApplicationLogic
     private QuadTree<int, string> _propertyQuadTree;
     private QuadTree<int, string> _parcelQuadTree;
     private QuadTree<int, string> _mixedQuadTree;
+    private Rectangle _boundary;
 
     public ApplicationLogic()
     {
         var boundaryPointBottomLeft = new GPSPoint(LatitudeDirection.S, 90, LongitudeDirection.W, 180);
         var boundaryPointTopRight = new GPSPoint(LatitudeDirection.N, 90, LongitudeDirection.E, 180);
+        _boundary = new Rectangle(boundaryPointBottomLeft, boundaryPointTopRight);
 
-        _propertyQuadTree = new QuadTree<int, string>(new Rectangle(boundaryPointBottomLeft, boundaryPointTopRight));
-        _parcelQuadTree = new QuadTree<int, string>(new Rectangle(boundaryPointBottomLeft, boundaryPointTopRight));
-        _mixedQuadTree = new QuadTree<int, string>(new Rectangle(boundaryPointBottomLeft, boundaryPointTopRight));
+        _propertyQuadTree = new QuadTree<int, string>(_boundary);
+        _parcelQuadTree = new QuadTree<int, string>(_boundary);
+        _mixedQuadTree = new QuadTree<int, string>(_boundary);
     }
 
     public List<RealtyObject> GetAllRealtyObjects()
     {
         var allRealtyObjects = new List<RealtyObject>();
-        foreach(var nodes in _mixedQuadTree.Root.InOrderTraversal())
+        foreach (var nodes in _mixedQuadTree.Root.InOrderTraversal())
         {
-            foreach(var realtyObject in nodes.Data)
+            foreach (var realtyObject in nodes.Data)
             {
-                allRealtyObjects.Add(realtyObject.Item as  RealtyObject);
+                allRealtyObjects.Add(realtyObject.Item as RealtyObject);
             }
         }
         return allRealtyObjects;
+    }
+
+    public void CreateOptimalizedTrees(List<RealtyObject> objectsList)
+    {
+        var propertyObjectsList = new List<QuadTreeObject<int, string>>();
+        var parcelObjectsList = new List<QuadTreeObject<int, string>>();
+        var mixedObjectsList = new List<QuadTreeObject<int, string>>();
+
+
+        foreach(var realtyObject in objectsList)
+        {
+            if (realtyObject is Property property)
+            {
+                propertyObjectsList.Add(new QuadTreeObject<int, string>(property.ConscriptionNumber, property.Description, property));
+                mixedObjectsList.Add(new QuadTreeObject<int, string>(property.ConscriptionNumber, property.Description, property));
+            }
+            else if (realtyObject is Parcel parcel)
+            {
+                parcelObjectsList.Add(new QuadTreeObject<int, string>(parcel.ParcelNumber , parcel.Description, parcel));
+                mixedObjectsList.Add(new QuadTreeObject<int, string>(parcel.ParcelNumber * -1, parcel.Description, parcel));
+            }
+
+            
+        }
+
+        var
+
+        _parcelQuadTree = new QuadTree<int, string>(_boundary,parcelObjectsList, parcelObjectsList.Count, 2);
+        _propertyQuadTree = new QuadTree<int, string>(_boundary, propertyObjectsList, propertyObjectsList.Count, 2);
+        _mixedQuadTree = new QuadTree<int, string>(_boundary, mixedObjectsList, objectsList.Count, 2);
     }
 
     public void ClearAll()

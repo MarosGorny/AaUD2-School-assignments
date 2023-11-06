@@ -569,11 +569,8 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
             throw new InvalidOperationException("DataScore cannot be calculated for an empty leaf node");
         }
 
-        // Logarithmic decrease of DataScore, log base 2
-        // Add 1 to the data count to prevent Math.Log(0) which is undefined
-        // Adding 1 also ensures that a count of 1 will return 1
+
         return 1.0 / (1 + (Math.Log(Data.Count) / Math.Log(2)) * QuadTreeOptimalization<K, V>.ScalingFactor); // Adjust the divisor as needed
-        //return 1.0 / (1 + Math.Log(Data.Count) / Math.Log(2));
     }
 
 

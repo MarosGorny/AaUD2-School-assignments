@@ -83,6 +83,7 @@ namespace GUIAssignment1
                 {
                     string filePath = ofd.FileName;
                     var realtyObjects = Program.ApplicationLogic.ImportCSV(filePath);
+                    Program.ApplicationLogic.CreateOptimalizedTrees(realtyObjects);
                     Program.ApplicationLogic.ClearAll();
                     foreach (var realtyObject in realtyObjects)
                     {

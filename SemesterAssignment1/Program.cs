@@ -31,7 +31,7 @@ namespace SemesterAssignment1
             //Console.WriteLine(  );
             //RealtyObjectTester.Test();
 
-            OptimalizationTest optimalizationTest = new OptimalizationTest(2000, 8000);
+            //OptimalizationTest optimalizationTest = new OptimalizationTest(2000, 8000);
         }
     }
 }
