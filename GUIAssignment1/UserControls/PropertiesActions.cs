@@ -50,8 +50,19 @@ namespace GUIAssignment1.UserControls
 
         private void DisplayFoundProperties(IEnumerable<Property> properties)
         {
+            //NEW CODE | After PROF. Jankovic wanted the change
             foreach (var property in properties)
             {
+                string finalString = "";
+                foreach (var parcel in property.PositionedOnParcels)
+                {
+                    string numberParcel = parcel.ParcelNumber.ToString() + " ";
+                    string descriptionParcel = parcel.Description + " ";
+                    string bottomLeftParcel = parcel.LowerLeft.ToString() + " ";
+                    string topRightParcel = parcel.UpperRight.ToString() + " ";
+                    finalString += numberParcel + descriptionParcel + bottomLeftParcel + topRightParcel + "\n";
+                }
+
                 string listOfParcelsString = string.Join(", ", property.PositionedOnParcels.Select(parcel => parcel.ParcelNumber));
                 string bottomLeftString = property.LowerLeft.ToString();
                 string topRightString = property.UpperRight.ToString();
@@ -60,7 +71,7 @@ namespace GUIAssignment1.UserControls
                 {
                     property.ConscriptionNumber,
                     property.Description,
-                    listOfParcelsString,
+                    finalString, //instead of listOfParcelsString
                     bottomLeftString,
                     topRightString
                 });
@@ -68,6 +79,27 @@ namespace GUIAssignment1.UserControls
                 int newRowIdx = propertyGridView.Rows.Count - 1;
                 propertyGridView.Rows[newRowIdx].HeaderCell.Value = (newRowIdx + 1).ToString();
             }
+
+
+            ///OLD CODE | BEFORE PROF. Jankovic wanted the change
+            //foreach (var property in properties)
+            //{
+            //    string listOfParcelsString = string.Join(", ", property.PositionedOnParcels.Select(parcel => parcel.ParcelNumber));
+            //    string bottomLeftString = property.LowerLeft.ToString();
+            //    string topRightString = property.UpperRight.ToString();
+
+            //    propertyGridView.Rows.Add(new object[]
+            //    {
+            //        property.ConscriptionNumber,
+            //        property.Description,
+            //        listOfParcelsString,
+            //        bottomLeftString,
+            //        topRightString
+            //    });
+
+            //    int newRowIdx = propertyGridView.Rows.Count - 1;
+            //    propertyGridView.Rows[newRowIdx].HeaderCell.Value = (newRowIdx + 1).ToString();
+            //}
         }
 
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
@@ -201,7 +233,7 @@ namespace GUIAssignment1.UserControls
             {
                 var cellValue = GetCellValue(propertyGridView, e.ColumnIndex, e.RowIndex);
                 // Show the message box
-                MessageBox.Show($"Cell at row {e.RowIndex + 1}, column {e.ColumnIndex + 1} \nValue: {cellValue}", "Cell Double-Clicked");
+                MessageBox.Show($"Cell at row {e.RowIndex + 1}, column {e.ColumnIndex + 1} \nValue\n: {cellValue}", "Cell Double-Clicked");
             }
         }
 

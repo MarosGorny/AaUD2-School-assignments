@@ -89,8 +89,9 @@ namespace GUIAssignment1
                     {
                         Program.ApplicationLogic.AddObject(realtyObject);
                     }
+                    MessageBox.Show("Imported");
                 }
-                MessageBox.Show("Imported");
+                
             }
             catch (Exception ex)
             {
