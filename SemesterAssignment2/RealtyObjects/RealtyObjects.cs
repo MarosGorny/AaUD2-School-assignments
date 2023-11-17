@@ -91,6 +91,8 @@ public class Parcel : RealtyObject
         : base(description, gpsRectangle)
     {
         ParcelNumber = parcelNumber;
+        LowerLeft = gpsRectangle.LowerLeft;
+        UpperRight = gpsRectangle.UpperRight;
         Bounds = gpsRectangle;
 
         this.SetUpperRight(gpsRectangle.UpperRight as GPSPoint);
@@ -110,5 +112,11 @@ public class Parcel : RealtyObject
     public void RemoveProperty(int property)
     {
         OccupiedByProperties.Remove(property);
+    }
+
+    public void ReleaseProperties()
+    {
+        OccupiedByProperties.ForEach(property => property.RemoveParcel(this));
+        OccupiedByProperties.Clear();
     }
 }
