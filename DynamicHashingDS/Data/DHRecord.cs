@@ -85,7 +85,6 @@ public class DummyClass : DHRecord
 
 public abstract class DHRecord
 {
-    public byte isValid { get; set; } = 0;
     public abstract int GetSize();
 
     public abstract BitArray GetHash();

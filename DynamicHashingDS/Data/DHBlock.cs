@@ -1,31 +1,20 @@
 ﻿namespace DynamicHashingDS.Data;
 public class DHBlock<T> where T : DHRecord, new()
 {
-
-    public DHBlock<T> NextBlock { get; set; }
-    public DHBlock<T> PreviousBlock { get; set; }
     public int MaxRecordsCount { get; set; }
-    public int ValidRecordsCount { get; set; }
-    public LinkedList<T> RecordsList { get; set; }
+    public int ValidRecordsCount { get; set; } = 0;
+    public List<T> RecordsList { get; set; } = new List<T>();
 
     public DHBlock(int blockFactor)
     {
-        RecordsList = new LinkedList<T>();
-        ValidRecordsCount = 0;
         MaxRecordsCount = blockFactor;
-
-        for (int i = 0; i < MaxRecordsCount; i++)
-        {
-            RecordsList.AddLast(new T());
-        }
     }
 
     public bool AddRecord(T record)
     {
         if (ValidRecordsCount < MaxRecordsCount)
         {
-            RecordsList.AddFirst(record);
-            RecordsList.RemoveLast();
+            RecordsList.Add(record);
             ValidRecordsCount++;
             return true;
         }
@@ -34,22 +23,23 @@ public class DHBlock<T> where T : DHRecord, new()
     }
 
 
-    public bool Find(T record)
+    public bool TryFind(T record, out T? foundRecord)
     {
         foreach (var r in RecordsList)
         {
             if (r.MyEquals(record))
             {
+                foundRecord = r;
                 return true;
             }
         }
-
+        foundRecord = null;
         return false;
     }
 
     public int GetSize()
     {
-        return RecordsList.Count * RecordsList.First.Value.GetSize();
+        return MaxRecordsCount * new T().GetSize();
     }
 
     public byte[] ToByteArray()

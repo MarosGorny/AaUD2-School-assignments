@@ -6,17 +6,14 @@ namespace DynamicHashingDS.DH;
 
 public class DynamicHashing<T> where T : DHRecord, new()
 {
-    private DHNode Root;
-    public int BlockFactor { get; set; }
-    public int MaxBlockDepth { get; set; }
-
-    public List<DHBlock<T>> Blocks { get; set; }
-
+    private DHNode<T> Root;
+    public int BlockFactor { get; private set; }
+    public int MaxBlockDepth { get; private set; }
+    public List<DHBlock<T>> Blocks { get; private set; }
 
     public DynamicHashing(int blockFactor)
     {
-        Blocks = new List<DHBlock<T>>();
-        Blocks.Add(new DHBlock<T>(blockFactor));
+        Blocks = new List<DHBlock<T>> { new DHBlock<T>(blockFactor) };
         MaxBlockDepth = new T().GetHash().Length;
         BlockFactor = blockFactor;
         Root = new DHExternalNode<T>();
@@ -24,77 +21,87 @@ public class DynamicHashing<T> where T : DHRecord, new()
 
     public void Insert(DHRecord record)
     {
-        DHNode currentNode = Root;
-        var hash = record.GetHash();
+        bool inserted = Root.Insert(record, Blocks, BlockFactor);
+    }
 
-        while(currentNode is DHInternalNode internalNode)
-        {
-            var nodeDepth = currentNode.Depth;
-            bool depthBit = hash[nodeDepth];
-            if (depthBit)
-            {
-                currentNode = internalNode.RightChild;
-            }
-            else
-            {
-                currentNode = internalNode.LeftChild;
-            }
-        }
+    /// <summary>
+    /// OLD IMPLEMENTATION
+    /// </summary>
+    /// <param name="record"></param>
 
-        if (currentNode is DHExternalNode<T> externalNode)
-        {
-            if(externalNode.RecordsCount < BlockFactor)
-            {
-                externalNode.RecordsCount++;
-                externalNode.BlockAddress = Blocks.Count - 1;
-                Blocks[externalNode.BlockAddress].AddRecord(record as T);
-            }
-            else 
-            {
-                var nodeAddress = externalNode.BlockAddress;
-                var parent = externalNode.Parent;
-                var newInternalNode = new DHInternalNode();
-                if(externalNode.Depth == 0)
-                {
-                    Root = newInternalNode;
-                }
-                newInternalNode.Depth = externalNode.Depth;
-                newInternalNode.Parent = parent;
+    //public void Insert(DHRecord record)
+    //{
+    //    DHNode currentNode = Root;
+    //    var hash = record.GetHash();
 
-                newInternalNode.LeftChild = externalNode;
-                newInternalNode.RightChild = new DHExternalNode<T>();
+    //    while(currentNode is DHInternalNode internalNode)
+    //    {
+    //        var nodeDepth = currentNode.Depth;
+    //        bool depthBit = hash[nodeDepth];
+    //        if (depthBit)
+    //        {
+    //            currentNode = internalNode.RightChild;
+    //        }
+    //        else
+    //        {
+    //            currentNode = internalNode.LeftChild;
+    //        }
+    //    }
 
-                newInternalNode.RightChild.Depth = newInternalNode.Depth + 1;
-                newInternalNode.LeftChild.Depth = newInternalNode.Depth + 1;
+    //    if (currentNode is DHExternalNode<T> externalNode)
+    //    {
+    //        if(externalNode.RecordsCount < BlockFactor)
+    //        {
+    //            externalNode.RecordsCount++;
+    //            externalNode.BlockAddress = Blocks.Count - 1;
+    //            Blocks[externalNode.BlockAddress].AddRecord(record as T);
+    //        }
+    //        else 
+    //        {
+    //            var nodeAddress = externalNode.BlockAddress;
+    //            var parent = externalNode.Parent;
+    //            var newInternalNode = new DHInternalNode();
+    //            if(externalNode.Depth == 0)
+    //            {
+    //                Root = newInternalNode;
+    //            }
+    //            newInternalNode.Depth = externalNode.Depth;
+    //            newInternalNode.Parent = parent;
 
-                newInternalNode.RightChild.Parent = newInternalNode;
-                newInternalNode.LeftChild.Parent = newInternalNode;
+    //            newInternalNode.LeftChild = externalNode;
+    //            newInternalNode.RightChild = new DHExternalNode<T>();
 
-                var newBlock = new DHBlock<T>(BlockFactor);
-                Blocks.Add(newBlock);
+    //            newInternalNode.RightChild.Depth = newInternalNode.Depth + 1;
+    //            newInternalNode.LeftChild.Depth = newInternalNode.Depth + 1;
 
-                var reInsertBlock = Blocks[nodeAddress];
+    //            newInternalNode.RightChild.Parent = newInternalNode;
+    //            newInternalNode.LeftChild.Parent = newInternalNode;
 
-                foreach (var reInsertRecord in reInsertBlock.RecordsList)
-                {
-                    var reInsertRecordHash = reInsertRecord.GetHash();
-                    var reInsertRecordDepthBit = reInsertRecordHash[newInternalNode.Depth];
-                    //TODO: We also need to delete that record from old one.
-                    parent.Insert(reInsertRecord);
+    //            var newBlock = new DHBlock<T>(BlockFactor);
+    //            Blocks.Add(newBlock);
+
+    //            var reInsertBlock = Blocks[nodeAddress];
+
+    //            foreach (var reInsertRecord in reInsertBlock.RecordsList)
+    //            {
+    //                var reInsertRecordHash = reInsertRecord.GetHash();
+    //                var reInsertRecordDepthBit = reInsertRecordHash[newInternalNode.Depth];
+    //                //TODO: We also need to delete that record from old one.
+    //                parent.Insert(reInsertRecord);
                     
-                }
+    //            }
 
-            }
+    //        }
 
           
-        }
+    //    }
 
-    }
+    //}
 
-    public void Delete(DHRecord record)
-    {
-        // Implement deletion logic
-    }
+    //public void Delete(DHRecord record)
+    //{
+    //    // Implement deletion logic
+    //}
 
     //public DHRecord Find(DHRecord record)
     //{
