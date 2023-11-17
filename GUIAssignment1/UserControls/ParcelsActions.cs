@@ -1,5 +1,6 @@
 ﻿using QuadTreeDS.SpatialItems;
 using SemesterAssignment1.RealtyObjects;
+using System.Windows.Forms;
 using static GUIAssignment1.RealtyEditForm;
 
 namespace GUIAssignment1.UserControls
@@ -20,7 +21,7 @@ namespace GUIAssignment1.UserControls
                 var cellValue = parcelGridView[e.ColumnIndex, e.RowIndex].Value?.ToString() ?? "N/A";
 
                 // Show the message box
-                MessageBox.Show($"Cell at row {e.RowIndex + 1}, column {e.ColumnIndex + 1} \nValue: {cellValue}", "Cell Double-Clicked");
+                MessageBox.Show($"Cell at row {e.RowIndex + 1}, column {e.ColumnIndex + 1} \nValue: {cellValue}\n", "Cell Double-Clicked");
             }
         }
 
@@ -211,6 +212,36 @@ namespace GUIAssignment1.UserControls
 
         private void DisplayFoundParcels(IEnumerable<Parcel> parcels)
         {
+            //NEW CODE AFTER PROF JANKOVIC WANTED THE CHANGE
+            foreach (var parcel in parcels)
+            {                
+                string finalString = "";
+                foreach (var property in parcel.OccupiedByProperties)
+                {
+                    string numberParcel = property.ConscriptionNumber.ToString() + " ";
+                    string descriptionParcel = property.Description + " ";
+                    string bottomLeftParcel = property.LowerLeft.ToString() + " ";
+                    string topRightParcel = property.UpperRight.ToString() + " ";
+                    finalString += numberParcel + descriptionParcel + bottomLeftParcel + topRightParcel + "\n";
+                }
+
+                string listOfParcelsString = string.Join(", ", parcel.OccupiedByProperties.Select(property => property.ConscriptionNumber));
+                string bottomLeftString = parcel.LowerLeft.ToString();
+                string topRightString = parcel.UpperRight.ToString();
+
+                parcelGridView.Rows.Add(new object[]
+                {
+                    parcel.ParcelNumber,
+                    parcel.Description,
+                    finalString, //INSTEAD OF listOfParcelsString
+                    bottomLeftString,
+                    topRightString
+                });
+
+                int newRowIdx = parcelGridView.Rows.Count - 1;
+                parcelGridView.Rows[newRowIdx].HeaderCell.Value = (newRowIdx + 1).ToString();
+            }
+            //OLD CODE BEFORE PROF JANKOVIC WANTED THE CHANGE
             foreach (var parcel in parcels)
             {
                 string listOfParcelsString = string.Join(", ", parcel.OccupiedByProperties.Select(property => property.ConscriptionNumber));
@@ -308,6 +339,19 @@ namespace GUIAssignment1.UserControls
             var foundParcels = Program.ApplicationLogic.FindParcels(gpsPoint);
             foreach (var foundParcel in foundParcels)
             {
+                //THIS WAS ADDED JUST FOR THE PURPOSE OF THE ASSIGNMENT OF JANKOVIC
+                string finalString = "";
+                foreach (var property in foundParcel.OccupiedByProperties)
+                {
+                    string numberParcel = property.ConscriptionNumber.ToString() + " ";
+                    string descriptionParcel = property.Description + " ";
+                    string bottomLeftParcel = property.LowerLeft.ToString() + " ";
+                    string topRightParcel = property.UpperRight.ToString() + " ";
+                    finalString += numberParcel + descriptionParcel + bottomLeftParcel + topRightParcel + "\n";
+                }
+                //END OF ADDED CODE
+
+
                 var parcelNumber = foundParcel.ParcelNumber;
                 var parcelDescription = foundParcel.Description;
                 var listOfProperties = foundParcel.OccupiedByProperties;
@@ -320,10 +364,17 @@ namespace GUIAssignment1.UserControls
                         listOfPropertiesString += ", ";
                     }
                 }
+
                 var bottomLeftString = ((GPSPoint)(foundParcel.LowerLeft)).ToString();
                 var topRightString = ((GPSPoint)(foundParcel.UpperRight)).ToString();
 
-                parcelGridView.Rows.Add(parcelNumber, parcelDescription, listOfPropertiesString, bottomLeftString, topRightString);
+
+                //NEW CODE AFTER PROF JANKOVIC WANTED THE CHANGE
+                parcelGridView.Rows.Add(parcelNumber, parcelDescription, finalString, bottomLeftString, topRightString); // finalStreng instead of listOfPropertiesString
+
+                //OLD CODE BEFORE PROF JANKOVIC WANTED THE CHANGE
+                //parcelGridView.Rows.Add(parcelNumber, parcelDescription, listOfPropertiesString, bottomLeftString, topRightString);
+
                 parcelGridView.Rows[parcelGridView.Rows.Count - 1].HeaderCell.Value = (parcelGridView.Rows.Count).ToString();
             }
         }

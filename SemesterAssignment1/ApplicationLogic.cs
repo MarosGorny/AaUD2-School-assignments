@@ -232,7 +232,7 @@ public class ApplicationLogic
     public void GenerateNewData(int propertyCount, int parcelCount, GPSRectangle boundary)
     {
         var realtyObjectsGenerator = new RealtyObjectsGenerator();
-        var (parcels, properties) = realtyObjectsGenerator.GenerateRealtyObjects(propertyCount, parcelCount, boundary);
+        var (parcels, properties) = realtyObjectsGenerator.GenerateRealtyObjects(parcelCount, propertyCount, boundary);
 
         ClearAll();
 

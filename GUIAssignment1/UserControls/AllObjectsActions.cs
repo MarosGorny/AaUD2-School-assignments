@@ -1,7 +1,5 @@
 ﻿using QuadTreeDS.SpatialItems;
 using SemesterAssignment1.RealtyObjects;
-using System.Windows.Forms;
-using System.Windows.Forms.VisualStyles;
 using Rectangle = QuadTreeDS.SpatialItems.Rectangle;
 
 namespace GUIAssignment1.UserControls
@@ -97,6 +95,18 @@ namespace GUIAssignment1.UserControls
 
         private void AddPropertyToGrid(Property property)
         {
+            // NEW CODE JUST FOR PROF JANKOVIC REQUEST
+            string finalString = "";
+            foreach (var parcel in property.PositionedOnParcels)
+            {
+                string numberParcel = parcel.ParcelNumber.ToString() + " ";
+                string descriptionParcel = parcel.Description + " ";
+                string bottomLeftParcel = parcel.LowerLeft.ToString() + " ";
+                string topRightParcel = parcel.UpperRight.ToString() + " ";
+                finalString += numberParcel + descriptionParcel + bottomLeftParcel + topRightParcel + "\n";
+            }
+            //END OF CODE
+
             string listOfParcelsString = String.Join(", ", property.PositionedOnParcels.Select(parcel => parcel.ParcelNumber));
             string bottomLeftString = property.LowerLeft.ToString();
             string topRightString = property.UpperRight.ToString();
@@ -105,13 +115,24 @@ namespace GUIAssignment1.UserControls
                 "Property",
                 property.ConscriptionNumber,
                 property.Description,
-                listOfParcelsString,
+                finalString, //INSTEAD of listOfParcelsString
                 bottomLeftString,
                 topRightString);
         }
 
         private void AddParcelToGrid(Parcel parcel)
         {
+            // NEW CODE JUST FOR PROF JANKOVIC REQUEST
+            string finalString = "";
+            foreach (var property in parcel.OccupiedByProperties)
+            {
+                string numberParcel = property.ConscriptionNumber.ToString() + " ";
+                string descriptionParcel = property.Description + " ";
+                string bottomLeftParcel = property.LowerLeft.ToString() + " ";
+                string topRightParcel = property.UpperRight.ToString() + " ";
+                finalString += numberParcel + descriptionParcel + bottomLeftParcel + topRightParcel + "\n";
+            }
+
             string listOfPropertiesString = String.Join(", ", parcel.OccupiedByProperties.Select(property => property.ConscriptionNumber));
             string bottomLeftString = parcel.LowerLeft.ToString();
             string topRightString = parcel.UpperRight.ToString();
@@ -120,7 +141,7 @@ namespace GUIAssignment1.UserControls
                 "Parcel",
                 parcel.ParcelNumber,
                 parcel.Description,
-                listOfPropertiesString,
+                finalString, //INSTEAD of listOfPropertiesString
                 bottomLeftString,
                 topRightString);
         }

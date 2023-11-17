@@ -1,5 +1,6 @@
 ﻿using QuadTreeDS.SpatialItems;
 using SemesterAssignment1.RealtyObjects;
+using System.Security.Cryptography;
 
 namespace SemesterAssignment1;
 public class RealtyObjectsGenerator
@@ -18,11 +19,11 @@ public class RealtyObjectsGenerator
     public List<Parcel> GenerateParcels(int parcelCount, GPSRectangle boundary)
     {
         var parcels = new List<Parcel>();
-        var ids = GenerateShuffledIds(parcelCount);
-
+       
         var lowerLeftGPSPoint = boundary.LowerLeft as GPSPoint;
         var upperRightGPSPoint = boundary.UpperRight as GPSPoint;
 
+        ////SAME PARCELS WITH SAME BOUNDARIES
         for (int i = 0; i < parcelCount; i++)
         {
             double latStart = GenerateRandomCoordinate(lowerLeftGPSPoint.X, upperRightGPSPoint.X);
@@ -32,10 +33,33 @@ public class RealtyObjectsGenerator
 
             var parcelBottomLeft = new GPSPoint(latStart >= 0 ? LatitudeDirection.N : LatitudeDirection.S, Math.Abs(latStart), longStart >= 0 ? LongitudeDirection.E : LongitudeDirection.W, Math.Abs(longStart));
             var parcelTopRight = new GPSPoint(latEnd >= 0 ? LatitudeDirection.N : LatitudeDirection.S, Math.Abs(latEnd), longEnd >= 0 ? LongitudeDirection.E : LongitudeDirection.W, Math.Abs(longEnd));
+            for (int j = 1; j < 11; j++)
+            {
+                var parcel = new Parcel((i*10) + j, $"Parcel {(i * 10) + j}", new GPSRectangle(parcelBottomLeft, parcelTopRight));
+                parcels.Add(parcel);
+            }
 
-            var parcel = new Parcel(ids[i], $"Parcel {ids[i]}", new GPSRectangle(parcelBottomLeft, parcelTopRight));
-            parcels.Add(parcel);
         }
+
+        //OLD CODE FOR RANDOM PARCELS | Prof. Jankovic wanted to make changes in the code, here is the old code.
+        //var ids = GenerateShuffledIds(parcelCount);
+
+        //var lowerLeftGPSPoint = boundary.LowerLeft as GPSPoint;
+        //var upperRightGPSPoint = boundary.UpperRight as GPSPoint;
+        //for (int i = 0; i < parcelCount; i++)
+        //{
+        //    double latStart = GenerateRandomCoordinate(lowerLeftGPSPoint.X, upperRightGPSPoint.X);
+        //    double longStart = GenerateRandomCoordinate(lowerLeftGPSPoint.Y, upperRightGPSPoint.Y);
+        //    double latEnd = GenerateRandomCoordinate(latStart, upperRightGPSPoint.X);
+        //    double longEnd = GenerateRandomCoordinate(longStart, upperRightGPSPoint.Y);
+
+        //    var parcelBottomLeft = new GPSPoint(latStart >= 0 ? LatitudeDirection.N : LatitudeDirection.S, Math.Abs(latStart), longStart >= 0 ? LongitudeDirection.E : LongitudeDirection.W, Math.Abs(longStart));
+        //    var parcelTopRight = new GPSPoint(latEnd >= 0 ? LatitudeDirection.N : LatitudeDirection.S, Math.Abs(latEnd), longEnd >= 0 ? LongitudeDirection.E : LongitudeDirection.W, Math.Abs(longEnd));
+
+        //    var parcel = new Parcel(ids[i], $"Parcel {ids[i]}", new GPSRectangle(parcelBottomLeft, parcelTopRight));
+        //    parcels.Add(parcel);
+        //    
+        //}
 
         return parcels;
     }
@@ -48,13 +72,13 @@ public class RealtyObjectsGenerator
         var lowerLeftGPSPoint = boundary.LowerLeft as GPSPoint;
         var upperRightGPSPoint = boundary.UpperRight as GPSPoint;
 
-        for (int i = 0; i < propertyCount; i++)
-        {
+
             double latStart = GenerateRandomCoordinate(lowerLeftGPSPoint.X, upperRightGPSPoint.X);
             double longStart = GenerateRandomCoordinate(lowerLeftGPSPoint.Y, upperRightGPSPoint.Y);
             double latEnd = GenerateRandomCoordinate(latStart, upperRightGPSPoint.X);
             double longEnd = GenerateRandomCoordinate(longStart, upperRightGPSPoint.Y);
-
+        for (int i = 0; i < propertyCount; i++)
+        {
             var propertyBottomLeft = new GPSPoint(latStart >= 0 ? LatitudeDirection.N : LatitudeDirection.S, Math.Abs(latStart), longStart >= 0 ? LongitudeDirection.E : LongitudeDirection.W, Math.Abs(longStart));
             var propertyTopRight = new GPSPoint(latEnd >= 0 ? LatitudeDirection.N : LatitudeDirection.S, Math.Abs(latEnd), longEnd >= 0 ? LongitudeDirection.E : LongitudeDirection.W, Math.Abs(longEnd));
 
@@ -69,35 +93,70 @@ public class RealtyObjectsGenerator
     {
         var properties = new List<Property>();
         var ids = GenerateShuffledIds(propertyCount);
-
+        //NEW CODE FOR SAME PROPERTIES
+        //OLD CODE FOR RANDOM PROPERTIES
         for (int i = 0; i < propertyCount; i++)
         {
             Parcel selectedParcel = parcels[_random.Next(parcels.Count)];
             GPSRectangle parcelBoundary = selectedParcel.Bounds;
 
-            double latStart = GenerateRandomCoordinate(parcelBoundary.LowerLeft.X, parcelBoundary.UpperRight.X);
-            double longStart = GenerateRandomCoordinate(parcelBoundary.LowerLeft.Y, parcelBoundary.UpperRight.Y);
 
-            // Changing size of property based on parcel size
-            double maxPropertySize = Math.Min(parcelBoundary.GetWidth(), parcelBoundary.GetHeight()) / 10;
-            double latEnd = GenerateRandomCoordinate(latStart, Math.Min(latStart + maxPropertySize, parcelBoundary.UpperRight.X));
-            double longEnd = GenerateRandomCoordinate(longStart, Math.Min(longStart + maxPropertySize, parcelBoundary.UpperRight.Y));
+                double latStart = GenerateRandomCoordinate(parcelBoundary.LowerLeft.X, parcelBoundary.UpperRight.X);
+                double longStart = GenerateRandomCoordinate(parcelBoundary.LowerLeft.Y, parcelBoundary.UpperRight.Y);
 
-            // Creating GPS point
-            var propertyBottomLeft = new GPSPoint(latStart >= 0 ? LatitudeDirection.N : LatitudeDirection.S, Math.Abs(latStart), longStart >= 0 ? LongitudeDirection.E : LongitudeDirection.W, Math.Abs(longStart));
-            var propertyTopRight = new GPSPoint(latEnd >= 0 ? LatitudeDirection.N : LatitudeDirection.S, Math.Abs(latEnd), longEnd >= 0 ? LongitudeDirection.E : LongitudeDirection.W, Math.Abs(longEnd));
-
-            var property = new Property(ids[i], $"Property {ids[i]}", new GPSRectangle(propertyBottomLeft, propertyTopRight));
-
-
-            if (linkToParcels)
+                // Changing size of property based on parcel size
+                double maxPropertySize = Math.Min(parcelBoundary.GetWidth(), parcelBoundary.GetHeight()) / 10;
+                double latEnd = GenerateRandomCoordinate(latStart, Math.Min(latStart + maxPropertySize, parcelBoundary.UpperRight.X));
+                double longEnd = GenerateRandomCoordinate(longStart, Math.Min(longStart + maxPropertySize, parcelBoundary.UpperRight.Y));
+            for (int j = 1; j < 11; j++)
             {
-                selectedParcel.AddProperty(property);
-                property.AddParcel(selectedParcel);
+                // Creating GPS point
+                var propertyBottomLeft = new GPSPoint(latStart >= 0 ? LatitudeDirection.N : LatitudeDirection.S, Math.Abs(latStart), longStart >= 0 ? LongitudeDirection.E : LongitudeDirection.W, Math.Abs(longStart));
+                var propertyTopRight = new GPSPoint(latEnd >= 0 ? LatitudeDirection.N : LatitudeDirection.S, Math.Abs(latEnd), longEnd >= 0 ? LongitudeDirection.E : LongitudeDirection.W, Math.Abs(longEnd));
+
+                var property = new Property((i * 10) + j, $"Property {(i * 10) + j}", new GPSRectangle(propertyBottomLeft, propertyTopRight));
+
+
+                if (linkToParcels)
+                {
+                    selectedParcel.AddProperty(property);
+                    property.AddParcel(selectedParcel);
+                }
+
+                properties.Add(property);
             }
 
-            properties.Add(property);
         }
+
+        //OLD CODE FOR RANDOM PROPERTIES
+        //for (int i = 0; i < propertyCount; i++)
+        //{
+        //    Parcel selectedParcel = parcels[_random.Next(parcels.Count)];
+        //    GPSRectangle parcelBoundary = selectedParcel.Bounds;
+
+        //    double latStart = GenerateRandomCoordinate(parcelBoundary.LowerLeft.X, parcelBoundary.UpperRight.X);
+        //    double longStart = GenerateRandomCoordinate(parcelBoundary.LowerLeft.Y, parcelBoundary.UpperRight.Y);
+
+        //    // Changing size of property based on parcel size
+        //    double maxPropertySize = Math.Min(parcelBoundary.GetWidth(), parcelBoundary.GetHeight()) / 10;
+        //    double latEnd = GenerateRandomCoordinate(latStart, Math.Min(latStart + maxPropertySize, parcelBoundary.UpperRight.X));
+        //    double longEnd = GenerateRandomCoordinate(longStart, Math.Min(longStart + maxPropertySize, parcelBoundary.UpperRight.Y));
+
+        //    // Creating GPS point
+        //    var propertyBottomLeft = new GPSPoint(latStart >= 0 ? LatitudeDirection.N : LatitudeDirection.S, Math.Abs(latStart), longStart >= 0 ? LongitudeDirection.E : LongitudeDirection.W, Math.Abs(longStart));
+        //    var propertyTopRight = new GPSPoint(latEnd >= 0 ? LatitudeDirection.N : LatitudeDirection.S, Math.Abs(latEnd), longEnd >= 0 ? LongitudeDirection.E : LongitudeDirection.W, Math.Abs(longEnd));
+
+        //    var property = new Property(ids[i], $"Property {ids[i]}", new GPSRectangle(propertyBottomLeft, propertyTopRight));
+
+
+        //    if (linkToParcels)
+        //    {
+        //        selectedParcel.AddProperty(property);
+        //        property.AddParcel(selectedParcel);
+        //    }
+
+        //    properties.Add(property);
+        //}
 
         return properties;
     }
