@@ -348,7 +348,7 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
     #endregion
 
     #region Deletion
-    public SpatialItem? Delete(QuadTreeObject<K, V> quadTreeObject) //TODO: Return bool or object
+    public ISpatialItem? Delete(QuadTreeObject<K, V> quadTreeObject) //TODO: Return bool or object
     {
         var deletedKey = true;
         if(QuadTree.CheckKeysDuplicate)
@@ -371,9 +371,9 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
         return null;
     }
 
-    private SpatialItem? TryRemoveDataFromNode(QuadTreeNode<K, V> node, QuadTreeObject<K, V> targetObject)
+    private ISpatialItem? TryRemoveDataFromNode(QuadTreeNode<K, V> node, QuadTreeObject<K, V> targetObject)
     {
-        SpatialItem? removedItem = null;
+        ISpatialItem? removedItem = null;
 
         if (targetObject.Item is Point && node.PointData.Remove(targetObject))
         {
@@ -395,7 +395,7 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
     #endregion
 
     #region Find
-    public List<QuadTreeObject<K, V>>? Find(SpatialItem rectangle)
+    public List<QuadTreeObject<K, V>>? Find(ISpatialItem rectangle)
     {
         List<QuadTreeObject<K, V>>? foundItems = new List<QuadTreeObject<K, V>>();
         Queue<QuadTreeNode<K, V>> nodesToCheck = new Queue<QuadTreeNode<K, V>>();
@@ -413,7 +413,7 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
                 {
                     foundItems.Add(kvp);
                 }
-                else if(kvp.Item is SpatialItem spatialItem && rectangle.Intersects(spatialItem))
+                else if(kvp.Item is ISpatialItem spatialItem && rectangle.Intersects(spatialItem))
                 {
                     foundItems.Add(kvp);
                 }
@@ -435,7 +435,7 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
         return foundItems;
     }
 
-    public (QuadTreeNode<K, V>? foundNode, QuadTreeObject<K,V>? foundObject) LocateNodeAndObjectForItem(SpatialItem searchItem, K key)
+    public (QuadTreeNode<K, V>? foundNode, QuadTreeObject<K,V>? foundObject) LocateNodeAndObjectForItem(ISpatialItem searchItem, K key)
     {
         Queue<QuadTreeNode<K, V>> nodesToCheck = new Queue<QuadTreeNode<K, V>>();
         nodesToCheck.Enqueue(this);
@@ -482,7 +482,7 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
     //    return false;
     //}
 
-    private QuadTreeObject<K,V>? ContainsDataItem(QuadTreeNode<K, V> node, SpatialItem searchItem, K key)
+    private QuadTreeObject<K,V>? ContainsDataItem(QuadTreeNode<K, V> node, ISpatialItem searchItem, K key)
     {
 
         if(searchItem is Point)
@@ -589,12 +589,12 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
         };
     }
 
-    private bool ShouldSubdivide(QuadTreeNode<K, V> node, SpatialItem rectangle)
+    private bool ShouldSubdivide(QuadTreeNode<K, V> node, ISpatialItem rectangle)
     {
         return node.Data.Count != 0 && node.CalculateSubquadrantsBoundaries().Any(boundary => boundary.ContainsStrict(rectangle));
     }
 
-    private bool TryMoveToChildContainingRectangle(ref QuadTreeNode<K, V> node, SpatialItem rectangle)
+    private bool TryMoveToChildContainingRectangle(ref QuadTreeNode<K, V> node, ISpatialItem rectangle)
     {
         if (TryGetFittingQuadrant(node, rectangle, out Quadrant? fittingQuadrant))
         {
@@ -612,7 +612,7 @@ public class QuadTreeNode<K, V> where K : IComparable<K>
     /// <param name="rectangle">The rectangle to check for containment within the quadrants.</param>
     /// <param name="fittingQuadrant">When this method returns, contains the quadrant which fully contains the rectangle, if found; otherwise, null.</param>
     /// <returns>True if a fitting quadrant was found; otherwise, false.</returns>
-    private bool TryGetFittingQuadrant(QuadTreeNode<K, V> node, SpatialItem rectangle, out Quadrant? fittingQuadrant)
+    private bool TryGetFittingQuadrant(QuadTreeNode<K, V> node, ISpatialItem rectangle, out Quadrant? fittingQuadrant)
     {
         foreach (Quadrant quadrant in Enum.GetValues(typeof(Quadrant)))
         {

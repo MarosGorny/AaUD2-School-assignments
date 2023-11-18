@@ -248,7 +248,7 @@ public class ApplicationLogic
     }
 
     //need to find spatialItem from quadtree
-    public (QuadTreeNode<int, string>? foundNode, SpatialItem? foundObject) FindObject(SpatialItem spatialItem)
+    public (QuadTreeNode<int, string>? foundNode, ISpatialItem? foundObject) FindObject(ISpatialItem spatialItem)
     {
         if(spatialItem is Property property)
         {

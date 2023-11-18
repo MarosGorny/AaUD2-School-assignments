@@ -27,8 +27,8 @@ public class Property : RealtyObject, IDHRecord
         : base(description,gpsRectangle)
     {
         ConscriptionNumber = conscriptionNumber;
-        LowerLeft = gpsRectangle.LowerLeft;
-        UpperRight = gpsRectangle.UpperRight;
+        this.SetUpperRight(gpsRectangle.UpperRight as GPSPoint);
+        this.SetLowerLeft(gpsRectangle.LowerLeft as GPSPoint);
     }
 
     public void AddParcel(Parcel parcel)
@@ -86,8 +86,8 @@ public class Parcel : RealtyObject
         :base(description, gpsRectangle)
     {
         ParcelNumber = parcelNumber;
-        LowerLeft = gpsRectangle.LowerLeft;
-        UpperRight = gpsRectangle.UpperRight;
+        this.SetLowerLeft(gpsRectangle.LowerLeft as GPSPoint);
+        this.SetUpperRight(gpsRectangle.UpperRight as GPSPoint);
         Bounds = gpsRectangle;
     }
 

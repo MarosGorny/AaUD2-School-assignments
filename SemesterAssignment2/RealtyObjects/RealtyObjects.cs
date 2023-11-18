@@ -31,8 +31,8 @@ public class Property : RealtyObject, IDHRecord
         : base(description, gpsRectangle)
     {
         ConscriptionNumber = conscriptionNumber;
-        LowerLeft = gpsRectangle.LowerLeft;
-        UpperRight = gpsRectangle.UpperRight;
+        this.SetLowerLeft(gpsRectangle.LowerLeft as GPSPoint);
+        this.SetUpperRight(gpsRectangle.UpperRight as GPSPoint);
     }
 
     public bool TryAddParcel(int parcel)
@@ -91,12 +91,13 @@ public class Parcel : RealtyObject
         : base(description, gpsRectangle)
     {
         ParcelNumber = parcelNumber;
-        LowerLeft = gpsRectangle.LowerLeft;
-        UpperRight = gpsRectangle.UpperRight;
         Bounds = gpsRectangle;
+
+        this.SetUpperRight(gpsRectangle.UpperRight as GPSPoint);
+        this.SetLowerLeft(gpsRectangle.LowerLeft as GPSPoint);
     }
 
-    public bool TryAddProperty(Property property)
+    public bool TryAddProperty(int property)
     {
         if (OccupiedByProperties.Count < 5)
         {
@@ -106,14 +107,8 @@ public class Parcel : RealtyObject
         return false;
     }
 
-    public void RemoveProperty(Property property)
+    public void RemoveProperty(int property)
     {
         OccupiedByProperties.Remove(property);
-    }
-
-    public void ReleaseProperties()
-    {
-        OccupiedByProperties.ForEach(property => property.RemoveParcel(this));
-        OccupiedByProperties.Clear();
     }
 }

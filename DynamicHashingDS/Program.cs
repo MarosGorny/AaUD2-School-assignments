@@ -1,6 +1,5 @@
 ﻿using DynamicHashingDS.Data;
 using DynamicHashingDS.DH;
-using SemesterAssignment
 
 namespace DynamicHashingDS;
 internal class Program
@@ -27,6 +26,5 @@ internal class Program
         dynamicHashing.Insert(dummy2);
         dynamicHashing.Insert(dummy3);
 
-        var property = Parcel
     }
 }

@@ -13,81 +13,72 @@ public enum Quadrant
 
 
 /// <summary>
-/// Abstract class representing an item that exists within a spatial context.
+/// Interface representing an item that exists within a spatial context.
 /// </summary>
-public abstract class SpatialItem
+public interface ISpatialItem
 {
-    public Point LowerLeft { get; protected set; }
-    public Point UpperRight { get; protected set; }
+    Point LowerLeft { get; }
+    Point UpperRight { get; }
 
-    public double GetLongestSide()
-    {
-        double width = GetWidth();
-        double height = GetHeight();
-        return System.Math.Max(width, height);
-    }
+    double GetLongestSide();
+    double GetHeight();
+    double GetWidth();
+    bool ContainsStrict(ISpatialItem other);
 
-    public double GetHeight()
-    {
-        return UpperRight.Y - LowerLeft.Y;
-    }
+    bool Intersects(ISpatialItem other);
 
-    public double GetWidth()
-    {
-        return UpperRight.X - LowerLeft.X;
-    }
+    bool OverlapsBorder(ISpatialItem other);
 
-    public bool ContainsStrict(SpatialItem other)
-    {
-        return LowerLeft.X <= other.LowerLeft.X &&
-               LowerLeft.Y <= other.LowerLeft.Y &&
-               UpperRight.X >= other.UpperRight.X &&
-               UpperRight.Y >= other.UpperRight.Y;
-    }
+    //public double GetLongestSide()
+    //{
+    //    double width = GetWidth();
+    //    double height = GetHeight();
+    //    return System.Math.Max(width, height);
+    //}
 
-    public bool Intersects(SpatialItem other)
-    {
-        return LowerLeft.X <= other.UpperRight.X &&
-               UpperRight.X >= other.LowerLeft.X &&
-               LowerLeft.Y <= other.UpperRight.Y &&
-               UpperRight.Y >= other.LowerLeft.Y;
-    }
+    //public double GetHeight()
+    //{
+    //    return UpperRight.Y - LowerLeft.Y;
+    //}
 
-    public bool OverlapsBorder(SpatialItem other)
-    {
-        // Check if the two items intersect in general.
-        bool generalIntersection = LowerLeft.X <= other.UpperRight.X &&
-                                   UpperRight.X >= other.LowerLeft.X &&
-                                   LowerLeft.Y <= other.UpperRight.Y &&
-                                   UpperRight.Y >= other.LowerLeft.Y;
-
-        if (generalIntersection)
-        {
-            // Check if one item is fully contained within the other.
-            bool thisContainsOther = ContainsStrict(other);
-            bool otherContainsThis = other.ContainsStrict(this);
-
-            // Return true only if neither item fully contains the other (indicating a border overlap).
-            return !(thisContainsOther || otherContainsThis);
-        }
-        return false;
-    }
+    //public double GetWidth()
+    //{
+    //    return UpperRight.X - LowerLeft.X;
+    //}
 }
 
 /// <summary>
 /// Represents a 2D point.
 /// </summary>
-public class Point : SpatialItem
+public class Point : ISpatialItem
 {
     public double X { get; set; }
     public double Y { get; set; }
+
+    public Point LowerLeft => this;
+    public Point UpperRight => this;
 
     public Point(double x, double y)
     {
         X = x;
         Y = y;
-        LowerLeft = this;
-        UpperRight = this;
+    }
+
+    #region Interface Implementation
+    #endregion
+    public double GetLongestSide()
+    {
+        return 0.0;
+    }
+
+    public double GetHeight()
+    {
+        return 0.0;
+    }
+
+    public double GetWidth()
+    {
+        return 0.0;
     }
 
 
@@ -112,20 +103,67 @@ public class Point : SpatialItem
         }
         return false;
     }
+
+    public bool ContainsStrict(ISpatialItem other)
+    {
+        return SpatialItemExtensions.ContainsStrict(this, other);
+    }
+
+    public bool Intersects(ISpatialItem other)
+    {
+        return SpatialItemExtensions.Intersects(this, other);
+    }
+
+    public bool OverlapsBorder(ISpatialItem other)
+    {
+        return SpatialItemExtensions.OverlapsBorder(this, other);
+    }
     #endregion
+
 }
 
 /// <summary>
 /// Represents a 2D rectangle.
 /// </summary>
-public class Rectangle : SpatialItem
+public class Rectangle : ISpatialItem
 {
+    public Point LowerLeft { get; private set; }
+    public Point UpperRight { get; private set; }
 
     public Rectangle(Point bottomLeft, Point topRight)
     {
         LowerLeft = bottomLeft;
         UpperRight = topRight;
     }
+
+    public void SetLowerLeft(Point newLowerLeft)
+    {
+        LowerLeft = newLowerLeft;
+    }
+
+    public void SetUpperRight(Point newUpperRight)
+    {
+        UpperRight = newUpperRight;
+    }
+
+
+    public double GetLongestSide()
+    {
+        double width = GetWidth();
+        double height = GetHeight();
+        return System.Math.Max(width, height);
+    }
+
+    public double GetHeight()
+    {
+        return UpperRight.Y - LowerLeft.Y;
+    }
+
+    public double GetWidth()
+    {
+        return UpperRight.X - LowerLeft.X;
+    }
+
     #region Overrides
     public static bool operator ==(Rectangle left, Rectangle right)
     {
@@ -144,6 +182,21 @@ public class Rectangle : SpatialItem
             return LowerLeft.Equals(other.LowerLeft) && UpperRight.Equals(other.UpperRight);
         }
         return false;
+    }
+
+    public bool ContainsStrict(ISpatialItem other)
+    {
+        return SpatialItemExtensions.ContainsStrict(this, other);
+    }
+
+    public bool Intersects(ISpatialItem other)
+    {
+        return SpatialItemExtensions.Intersects(this, other);
+    }
+
+    public bool OverlapsBorder(ISpatialItem other)
+    {
+        return SpatialItemExtensions.OverlapsBorder(this, other);
     }
     #endregion
 
@@ -195,7 +248,6 @@ public class GPSRectangle : Rectangle
     public GPSRectangle(GPSPoint bottomLeft, GPSPoint topRight)
         : base(bottomLeft, topRight)
     {
-
     }
 
 }
