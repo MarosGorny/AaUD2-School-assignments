@@ -4,7 +4,7 @@ using System.Text;
 
 namespace DynamicHashingDS.Data;
 
-public class DummyClass : DHRecord
+public class DummyClass : IDHRecord
 {
     public int Cislo { get; set; }
     public int ID { get; set; }
@@ -12,7 +12,7 @@ public class DummyClass : DHRecord
     [StringLength(14)]
     public string Text { get; set; }
 
-    public override DHRecord FromByteArray(byte[] byteArray)
+    public IDHRecord FromByteArray(byte[] byteArray)
     {
         using (var ms = new MemoryStream(byteArray))
         using (var reader = new BinaryReader(ms))
@@ -28,7 +28,7 @@ public class DummyClass : DHRecord
         return this;
     }
 
-    public override BitArray GetHash()
+    public BitArray GetHash()
     {
         var hashValue = Cislo.GetHashCode();
         var hashValueBytes = BitConverter.GetBytes(hashValue);
@@ -36,7 +36,7 @@ public class DummyClass : DHRecord
         return hash;
     }
 
-    public override int GetSize()
+    public int GetSize()
     {
         int size = 0;
 
@@ -47,7 +47,7 @@ public class DummyClass : DHRecord
         return size;
     }
 
-    public override bool MyEquals(DHRecord other)
+    public bool MyEquals(IDHRecord other)
     {
         if (other is DummyClass otherDummy)
         {
@@ -57,7 +57,7 @@ public class DummyClass : DHRecord
         return false;
     }
 
-    public override byte[] ToByteArray()
+    public byte[] ToByteArray()
     {
         using (var ms = new MemoryStream())
         using (var writer = new BinaryWriter(ms))
@@ -83,14 +83,16 @@ public class DummyClass : DHRecord
 }
 
 
-public abstract class DHRecord
+public interface IDHRecord
 {
-    public abstract int GetSize();
+    int GetSize();
 
-    public abstract BitArray GetHash();
-    public abstract bool MyEquals(DHRecord other);
+    BitArray GetHash();
+    bool MyEquals(IDHRecord other);
 
-    public abstract byte[] ToByteArray();
+    byte[] ToByteArray();
+
+    IDHRecord FromByteArray(byte[] byteArray);
 
     // Method to serialize the record to a byte array
     //public byte[] ToByteArray()
@@ -111,10 +113,5 @@ public abstract class DHRecord
     //            return memoryStream.ToArray();
     //        }
     //    }
-    //}
-
-
-
-    public abstract DHRecord FromByteArray(byte[] byteArray);
-   
+    //}   
 }

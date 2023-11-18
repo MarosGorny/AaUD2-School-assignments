@@ -7,9 +7,9 @@ namespace QuadTreeDS.QuadTree
         public K Key { get; set; }
         public V Value { get; set; }
 
-        public SpatialItem Item { get; set; }
+        public ISpatialItem Item { get; set; }
 
-        public QuadTreeObject(K key, V value, SpatialItem item)
+        public QuadTreeObject(K key, V value, ISpatialItem item)
         {
             Key = key;
             Value = value;

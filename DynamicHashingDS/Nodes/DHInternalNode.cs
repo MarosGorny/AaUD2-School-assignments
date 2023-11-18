@@ -4,12 +4,12 @@ using System.Xml.Linq;
 
 namespace DynamicHashingDS.Nodes;
 
-public class DHInternalNode<T> : DHNode<T> where T : DHRecord, new()
+public class DHInternalNode<T> : DHNode<T> where T : IDHRecord, new()
 {
     public DHNode<T> LeftChild { get; set; }
     public DHNode<T> RightChild { get; set; }
 
-    public override bool Insert(DHRecord record, List<DHBlock<T>> blocks, int blockFactor)
+    public override bool Insert(IDHRecord record, List<DHBlock<T>> blocks, int blockFactor)
     {
         BitArray hash = record.GetHash();
         DHNode<T> nextNode = Navigate(hash);

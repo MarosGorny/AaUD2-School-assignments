@@ -4,7 +4,7 @@ using System.Collections;
 
 namespace DynamicHashingDS.DH;
 
-public class DynamicHashing<T> where T : DHRecord, new()
+public class DynamicHashing<T> where T : IDHRecord, new()
 {
     private DHNode<T> Root;
     public int BlockFactor { get; private set; }
@@ -19,7 +19,7 @@ public class DynamicHashing<T> where T : DHRecord, new()
         Root = new DHExternalNode<T>();
     }
 
-    public void Insert(DHRecord record)
+    public void Insert(IDHRecord record)
     {
         bool inserted = Root.Insert(record, Blocks, BlockFactor);
     }

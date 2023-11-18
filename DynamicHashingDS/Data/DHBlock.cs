@@ -1,5 +1,5 @@
 ﻿namespace DynamicHashingDS.Data;
-public class DHBlock<T> where T : DHRecord, new()
+public class DHBlock<T> where T : IDHRecord, new()
 {
     public int MaxRecordsCount { get; set; }
     public int ValidRecordsCount { get; set; } = 0;
@@ -10,11 +10,11 @@ public class DHBlock<T> where T : DHRecord, new()
         MaxRecordsCount = blockFactor;
     }
 
-    public bool AddRecord(T record)
+    public bool AddRecord(IDHRecord record)
     {
         if (ValidRecordsCount < MaxRecordsCount)
         {
-            RecordsList.Add(record);
+            RecordsList.Add((T)record);
             ValidRecordsCount++;
             return true;
         }
@@ -33,7 +33,7 @@ public class DHBlock<T> where T : DHRecord, new()
                 return true;
             }
         }
-        foundRecord = null;
+        foundRecord = default; //TODO: What it really does?
         return false;
     }
 
