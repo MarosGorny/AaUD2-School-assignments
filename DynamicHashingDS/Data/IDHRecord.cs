@@ -65,14 +65,19 @@ public class DummyClass : IDHRecord
             writer.Write(Cislo);
             writer.Write(ID);
 
-            // Ensure Text is exactly 14 characters long by padding with null characters if necessary
-            string paddedText = Text?.PadRight(14, '\0');
-            var textBytes = Encoding.Unicode.GetBytes(paddedText);
-
-            // Check the length of the textBytes to ensure it's 28 bytes
-            if (textBytes.Length != 28)
+            byte[] textBytes;
+            if (Text != null)
             {
-                throw new InvalidOperationException("The encoded text does not meet the expected length of 28 bytes.");
+                string paddedText = Text.PadRight(14, '\0');
+                textBytes = Encoding.Unicode.GetBytes(paddedText);
+                if (textBytes.Length != 28)
+                {
+                    throw new InvalidOperationException("The encoded text does not meet the expected length of 28 bytes.");
+                }
+            }
+            else
+            {
+                textBytes = new byte[28]; // Create an array of 28 null bytes
             }
 
             writer.Write(textBytes);

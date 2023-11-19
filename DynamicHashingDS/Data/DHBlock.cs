@@ -63,7 +63,43 @@ public class DHBlock<T> where T : IDHRecord, new()
         record.FromByteArray(byteArray);
         return record;
     }
+    //TODO: Vediet ulozit a nacitat spatne z binarneho suboru
 
+    public void WriteToBinaryFile(string filePath)
+    {
+        byte[] blockBytes = ToByteArray();
+
+        using (FileStream fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
+        {
+            using (BinaryWriter binaryWriter = new BinaryWriter(fileStream))
+            {
+                binaryWriter.Write(blockBytes);
+            }
+        }
+    }
+
+    public void ReadFromBinaryFile(string filePath)
+    {
+        using (FileStream fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+        {
+            using (BinaryReader binaryReader = new BinaryReader(fileStream))
+            {
+                RecordsList.Clear(); 
+                ValidRecordsCount = 0;
+
+                while (fileStream.Position < fileStream.Length)
+                {
+                    byte[] recordBytes = binaryReader.ReadBytes(new T().GetSize());
+                    T record = FromByteArray(recordBytes);
+                    if (record != null)
+                    {
+                        RecordsList.Add(record);
+                        ValidRecordsCount++;
+                    }
+                }
+            }
+        }
+    }
 
 }
 

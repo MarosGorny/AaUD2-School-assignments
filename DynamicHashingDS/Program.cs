@@ -1,6 +1,5 @@
 ﻿using DynamicHashingDS.Data;
 using DynamicHashingDS.DH;
-using SemesterAssignment
 
 namespace DynamicHashingDS;
 internal class Program
@@ -11,6 +10,7 @@ internal class Program
         DummyClass dummy = new DummyClass();
         dummy.Cislo = 1;
         dummy.ID = 2;
+        dummy.Text = "ahoj";
 
         DummyClass dummy2 = new DummyClass();
         dummy2.Cislo = 2;
@@ -20,13 +20,18 @@ internal class Program
         dummy3.Cislo = 3;
         dummy3.ID = 4;
 
+        //var dynamicHashing = new DynamicHashing<DummyClass>(2);
+        //dynamicHashing.Insert(dummy);
+        //dynamicHashing.Insert(dummy2);
+        //dynamicHashing.Insert(dummy3);
 
+        var block = new DHBlock<DummyClass>(3);
+        block.AddRecord(dummy);
+        block.AddRecord(dummy2);
+        block.AddRecord(dummy3);
+        block.WriteToBinaryFile("test.bin");
+        block.ReadFromBinaryFile("test.bin");
+        Console.WriteLine("Hello World!");
 
-        var dynamicHashing = new DynamicHashing<DummyClass>(2);
-        dynamicHashing.Insert(dummy);
-        dynamicHashing.Insert(dummy2);
-        dynamicHashing.Insert(dummy3);
-
-        var property = Parcel
     }
 }
