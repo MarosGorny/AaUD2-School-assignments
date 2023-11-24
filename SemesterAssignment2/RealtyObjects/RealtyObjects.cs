@@ -1,17 +1,17 @@
 ﻿using DynamicHashingDS.Data;
 using QuadTreeDS.SpatialItems;
 using System.Collections;
+using System.ComponentModel.DataAnnotations;
 
-namespace SemesterAssignment1.RealtyObjects;
+namespace SemesterAssignment2.RealtyObjects;
 
 public abstract class RealtyObject : Rectangle
 {
-    public string Description { get; set; }
-
+    public GPSRectangle Bounds { get; set; }
     public RealtyObject(string description, GPSRectangle gpsRectangle)
-        :base(gpsRectangle.LowerLeft as GPSPoint, gpsRectangle.UpperRight as GPSPoint)
+        : base(gpsRectangle.LowerLeft as GPSPoint, gpsRectangle.UpperRight as GPSPoint)
     {
-        Description = description;
+        Bounds = gpsRectangle;
     }
 }
 
@@ -21,31 +21,35 @@ public abstract class RealtyObject : Rectangle
 public class Property : RealtyObject, IDHRecord
 {
     public int ConscriptionNumber { get; set; }
-    public List<Parcel> PositionedOnParcels { get; set; } = new List<Parcel>(); 
+    public int PropertyNumber { get; set; }
+
+    [StringLength(15)]
+    public string Description { get; set; }
+    public List<int> PositionedOnParcels { get; private set; } = new List<int>();
 
     public Property(int conscriptionNumber, string description, GPSRectangle gpsRectangle)
-        : base(description,gpsRectangle)
+        : base(description, gpsRectangle)
     {
         ConscriptionNumber = conscriptionNumber;
-        this.SetUpperRight(gpsRectangle.UpperRight as GPSPoint);
         this.SetLowerLeft(gpsRectangle.LowerLeft as GPSPoint);
+        this.SetUpperRight(gpsRectangle.UpperRight as GPSPoint);
     }
 
-    public void AddParcel(Parcel parcel)
+    public bool TryAddParcel(int parcel)
     {
-        PositionedOnParcels.Add(parcel);
+        if (PositionedOnParcels.Count < 6)
+        {
+            PositionedOnParcels.Add(parcel);
+            return true;
+        }
+        return false;
     }
 
-    public void RemoveParcel(Parcel parcel)
+    public void RemoveParcel(int parcel)
     {
         PositionedOnParcels.Remove(parcel);
     }
 
-    public void ReleaseParcels()
-    {
-        PositionedOnParcels.ForEach(parcel => parcel.RemoveProperty(this));
-        PositionedOnParcels.Clear();
-    }
 
     public int GetSize()
     {
@@ -79,31 +83,40 @@ public class Property : RealtyObject, IDHRecord
 public class Parcel : RealtyObject
 {
     public int ParcelNumber { get; set; }
-    public List<Property> OccupiedByProperties { get; set; } = new List<Property>();
-    public GPSRectangle Bounds { get; set; }
+    [StringLength(15)]
+    public string Description { get; set; }
+    public List<int> OccupiedByProperties { get; set; } = new List<int>();
 
     public Parcel(int parcelNumber, string description, GPSRectangle gpsRectangle)
-        :base(description, gpsRectangle)
+        : base(description, gpsRectangle)
     {
         ParcelNumber = parcelNumber;
         this.SetLowerLeft(gpsRectangle.LowerLeft as GPSPoint);
         this.SetUpperRight(gpsRectangle.UpperRight as GPSPoint);
         Bounds = gpsRectangle;
+
+        this.SetUpperRight(gpsRectangle.UpperRight as GPSPoint);
+        this.SetLowerLeft(gpsRectangle.LowerLeft as GPSPoint);
     }
 
-    public void AddProperty(Property property)
+    public bool TryAddProperty(int property)
     {
-        OccupiedByProperties.Add(property);
+        if (OccupiedByProperties.Count < 5)
+        {
+            OccupiedByProperties.Add(property);
+            return true;
+        }
+        return false;
     }
 
-    public void RemoveProperty(Property property)
+    public void RemoveProperty(int property)
     {
         OccupiedByProperties.Remove(property);
     }
 
-    public void ReleaseProperties()
-    {
-        OccupiedByProperties.ForEach(property => property.RemoveParcel(this));
-        OccupiedByProperties.Clear();
-    }
+    //public void ReleaseProperties()
+    //{
+    //    OccupiedByProperties.ForEach(property => property.RemoveParcel(this));
+    //    OccupiedByProperties.Clear();
+    //}
 }

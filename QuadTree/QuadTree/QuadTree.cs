@@ -51,7 +51,7 @@ public class QuadTree<K, V> where K : IComparable<K>
         Root.Insert(quadTreeObject);
     }
 
-    public List<QuadTreeObject<K, V>>? Find(SpatialItem rectangle)
+    public List<QuadTreeObject<K, V>>? Find(ISpatialItem rectangle)
     {
         return Root.Find(rectangle);
     }
@@ -61,7 +61,7 @@ public class QuadTree<K, V> where K : IComparable<K>
         return Root.LocateNodeAndObjectForItem(quadTreeObject.Item, quadTreeObject.Key);
     }
 
-    public SpatialItem? Delete(QuadTreeObject<K, V> quadTreeObject)
+    public ISpatialItem? Delete(QuadTreeObject<K, V> quadTreeObject)
     {
         return Root.Delete(quadTreeObject);
     }

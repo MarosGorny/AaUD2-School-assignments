@@ -12,6 +12,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GUIAssignment1", "GUIAssign
 		{19CD025D-DFE4-45A2-B114-219486192463} = {19CD025D-DFE4-45A2-B114-219486192463}
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DynamicHashingDS", "DynamicHashingDS\DynamicHashingDS.csproj", "{0C725126-E93D-4952-ADB8-DB48F5C5F94A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SemesterAssignment2", "SemesterAssignment2\SemesterAssignment2.csproj", "{AB94CD0C-004C-484B-B3C2-FF01AFED3419}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,6 +34,14 @@ Global
 		{8C077C6D-B927-4F4D-8703-6DA677AF3597}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8C077C6D-B927-4F4D-8703-6DA677AF3597}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8C077C6D-B927-4F4D-8703-6DA677AF3597}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0C725126-E93D-4952-ADB8-DB48F5C5F94A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0C725126-E93D-4952-ADB8-DB48F5C5F94A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0C725126-E93D-4952-ADB8-DB48F5C5F94A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0C725126-E93D-4952-ADB8-DB48F5C5F94A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AB94CD0C-004C-484B-B3C2-FF01AFED3419}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB94CD0C-004C-484B-B3C2-FF01AFED3419}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB94CD0C-004C-484B-B3C2-FF01AFED3419}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB94CD0C-004C-484B-B3C2-FF01AFED3419}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
