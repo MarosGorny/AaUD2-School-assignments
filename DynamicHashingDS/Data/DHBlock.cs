@@ -63,7 +63,6 @@ public class DHBlock<T> where T : IDHRecord, new()
         record.FromByteArray(byteArray);
         return record;
     }
-    //TODO: Vediet ulozit a nacitat spatne z binarneho suboru
 
     public void WriteToBinaryFile(string filePath)
     {
