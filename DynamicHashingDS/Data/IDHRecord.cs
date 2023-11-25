@@ -4,7 +4,7 @@ using System.Text;
 
 namespace DynamicHashingDS.Data;
 
-public class DummyClass : IDHRecord
+public class DummyClass : IDHRecord<DummyClass>
 {
     public int Cislo { get; set; }
     public int ID { get; set; }
@@ -12,7 +12,7 @@ public class DummyClass : IDHRecord
     [StringLength(14)]
     public string Text { get; set; }
 
-    public IDHRecord FromByteArray(byte[] byteArray)
+    public DummyClass FromByteArray(byte[] byteArray)
     {
         using (var ms = new MemoryStream(byteArray))
         using (var reader = new BinaryReader(ms))
@@ -47,7 +47,29 @@ public class DummyClass : IDHRecord
         return size;
     }
 
-    public bool MyEquals(IDHRecord other)
+    public string GetHashString()
+    {
+        var hash = GetHash();
+        var sb = new StringBuilder();
+        int counter = 0;
+        for (int i = 0; i < hash.Length; i++)
+        {
+            sb.Append(hash[i] ? "1" : "0");
+            if(++counter % 8 == 0)
+            {
+                sb.Append(" ");
+            }
+        }
+
+        return sb.ToString();
+    }
+
+    public override string ToString()
+    {
+        return $"DummyClass(Hash: {GetHashString()},Cislo: {Cislo}, ID: {ID}, Text: {Text})";
+    }
+
+    public bool MyEquals(DummyClass other)
     {
         if (other is DummyClass otherDummy)
         {
@@ -88,35 +110,14 @@ public class DummyClass : IDHRecord
 }
 
 
-public interface IDHRecord
+public interface IDHRecord<T> where T : IDHRecord<T>
 {
     int GetSize();
 
     BitArray GetHash();
-    bool MyEquals(IDHRecord other);
+    bool MyEquals(T other);
 
     byte[] ToByteArray();
 
-    IDHRecord FromByteArray(byte[] byteArray);
-
-    // Method to serialize the record to a byte array
-    //public byte[] ToByteArray()
-    //{
-    //    using (var memoryStream = new MemoryStream())
-    //    {
-    //        using (var binaryWriter = new BinaryWriter(memoryStream))
-    //        {
-    //            try
-    //            {
-    //                binaryWriter.Write(NejakyAtributInt);
-    //            }
-    //            catch (IOException e)
-    //            {
-    //                throw new InvalidOperationException("Error during conversion to byte array.", e);
-    //            }
-
-    //            return memoryStream.ToArray();
-    //        }
-    //    }
-    //}   
+    T FromByteArray(byte[] byteArray);
 }

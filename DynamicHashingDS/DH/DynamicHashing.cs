@@ -1,27 +1,68 @@
 ﻿using DynamicHashingDS.Data;
 using DynamicHashingDS.Nodes;
 using System.Collections;
+using System.IO;
 
 namespace DynamicHashingDS.DH;
 
-public class DynamicHashing<T> where T : IDHRecord, new()
+public class DynamicHashing<T> where T : IDHRecord<T>, new()
 {
     private DHNode<T> Root;
-    public int BlockFactor { get; private set; }
+    public int MainBlockFactor { get; private set; }
+    public int OverflowBlockFactor { get; private set; }
     public int MaxBlockDepth { get; private set; }
-    public List<DHBlock<T>> Blocks { get; private set; }
+    //public List<DHBlock<T>> Blocks { get; private set; }
 
-    public DynamicHashing(int blockFactor)
+    public FileBlockManager<T> FileBlockManager { get; private set;}
+
+    public DynamicHashing(int mainBlockFactor, int overflowBlockFactor, string mainFilePath, string overflowFilePath)
     {
-        Blocks = new List<DHBlock<T>> { new DHBlock<T>(blockFactor) };
+        //TODO: DONT FORGET ABOUT THISSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
+        if (File.Exists(mainFilePath))
+        {
+            File.Delete(mainFilePath);
+        }
+
+        using (var fsMain = new FileStream(mainFilePath, FileMode.Create))
+        {
+            // Empty file is created, and FileStream is closed upon exiting the using block
+        }
+
+        if (File.Exists(overflowFilePath))
+        {
+            File.Delete(overflowFilePath);
+        }
+
+        using (var fsOverflow = new FileStream(overflowFilePath, FileMode.Create))
+        {
+            // Empty file is created, and FileStream is closed upon exiting the using block
+        }
+
+        // ... Initialization ...
+        FileBlockManager = new FileBlockManager<T>(mainFilePath, overflowFilePath, mainBlockFactor, overflowBlockFactor);
+
         MaxBlockDepth = new T().GetHash().Length;
-        BlockFactor = blockFactor;
-        Root = new DHExternalNode<T>();
+        MainBlockFactor = mainBlockFactor;
+        OverflowBlockFactor = overflowBlockFactor;
+
+        Root = new DHInternalNode<T>(this,null);
+        var leftBlockAddress = FileBlockManager.GetFreeBlock(false);
+        var leftBlock = new DHBlock<T>(mainBlockFactor, leftBlockAddress);
+        leftBlock.WriteToBinaryFile(mainFilePath,leftBlockAddress);
+        ((DHInternalNode<T>)Root).AddLeftExternalNode(leftBlockAddress);
+
+        var rightBlockAddress = FileBlockManager.GetFreeBlock(false);
+        var rightBlock = new DHBlock<T>(mainBlockFactor, rightBlockAddress);
+        ((DHInternalNode<T>)Root).AddRightExternalNode(rightBlockAddress);
+        Console.WriteLine("Root created");
+        Console.WriteLine(FileBlockManager.SequentialFileOutput());
+
     }
 
-    public void Insert(IDHRecord record)
+    public void Insert(IDHRecord<T> record)
     {
-        bool inserted = Root.Insert(record, Blocks, BlockFactor);
+        bool inserted = Root.Insert(record);
+        Console.WriteLine(FileBlockManager.SequentialFileOutput());
     }
 
     /// <summary>

@@ -1,24 +1,47 @@
 ﻿using DynamicHashingDS.Data;
+using DynamicHashingDS.DH;
 using System.Collections;
-using System.Xml.Linq;
 
 namespace DynamicHashingDS.Nodes;
 
-public class DHInternalNode<T> : DHNode<T> where T : IDHRecord, new()
+public class DHInternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
 {
+    public DHInternalNode(DynamicHashing<T> dynamicHashing,DHNode<T>? parent) : base(dynamicHashing, parent)
+    {
+    }
+
     public DHNode<T> LeftChild { get; set; }
     public DHNode<T> RightChild { get; set; }
 
-    public override bool Insert(IDHRecord record, List<DHBlock<T>> blocks, int blockFactor)
+    public override bool Insert(IDHRecord<T> record)
     {
         BitArray hash = record.GetHash();
         DHNode<T> nextNode = Navigate(hash);
-        return nextNode.Insert(record, blocks, blockFactor);
+        return nextNode.Insert(record);
+    }
+
+    public void AddLeftExternalNode(int blockAddress)
+    {
+        this.LeftChild = new DHExternalNode<T>(this.dynamicHashing,this,blockAddress);
+    }
+
+    public void AddRightExternalNode(int blockAddress)
+    {
+        this.RightChild = new DHExternalNode<T>(this.dynamicHashing, this, blockAddress);
     }
 
     private DHNode<T> Navigate(BitArray hash)
     {
-        var reversePosition = hash.Length - Depth - 1;
-        return hash[reversePosition] ? RightChild : LeftChild;
+        var position = Depth;
+        return hash[position] ? RightChild : LeftChild;
     }
+
+    public override string ToString()
+    {
+        var leftChildDesc = LeftChild != null ? $"Left: {LeftChild.ToString()}" : "Left: null";
+        var rightChildDesc = RightChild != null ? $"Right: {RightChild.ToString()}" : "Right: null";
+
+        return $"InternalNode(Depth: {Depth}, {leftChildDesc}, {rightChildDesc})";
+    }
+
 }

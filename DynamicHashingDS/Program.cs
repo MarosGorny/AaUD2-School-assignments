@@ -20,18 +20,21 @@ internal class Program
         dummy3.Cislo = 3;
         dummy3.ID = 4;
 
-        //var dynamicHashing = new DynamicHashing<DummyClass>(2);
-        //dynamicHashing.Insert(dummy);
-        //dynamicHashing.Insert(dummy2);
-        //dynamicHashing.Insert(dummy3);
 
-        var block = new DHBlock<DummyClass>(3);
-        block.AddRecord(dummy);
-        block.AddRecord(dummy2);
-        block.AddRecord(dummy3);
-        block.WriteToBinaryFile("test.bin");
-        block.ReadFromBinaryFile("test.bin");
-        Console.WriteLine("Hello World!");
+        var dynamicHashing = new DynamicHashing<DummyClass>(5,5,"testMain.bin","testFlow.bin");
+        dynamicHashing.Insert(dummy);
+        dynamicHashing.Insert(dummy2);
+        dynamicHashing.Insert(dummy3);
+
+        //var block = new DHBlock<DummyClass>(3,3);
+        //block.AddRecord(dummy);
+        //block.AddRecord(dummy2);
+        //block.AddRecord(dummy3);
+        //block.DeleteRecord(dummy2);
+        //block.DeleteRecord(dummy);
+        //block.WriteToBinaryFile("test.bin");
+        //block.ReadFromBinaryFile("test.bin");
+        //Console.WriteLine("Hello World!");
 
     }
 }
