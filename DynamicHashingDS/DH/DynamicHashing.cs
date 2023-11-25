@@ -11,12 +11,15 @@ public class DynamicHashing<T> where T : IDHRecord<T>, new()
     public int MainBlockFactor { get; private set; }
     public int OverflowBlockFactor { get; private set; }
     public int MaxBlockDepth { get; private set; }
+
+    public int MaxHashSize { get; private set; }
     //public List<DHBlock<T>> Blocks { get; private set; }
 
     public FileBlockManager<T> FileBlockManager { get; private set;}
 
-    public DynamicHashing(int mainBlockFactor, int overflowBlockFactor, string mainFilePath, string overflowFilePath)
+    public DynamicHashing(int mainBlockFactor, int overflowBlockFactor, string mainFilePath, string overflowFilePath, int? maxHashSize = null)
     {
+        MaxHashSize = maxHashSize ?? new T().GetHash().Length;
         //TODO: DONT FORGET ABOUT THISSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
         if (File.Exists(mainFilePath))
         {
@@ -46,23 +49,26 @@ public class DynamicHashing<T> where T : IDHRecord<T>, new()
         OverflowBlockFactor = overflowBlockFactor;
 
         Root = new DHInternalNode<T>(this,null);
-        var leftBlockAddress = FileBlockManager.GetFreeBlock(false);
-        var leftBlock = new DHBlock<T>(mainBlockFactor, leftBlockAddress);
-        leftBlock.WriteToBinaryFile(mainFilePath,leftBlockAddress);
-        ((DHInternalNode<T>)Root).AddLeftExternalNode(leftBlockAddress);
 
-        var rightBlockAddress = FileBlockManager.GetFreeBlock(false);
-        var rightBlock = new DHBlock<T>(mainBlockFactor, rightBlockAddress);
-        ((DHInternalNode<T>)Root).AddRightExternalNode(rightBlockAddress);
+        //var leftBlockAddress = FileBlockManager.GetFreeBlock(false);
+        //var leftBlock = new DHBlock<T>(mainBlockFactor, leftBlockAddress);
+        //leftBlock.WriteToBinaryFile(mainFilePath,leftBlockAddress);
+        ((DHInternalNode<T>)Root).AddLeftExternalNode(-1);
+
+        //var rightBlockAddress = FileBlockManager.GetFreeBlock(false);
+        //var rightBlock = new DHBlock<T>(mainBlockFactor, rightBlockAddress);
+        //rightBlock.WriteToBinaryFile(mainFilePath, rightBlockAddress);
+        ((DHInternalNode<T>)Root).AddRightExternalNode(-1);
+
         Console.WriteLine("Root created");
-        Console.WriteLine(FileBlockManager.SequentialFileOutput());
+        Console.WriteLine(FileBlockManager.SequentialFileOutput(MaxHashSize));
 
     }
 
     public void Insert(IDHRecord<T> record)
     {
         bool inserted = Root.Insert(record);
-        Console.WriteLine(FileBlockManager.SequentialFileOutput());
+        Console.WriteLine(FileBlockManager.SequentialFileOutput(MaxHashSize));
     }
 
     /// <summary>

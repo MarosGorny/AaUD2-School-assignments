@@ -7,12 +7,14 @@ public abstract class DHNode<T> where T : IDHRecord<T>, new()
 {
     public DHNode<T>? Parent { get; set; }
     public int Depth { get; set; }
+    protected int MaxHashSize { get; private set; }
 
     protected DynamicHashing<T> dynamicHashing;
 
     public DHNode(DynamicHashing<T> dynamicHashing, DHNode<T> parent)
     {
         this.dynamicHashing = dynamicHashing;
+        MaxHashSize = dynamicHashing.MaxHashSize;
 
         Parent = parent;
 

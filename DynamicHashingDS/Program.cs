@@ -8,23 +8,30 @@ internal class Program
     {
         Console.WriteLine("a");
         DummyClass dummy = new DummyClass();
-        dummy.Cislo = 1;
-        dummy.ID = 2;
-        dummy.Text = "ahoj";
+        dummy.Cislo = 0;
+
+        DummyClass dummy1 = new DummyClass();
+        dummy1.Cislo = 1;
+        dummy1.ID = 1;
+        dummy1.Text = "ahoj";
 
         DummyClass dummy2 = new DummyClass();
         dummy2.Cislo = 2;
-        dummy2.ID = 3;
+        dummy2.ID = 2;
 
         DummyClass dummy3 = new DummyClass();
         dummy3.Cislo = 3;
-        dummy3.ID = 4;
+        dummy3.ID = 3;
 
 
-        var dynamicHashing = new DynamicHashing<DummyClass>(5,5,"testMain.bin","testFlow.bin");
+
+
+        var dynamicHashing = new DynamicHashing<DummyClass>(1,1,"testMain.bin","testFlow.bin", 2);
+        dynamicHashing.Insert(dummy1);
+        dynamicHashing.Insert(dummy3);
         dynamicHashing.Insert(dummy);
         dynamicHashing.Insert(dummy2);
-        dynamicHashing.Insert(dummy3);
+
 
         //var block = new DHBlock<DummyClass>(3,3);
         //block.AddRecord(dummy);

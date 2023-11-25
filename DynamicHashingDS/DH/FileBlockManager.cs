@@ -74,8 +74,10 @@ public class FileBlockManager<T> where T : IDHRecord<T>, new()
         string filePath = isOverflow ? OverflowFilePath : MainFilePath;
         int blockFactor = isOverflow ? overflowFileBlockFactor : mainFileBlockFactor;
 
+        int recordSize = isOverflow ? new DHBlock<T>(overflowFileBlockFactor).GetSize() : new DHBlock<T>(mainFileBlockFactor).GetSize();
+
         // If the block to release is at the end of the file, shrink the file
-        if (blockAddress == fileSize - 1)
+        if (blockAddress == fileSize - recordSize)
         {
             ShrinkFile(isOverflow, blockAddress);
         }
@@ -134,16 +136,20 @@ public class FileBlockManager<T> where T : IDHRecord<T>, new()
         }
     }
 
-    public string SequentialFileOutput()
+    public string SequentialFileOutput(int maxHashSize)
     {
         StringBuilder output = new StringBuilder();
 
         // Process the main file
+        output.AppendLine("Max Hash Size: " + maxHashSize + "\n");
+
+        output.AppendLine("Main Block Factor: " + mainFileBlockFactor);
         output.AppendLine("Main File Contents:");
         output.Append(ProcessFileSequentially(MainFilePath, mainFileBlockFactor));
 
         // Process the overflow file
-        output.AppendLine("\nOverflow File Contents:");
+        output.AppendLine("\nOverflow Block Factor: " + overflowFileBlockFactor);
+        output.AppendLine("Overflow File Contents:");
         output.Append(ProcessFileSequentially(OverflowFilePath, overflowFileBlockFactor));
 
         return output.ToString();

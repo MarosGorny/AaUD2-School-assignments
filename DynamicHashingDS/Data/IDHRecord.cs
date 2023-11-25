@@ -30,10 +30,25 @@ public class DummyClass : IDHRecord<DummyClass>
 
     public BitArray GetHash()
     {
+        //var hashValue = Cislo.GetHashCode();
+        //var hashValueBytes = BitConverter.GetBytes(hashValue);
+        //var hash = new BitArray(hashValueBytes);
+        //return hash;
+
         var hashValue = Cislo.GetHashCode();
         var hashValueBytes = BitConverter.GetBytes(hashValue);
-        var hash = new BitArray(hashValueBytes);
-        return hash;
+        var fullHash = new BitArray(hashValueBytes);
+
+        // Create a new BitArray with a size of 3 bits
+        var limitedHash = new BitArray(3);
+
+        // Copy the first 3 bits from the full hash to the limited hash
+        for (int i = 0; i < 3; i++)
+        {
+            limitedHash[i] = fullHash[i];
+        }
+
+        return limitedHash;
     }
 
     public int GetSize()
@@ -52,7 +67,7 @@ public class DummyClass : IDHRecord<DummyClass>
         var hash = GetHash();
         var sb = new StringBuilder();
         int counter = 0;
-        for (int i = 0; i < hash.Length; i++)
+        for (int i = hash.Length - 1; i >= 0; i--)
         {
             sb.Append(hash[i] ? "1" : "0");
             if(++counter % 8 == 0)

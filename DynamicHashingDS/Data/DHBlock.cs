@@ -9,6 +9,10 @@ public class DHBlock<T> where T : IDHRecord<T>, new()
     public int NextBlockAddress { get; set; } = -1; 
     public int PreviousBlockAddress { get; set; } = -1; 
 
+    public DHBlock(int blockFactor)
+    {
+        MaxRecordsCount = blockFactor;
+    }
 
     public DHBlock(int blockFactor, int blockAddress)
     {

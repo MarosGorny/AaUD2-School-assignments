@@ -6,12 +6,15 @@ namespace DynamicHashingDS.Nodes;
 
 public class DHInternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
 {
-    public DHInternalNode(DynamicHashing<T> dynamicHashing,DHNode<T>? parent) : base(dynamicHashing, parent)
-    {
-    }
+
 
     public DHNode<T> LeftChild { get; set; }
     public DHNode<T> RightChild { get; set; }
+
+
+    public DHInternalNode(DynamicHashing<T> dynamicHashing, DHNode<T>? parent) : base(dynamicHashing, parent)
+    {
+    }
 
     public override bool Insert(IDHRecord<T> record)
     {
@@ -32,7 +35,7 @@ public class DHInternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
 
     private DHNode<T> Navigate(BitArray hash)
     {
-        var position = Depth;
+        var position = Depth < MaxHashSize ? Depth : MaxHashSize - 1;
         return hash[position] ? RightChild : LeftChild;
     }
 
