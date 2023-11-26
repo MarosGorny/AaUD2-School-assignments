@@ -10,7 +10,7 @@ public class DummyClass : IDHRecord<DummyClass>
     public int ID { get; set; }
 
     [StringLength(14)]
-    public string Text { get; set; }
+    public string Text { get; set; } = "";
 
     public DummyClass FromByteArray(byte[] byteArray)
     {

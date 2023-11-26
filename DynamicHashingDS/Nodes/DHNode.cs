@@ -50,4 +50,6 @@ public abstract class DHNode<T> where T : IDHRecord<T>, new()
     /// <param name="record">The record to insert.</param>
     /// <returns>True if the insertion is successful, otherwise false.</returns>
     public abstract bool Insert(IDHRecord<T> record);
+
+    public abstract bool TryFind(IDHRecord<T> record, out IDHRecord<T>? foundRecord);
 }

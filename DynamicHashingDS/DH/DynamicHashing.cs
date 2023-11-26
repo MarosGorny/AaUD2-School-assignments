@@ -35,6 +35,11 @@ public class DynamicHashing<T> where T : IDHRecord<T>, new()
         OutputSequentialFile();
     }
 
+    public bool TryFind(IDHRecord<T> record, out IDHRecord<T>? foundRecord)
+    {  
+        return _root.TryFind(record,out foundRecord);
+    }
+
     /// <summary>
     /// Inserts a record into the dynamic hashing structure.
     /// </summary>

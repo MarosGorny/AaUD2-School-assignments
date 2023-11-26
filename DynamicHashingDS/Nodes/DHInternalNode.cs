@@ -32,9 +32,57 @@ public class DHInternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
     /// <returns>True if the insertion is successful, otherwise false.</returns>
     public override bool Insert(IDHRecord<T> record)
     {
-        BitArray hash = record.GetHash();
-        DHNode<T> nextNode = Navigate(hash);
-        return nextNode.Insert(record);
+        var externalNode = FindExternalNode(record.GetHash());
+        return externalNode.Insert(record);
+    }
+
+    /// <summary>
+    /// Tries to find a record in the child nodes based on the hash.
+    /// </summary>
+    /// <param name="record">The record to find.</param>
+    /// <param name="foundRecord">The found record if successful.</param>
+    /// <returns>True if the record is found, otherwise false.</returns>
+    public override bool TryFind(IDHRecord<T> record, out IDHRecord<T>? foundRecord)
+    {
+        var externalNode = FindExternalNode(record.GetHash());
+        return externalNode.TryFind(record, out foundRecord);
+    }
+
+    /// <summary>
+    /// Deletes a record from the appropriate child node based on the hash.
+    /// </summary>
+    /// <param name="record">The record to delete.</param>
+    /// <returns>True if the deletion is successful, otherwise false.</returns>
+    public bool Delete(IDHRecord<T> record)
+    {
+        var externalNode = FindExternalNode(record.GetHash());
+        throw new System.NotImplementedException();
+        //return externalNode.Delete(record);
+    }
+
+    /// <summary>
+    /// Navigates to the external node associated with the given hash.
+    /// </summary>
+    /// <param name="hash">The hash of the record.</param>
+    /// <returns>The corresponding external node.</returns>
+    /// <exception cref="InvalidOperationException">Thrown when an external node is not found.</exception>
+    private DHExternalNode<T> FindExternalNode(BitArray hash)
+    {
+        DHNode<T> currentNode = this;
+
+        while (currentNode is DHInternalNode<T> internalNode)
+        {
+            currentNode = internalNode.Navigate(hash);
+        }
+
+        if (currentNode is DHExternalNode<T> externalNode)
+        {
+            return externalNode;
+        }
+        else
+        {
+            throw new InvalidOperationException("Expected an external node but found a different type.");
+        }
     }
 
     /// <summary>

@@ -26,9 +26,25 @@ internal class Program
 
 
         var dynamicHashing = new DynamicHashing<DummyClass>(2,2,"testMain.bin","testFlow.bin", 2);
+
+        dynamicHashing.TryFind(dummy1, out var foundRecord);
+        Console.WriteLine(foundRecord);
+
         dynamicHashing.Insert(dummy1);
+
+        dynamicHashing.TryFind(dummy1, out var foundRecord1);
+        Console.WriteLine(foundRecord1);
+
         dynamicHashing.Insert(dummy1);
+
+        dynamicHashing.TryFind(dummy3, out var foundRecord3);
+        Console.WriteLine(foundRecord3);
+
         dynamicHashing.Insert(dummy3);
+
+        dynamicHashing.TryFind(dummy3, out var foundRecord4);
+        Console.WriteLine(foundRecord4);
+
         dynamicHashing.Insert(dummy);
         dynamicHashing.Insert(dummy2);
 

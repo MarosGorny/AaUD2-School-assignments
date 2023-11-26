@@ -1,4 +1,6 @@
-﻿namespace DynamicHashingDS.Data;
+﻿using System.Reflection.Metadata.Ecma335;
+
+namespace DynamicHashingDS.Data;
 
 /// <summary>
 /// Represents a block in a dynamic hashing data structure.
@@ -88,22 +90,30 @@ public class DHBlock<T> where T : IDHRecord<T>, new()
     }
 
     /// <summary>
-    /// Attempts to find a record in the block.
+    /// Attempts to find a record in the block. If the record is not found in the current block,
+    /// and there is a linked next block, the search continues in the next block.
     /// </summary>
     /// <param name="record">The record to find.</param>
-    /// <param name="foundRecord">When this method returns, contains the found record, if it exists; otherwise null.</param>
-    /// <returns>True if a record was found; otherwise, false.</returns>
-    public bool TryFind(T record, out IDHRecord<T>? foundRecord)
+    /// <param name="foundRecord">When this method returns, contains the found record if it exists; otherwise null.</param>
+    /// <returns>True if a record was found in the current block or any linked next block; otherwise, false.</returns>
+    public bool TryFind(IDHRecord<T> record, out IDHRecord<T>? foundRecord)
     {
         foreach (var r in RecordsList)
         {
-            if (r.MyEquals(record))
+            if (r.MyEquals((T)record))
             {
                 foundRecord = r;
-                return true;
+                return true; 
             }
         }
-        foundRecord = null; 
+
+        if (NextBlockAddress != GlobalConstants.InvalidAddress)
+        {
+            // If the record is not found and there is a next block, the search should continue there.
+            throw new NotImplementedException("Continuation to next block not implemented.");
+        }
+
+        foundRecord = null;
         return false;
     }
 

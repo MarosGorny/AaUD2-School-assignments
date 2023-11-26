@@ -68,6 +68,19 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
         }
     }
 
+    public override bool TryFind(IDHRecord<T> record, out IDHRecord<T>? foundRecord)
+    {
+        if(_recordsCount < 0 || _blockAddress == GlobalConstants.InvalidAddress)
+        {
+            foundRecord = null;
+            return false;
+        }
+
+        var block = ReadCurrentBlock();
+        return block.TryFind(record, out foundRecord);
+        throw new NotImplementedException();
+    }
+
     /// <summary>
     /// Splits the current node and redistributes records, handling the creation of new child nodes as necessary.
     /// </summary>
