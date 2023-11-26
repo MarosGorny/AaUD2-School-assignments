@@ -2,6 +2,7 @@
 using DynamicHashingDS.DH;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Metrics;
 
 namespace DynamicHashingDS.DynamicHashingTest;
 class DynamicHashingTester
@@ -152,6 +153,62 @@ class DynamicHashingTester
         }
 
         Console.WriteLine("--------------------------------- Verification successful! ------------------------------------------");
+
+    }
+
+    public void EdgeTesting()
+    {
+        DummyClass dummy = new DummyClass();
+        dummy.Cislo = 0;
+
+        DummyClass dummy1 = new DummyClass();
+        dummy1.Cislo = 1;
+        dummy1.ID = 1;
+        dummy1.Text = "ahoj";
+
+        DummyClass dummy2 = new DummyClass();
+        dummy2.Cislo = 2;
+        dummy2.ID = 2;
+
+        DummyClass dummy3 = new DummyClass();
+        dummy3.Cislo = 3;
+        dummy3.ID = 3;
+
+
+
+
+        var dynamicHashing = new DynamicHashing<DummyClass>(1, 1, "testMain.bin", "testFlow.bin", 1,true);
+
+        dynamicHashing.Insert(dummy1);
+        dynamicHashing.Insert(dummy1);
+        dynamicHashing.Insert(dummy1);
+        dynamicHashing.Insert(dummy1);
+
+        //dynamicHashing.TryFind(dummy1, out var foundRecord);
+        //Console.WriteLine("Found: " + foundRecord);
+        ////Console.WriteLine("Deleted: " + dynamicHashing.Delete(dummy1));
+
+
+        //dynamicHashing.Insert(dummy1);
+
+        //dynamicHashing.TryFind(dummy1, out var foundRecord1);
+        //Console.WriteLine("Found: " + foundRecord1);
+        ////Console.WriteLine("Deleted: " + dynamicHashing.Delete(dummy1));
+
+        //dynamicHashing.Insert(dummy1);
+
+        //dynamicHashing.TryFind(dummy3, out var foundRecord3);
+        //Console.WriteLine(foundRecord3);
+
+        //dynamicHashing.Insert(dummy3);
+        ////Console.WriteLine("Deleted: " + dynamicHashing.Delete(dummy3));
+        //dynamicHashing.Insert(dummy3);
+
+        //dynamicHashing.TryFind(dummy3, out var foundRecord4);
+        //Console.WriteLine(foundRecord4);
+
+        //dynamicHashing.Insert(dummy);
+        //dynamicHashing.Insert(dummy2);
 
     }
 }

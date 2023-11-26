@@ -14,6 +14,7 @@ public class DHBlock<T> where T : IDHRecord<T>, new()
     public List<IDHRecord<T>> RecordsList { get; private set; } = new List<IDHRecord<T>>();
     public int NextBlockAddress { get; set; } = -1; 
     public int PreviousBlockAddress { get; set; } = -1;
+    public int Depth { get; set; } = 0;
 
 
     /// <summary>
@@ -133,7 +134,11 @@ public class DHBlock<T> where T : IDHRecord<T>, new()
     public int GetSize()
     {
         int recordSize = new T().GetSize();
-        return 4 + (MaxRecordsCount * recordSize); // 4 bytes for ValidRecordsCount
+
+        return sizeof(int)  // Size for ValidRecordsCount
+            + sizeof(int)  // Size for NextBlockAddress
+            + sizeof(int)  // Size for PreviousBlockAddress
+            + (MaxRecordsCount * recordSize);  // Size for records in list
     }
 
     /// <summary>
@@ -146,10 +151,12 @@ public class DHBlock<T> where T : IDHRecord<T>, new()
 
         // Serialize the ValidRecordsCount
         Buffer.BlockCopy(BitConverter.GetBytes(ValidRecordsCount), 0, blockBytes, 0, 4);
+        Buffer.BlockCopy(BitConverter.GetBytes(NextBlockAddress), 0, blockBytes, 4, 4);
+        Buffer.BlockCopy(BitConverter.GetBytes(PreviousBlockAddress), 0, blockBytes, 8, 4);
 
         int recordSize = new T().GetSize();
         // Serialize the valid records
-        int offset = 4; // Start after the ValidRecordsCount
+        int offset = 12; // Start after the PreviousBlockAddress
         for (int i = 0; i < ValidRecordsCount; i++)
         {
             byte[] recordBytes = RecordsList[i].ToByteArray();
@@ -170,9 +177,11 @@ public class DHBlock<T> where T : IDHRecord<T>, new()
 
         // Deserialize the ValidRecordsCount
         ValidRecordsCount = BitConverter.ToInt32(byteArray, 0);
+        NextBlockAddress = BitConverter.ToInt32(byteArray, 4);
+        PreviousBlockAddress = BitConverter.ToInt32(byteArray, 8);
 
         // Deserialize the valid records
-        int offset = 4; // Start after the ValidRecordsCount
+        int offset = 12; // Start after the PreviousBlockAddress
         RecordsList.Clear();
         for (int i = 0; i < ValidRecordsCount; i++)
         {

@@ -1,6 +1,5 @@
 ﻿using DynamicHashingDS.Data;
 using DynamicHashingDS.DH;
-using System.Collections;
 
 namespace DynamicHashingDS.Nodes;
 
@@ -62,7 +61,7 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
             else
             {
                 // Handle overflow to overflow file
-                HandleOverflow(record, _fileBlockManager);
+                HandleOverflow(record, this);
                 return true;
             }
         }
@@ -280,32 +279,233 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
     {
         if (node is DHExternalNode<T> finalExternalNode)
         {
+            var block = finalExternalNode.ReadOrCreateBlock(dynamicHashing.MainBlockFactor);
+
+
             for (int i = 0; i < remainingRecords.Count; i++)
             {
                 var rec = remainingRecords[i];
                 if (i < dynamicHashing.MainBlockFactor)
                 {
-                    finalExternalNode.AddRecord(rec, dynamicHashing.MainBlockFactor);
+                    finalExternalNode.AddRecordToBlockWithoutReadAndWrite(rec, dynamicHashing.MainBlockFactor, block);
+                    //finalExternalNode.AddRecord(rec, dynamicHashing.MainBlockFactor);
                 }
                 else
                 {
-                    throw new NotImplementedException();
+                    var newBlock = _fileBlockManager.GetFreeBlock(true);
+                    block.NextBlockAddress = newBlock;
+                    block.WriteToBinaryFile(dynamicHashing.FileBlockManager.MainFilePath, _blockAddress);
+                    HandleOverflow(rec, finalExternalNode);
+                    //throw new NotImplementedException();
                     //Add to overflow file
                 }
             }
         }
     }
 
-    /// <summary>
-    /// Handles overflow situations by directing the record to an overflow mechanism.
-    /// </summary>
-    /// <param name="record">The record causing overflow.</param>
-    /// <param name="fileBlockManager">The file block manager handling overflow.</param>
-    private void HandleOverflow(IDHRecord<T> record, FileBlockManager<T> fileBlockManager)
+    private void HandleOverflow(IDHRecord<T> record, DHExternalNode<T> node)
     {
-        // Implement logic to handle overflow
-        throw new NotImplementedException();
+        var currentBlock = node.ReadCurrentBlock();
+        int blockAddress = currentBlock.NextBlockAddress;
+        int counter = 0;
+
+        // Traverse the overflow blocks looking for space
+        while (blockAddress != GlobalConstants.InvalidAddress)
+        {
+            var overflowBlock = ReadOverflowBlock(blockAddress);
+
+            if (HasSpace(overflowBlock))
+            {
+                WriteRecordToBlock(overflowBlock, record, blockAddress, true);
+                return;
+            }
+
+            // Prepare for the next iteration
+            currentBlock = overflowBlock;
+            blockAddress = overflowBlock.NextBlockAddress;
+            counter++;
+        }
+
+        // Create a new overflow block and update the chain
+        CreateNewOverflowBlock(record, currentBlock, counter);
     }
+
+
+    private void CreateNewOverflowBlock(IDHRecord<T> record, DHBlock<T> previousBlock, int counter)
+    {
+        int newOverflowBlockAddress = _fileBlockManager.GetFreeBlock(true);
+        var newOverflowBlock = new DHBlock<T>(dynamicHashing.OverflowBlockFactor, newOverflowBlockAddress);
+        newOverflowBlock.AddRecord(record);
+
+        if (counter > 0)
+        {
+            newOverflowBlock.PreviousBlockAddress = previousBlock.BlockAddress;
+        }
+
+        newOverflowBlock.WriteToBinaryFile(dynamicHashing.FileBlockManager.OverflowFilePath, newOverflowBlockAddress);
+
+        // Update the last block in the chain to point to the new overflow block
+        UpdateNextBlockAddress(previousBlock, newOverflowBlockAddress, counter);
+    }
+
+    private void UpdateNextBlockAddress(DHBlock<T> block, int newBlockAddress, int counter)
+    {
+        block.NextBlockAddress = newBlockAddress;
+        string filePath = counter > 0 ? dynamicHashing.FileBlockManager.OverflowFilePath : dynamicHashing.FileBlockManager.MainFilePath;
+        block.WriteToBinaryFile(filePath, block.BlockAddress);
+    }
+
+
+    private DHBlock<T> ReadOverflowBlock(int blockAddress)
+    {
+        var overflowBlock = new DHBlock<T>(dynamicHashing.OverflowBlockFactor, blockAddress);
+        overflowBlock.ReadFromBinaryFile(dynamicHashing.FileBlockManager.OverflowFilePath, blockAddress);
+        return overflowBlock;
+    }
+
+    private bool HasSpace(DHBlock<T> block)
+    {
+        return block.ValidRecordsCount < dynamicHashing.OverflowBlockFactor;
+    }
+
+    private void WriteRecordToBlock(DHBlock<T> block, IDHRecord<T> record, int blockAddress, bool isOverflow)
+    {
+        block.AddRecord(record);
+        string filePath = isOverflow ? dynamicHashing.FileBlockManager.OverflowFilePath : dynamicHashing.FileBlockManager.MainFilePath;
+        block.WriteToBinaryFile(filePath, blockAddress);
+    }
+
+    private void CreateNewOverflowBlock(IDHRecord<T> record, DHBlock<T> previousBlock)
+    {
+        int newOverflowBlockAddress = _fileBlockManager.GetFreeBlock(true);
+        var newOverflowBlock = new DHBlock<T>(dynamicHashing.OverflowBlockFactor, newOverflowBlockAddress);
+        newOverflowBlock.AddRecord(record);
+        newOverflowBlock.PreviousBlockAddress = previousBlock.BlockAddress;
+        newOverflowBlock.WriteToBinaryFile(dynamicHashing.FileBlockManager.OverflowFilePath, newOverflowBlockAddress);
+
+        UpdateNextBlockAddress(previousBlock, newOverflowBlockAddress);
+    }
+
+    private void UpdateNextBlockAddress(DHBlock<T> block, int newBlockAddress)
+    {
+        block.NextBlockAddress = newBlockAddress;
+        string filePath = dynamicHashing.FileBlockManager.OverflowFilePath;
+
+        if(block.PreviousBlockAddress == GlobalConstants.InvalidAddress && block.NextBlockAddress == GlobalConstants.InvalidAddress)
+        {
+            filePath = dynamicHashing.FileBlockManager.MainFilePath;
+        }
+
+        block.WriteToBinaryFile(filePath, block.BlockAddress);
+    }
+
+
+    //private void HandleOverflow(IDHRecord<T> record, DHExternalNode<T> node)
+    //{
+    //    var currentBlock = node.ReadCurrentBlock();
+    //    int blockAddress = currentBlock.NextBlockAddress;
+    //    int counter = 0;
+
+    //    while (blockAddress != GlobalConstants.InvalidAddress)
+    //    {
+    //        var overflowBlock = new DHBlock<T>(dynamicHashing.OverflowBlockFactor, blockAddress);
+    //        overflowBlock.ReadFromBinaryFile(dynamicHashing.FileBlockManager.OverflowFilePath, blockAddress);
+
+    //        if (overflowBlock.ValidRecordsCount < dynamicHashing.OverflowBlockFactor)
+    //        {
+    //            // Found a block with space
+    //            overflowBlock.AddRecord(record);
+    //            overflowBlock.WriteToBinaryFile(dynamicHashing.FileBlockManager.OverflowFilePath, blockAddress);
+    //            return;
+    //        }
+    //        else
+    //        {
+    //            // Move to next overflow block if it exists
+    //            blockAddress = overflowBlock.NextBlockAddress;
+    //        }
+    //        currentBlock = overflowBlock;
+    //        counter++;
+    //    }
+
+    //    // If we reach here, we need to create a new overflow block
+    //    int newOverflowBlockAddress = _fileBlockManager.GetFreeBlock(true);
+    //    //blockAddress = newOverflowBlockAddress;
+    //    var newOverflowBlock = new DHBlock<T>(dynamicHashing.OverflowBlockFactor, newOverflowBlockAddress);
+    //    newOverflowBlock.AddRecord(record);
+    //    if(counter > 0)
+    //    {
+    //        newOverflowBlock.PreviousBlockAddress = currentBlock.BlockAddress;
+    //    }
+
+    //    newOverflowBlock.WriteToBinaryFile(dynamicHashing.FileBlockManager.OverflowFilePath, newOverflowBlockAddress);
+
+    //    // Update the last block in the chain to point to the new overflow block
+    //    if (currentBlock.NextBlockAddress == GlobalConstants.InvalidAddress)
+    //    {
+    //        currentBlock.NextBlockAddress = newOverflowBlockAddress;
+    //        if(counter > 0)
+    //        {
+    //            currentBlock.WriteToBinaryFile(dynamicHashing.FileBlockManager.OverflowFilePath, currentBlock.BlockAddress);
+    //        } else
+    //        {
+    //            currentBlock.WriteToBinaryFile(dynamicHashing.FileBlockManager.MainFilePath, currentBlock.BlockAddress);
+    //        }
+
+    //    }
+    //}
+
+
+
+    //private void HandleOverflow(IDHRecord<T> record, DHExternalNode<T> node)
+    //{
+    //    var currentBlock = node.ReadCurrentBlock();
+    //    if(currentBlock.NextBlockAddress == GlobalConstants.InvalidAddress)
+    //    {
+    //        var newOverflowBlockAddress =  _fileBlockManager.GetFreeBlock(true);
+    //        currentBlock.NextBlockAddress = newOverflowBlockAddress;
+    //        currentBlock.WriteToBinaryFile(dynamicHashing.FileBlockManager.MainFilePath, _blockAddress);
+
+    //        var newOverflowBlock = new DHBlock<T>(dynamicHashing.OverflowBlockFactor, newOverflowBlockAddress);
+    //        newOverflowBlock.AddRecord(record);
+    //        newOverflowBlock.WriteToBinaryFile(dynamicHashing.FileBlockManager.OverflowFilePath, newOverflowBlockAddress);
+    //    }
+    //    else
+    //    {
+    //        var newOverflowBlock = new DHBlock<T>(dynamicHashing.OverflowBlockFactor, currentBlock.NextBlockAddress);
+    //        newOverflowBlock.ReadFromBinaryFile(dynamicHashing.FileBlockManager.OverflowFilePath, currentBlock.NextBlockAddress);
+    //        if(newOverflowBlock.ValidRecordsCount < dynamicHashing.OverflowBlockFactor)
+    //        {
+    //            newOverflowBlock.AddRecord(record);
+    //            newOverflowBlock.WriteToBinaryFile(dynamicHashing.FileBlockManager.OverflowFilePath, currentBlock.NextBlockAddress);
+    //        }
+    //        else
+    //        {
+    //            if(newOverflowBlock.NextBlockAddress == GlobalConstants.InvalidAddress)
+    //            {
+    //                var newOverflowBlockAddress = _fileBlockManager.GetFreeBlock(true);
+    //                newOverflowBlock.NextBlockAddress = newOverflowBlockAddress;
+    //                newOverflowBlock.WriteToBinaryFile(dynamicHashing.FileBlockManager.OverflowFilePath, currentBlock.NextBlockAddress);
+
+    //                var newOverflowBlock2 = new DHBlock<T>(dynamicHashing.OverflowBlockFactor, newOverflowBlockAddress);
+    //                newOverflowBlock2.AddRecord(record);
+    //                newOverflowBlock2.PreviousBlockAddress = currentBlock.NextBlockAddress;
+    //                newOverflowBlock2.WriteToBinaryFile(dynamicHashing.FileBlockManager.OverflowFilePath, newOverflowBlockAddress);
+    //            }
+    //            else
+    //            {
+    //                var newOverflowBlock = new DHBlock<T>(dynamicHashing.OverflowBlockFactor, currentBlock.NextBlockAddress);
+    //                newOverflowBlock.ReadFromBinaryFile(dynamicHashing.FileBlockManager.OverflowFilePath, currentBlock.NextBlockAddress);
+    //                if (newOverflowBlock.ValidRecordsCount < dynamicHashing.OverflowBlockFactor)
+    //                {
+    //                    newOverflowBlock.AddRecord(record);
+    //                    newOverflowBlock.WriteToBinaryFile(dynamicHashing.FileBlockManager.OverflowFilePath, currentBlock.NextBlockAddress);
+    //                }
+    //            }
+    //        }
+    //    }
+
+    //    //throw new NotImplementedException();
+    //}
 
     /// <summary>
     /// Adds a record to the block associated with this external node.
@@ -319,6 +519,18 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
         block.AddRecord(record);
         block.WriteToBinaryFile(dynamicHashing.FileBlockManager.MainFilePath, _blockAddress);
         _recordsCount++;
+    }
+
+    private void AddRecordToBlockWithoutReadAndWrite(IDHRecord<T> record, int blockFactor, DHBlock<T> block)
+    {
+        block.AddRecord(record);
+        _recordsCount++;
+    }
+
+    private int GetOrCreateBlockAddress()
+    {
+        EnsureBlockAddress();
+        return _blockAddress;
     }
 
     /// <summary>

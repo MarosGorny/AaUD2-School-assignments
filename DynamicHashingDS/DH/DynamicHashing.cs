@@ -15,6 +15,8 @@ public class DynamicHashing<T> where T : IDHRecord<T>, new()
     public int MaxHashSize { get; private set; }
     public FileBlockManager<T> FileBlockManager { get; private set;}
 
+    private bool _debug;
+
     /// <summary>
     /// Initializes a new instance of the DynamicHashing class.
     /// </summary>
@@ -23,7 +25,7 @@ public class DynamicHashing<T> where T : IDHRecord<T>, new()
     /// <param name="mainFilePath">The file path for the main file.</param>
     /// <param name="overflowFilePath">The file path for the overflow file.</param>
     /// <param name="maxHashSize">The maximum size of the hash. If null, it will be calculated based on the type T.</param>
-    public DynamicHashing(int mainBlockFactor, int overflowBlockFactor, string mainFilePath, string overflowFilePath, int? maxHashSize = null)
+    public DynamicHashing(int mainBlockFactor, int overflowBlockFactor, string mainFilePath, string overflowFilePath, int? maxHashSize = null, bool debug = false)
     {
         InitializeFiles(mainFilePath, overflowFilePath);
         MaxHashSize = maxHashSize ?? new T().GetHash().Length;
@@ -32,13 +34,17 @@ public class DynamicHashing<T> where T : IDHRecord<T>, new()
         FileBlockManager = new FileBlockManager<T>(mainFilePath, overflowFilePath, mainBlockFactor, overflowBlockFactor);
         InitializeRootNode();
 
-        //OutputSequentialFile();
+        _debug = debug;
+
+        if(_debug)
+            OutputSequentialFile();
     }
 
     public IDHRecord<T>? Delete(IDHRecord<T> record)
     {
         IDHRecord<T>? deletedRecord = _root.Delete(record);
-        //OutputSequentialFile();
+        if (_debug)
+            OutputSequentialFile();
         return deletedRecord;
     }
 
@@ -54,7 +60,8 @@ public class DynamicHashing<T> where T : IDHRecord<T>, new()
     public void Insert(IDHRecord<T> record)
     {
         bool inserted = _root.Insert(record);
-        //Console.WriteLine(FileBlockManager.SequentialFileOutput(MaxHashSize));
+        if (_debug)
+            OutputSequentialFile();
     }
 
     /// <summary>
