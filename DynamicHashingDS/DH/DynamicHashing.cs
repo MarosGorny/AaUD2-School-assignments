@@ -35,6 +35,13 @@ public class DynamicHashing<T> where T : IDHRecord<T>, new()
         OutputSequentialFile();
     }
 
+    public IDHRecord<T>? Delete(IDHRecord<T> record)
+    {
+        IDHRecord<T>? deletedRecord = _root.Delete(record);
+        OutputSequentialFile();
+        return deletedRecord;
+    }
+
     public bool TryFind(IDHRecord<T> record, out IDHRecord<T>? foundRecord)
     {  
         return _root.TryFind(record,out foundRecord);

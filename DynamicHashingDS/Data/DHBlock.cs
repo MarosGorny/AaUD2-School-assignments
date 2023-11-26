@@ -67,8 +67,8 @@ public class DHBlock<T> where T : IDHRecord<T>, new()
     /// Deletes a specified record from the block.
     /// </summary>
     /// <param name="record">The record to delete.</param>
-    /// <returns>True if the record was successfully deleted; otherwise, false.</returns>
-    public bool DeleteRecord(T record)
+    /// <returns>The deleted record if it was successfully deleted; otherwise, null.</returns>
+    public IDHRecord<T>? Delete(T record)
     {
         var foundIndex = RecordsList.FindIndex(r => r.MyEquals(record));
         if (foundIndex != -1)
@@ -82,11 +82,19 @@ public class DHBlock<T> where T : IDHRecord<T>, new()
             }
 
             // Remove the last record (which is the record to be deleted)
+            var deletedRecord = RecordsList[ValidRecordsCount - 1];
             RecordsList.RemoveAt(ValidRecordsCount - 1);
             ValidRecordsCount--;
-            return true;
+            return deletedRecord;
         }
-        return false;
+
+        if(NextBlockAddress != GlobalConstants.InvalidAddress)
+        {
+            // If the record is not found and there is a next block, the search should continue there.
+            throw new NotImplementedException("Continuation to next block not implemented.");
+        }
+
+        return null;
     }
 
     /// <summary>

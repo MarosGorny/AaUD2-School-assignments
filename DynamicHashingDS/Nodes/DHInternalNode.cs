@@ -53,11 +53,10 @@ public class DHInternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
     /// </summary>
     /// <param name="record">The record to delete.</param>
     /// <returns>True if the deletion is successful, otherwise false.</returns>
-    public bool Delete(IDHRecord<T> record)
+    public override IDHRecord<T>? Delete(IDHRecord<T> record)
     {
         var externalNode = FindExternalNode(record.GetHash());
-        throw new System.NotImplementedException();
-        //return externalNode.Delete(record);
+        return externalNode.Delete(record);
     }
 
     /// <summary>

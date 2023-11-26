@@ -81,6 +81,20 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
         throw new NotImplementedException();
     }
 
+    public override IDHRecord<T>? Delete(IDHRecord<T> record)
+    {
+        if (_recordsCount < 0 || _blockAddress == GlobalConstants.InvalidAddress)
+        {
+            return null;
+        }
+
+        var block = ReadCurrentBlock();
+        var deletedRecord = block.Delete((T)record);
+        block.WriteToBinaryFile(dynamicHashing.FileBlockManager.MainFilePath, _blockAddress);
+        _recordsCount--;
+        return deletedRecord;
+    }
+
     /// <summary>
     /// Splits the current node and redistributes records, handling the creation of new child nodes as necessary.
     /// </summary>
