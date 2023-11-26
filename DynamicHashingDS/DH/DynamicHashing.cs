@@ -1,159 +1,91 @@
 ﻿using DynamicHashingDS.Data;
 using DynamicHashingDS.Nodes;
-using System.Collections;
-using System.IO;
 
 namespace DynamicHashingDS.DH;
 
+/// <summary>
+/// Represents a dynamic hashing mechanism for storing and retrieving records.
+/// </summary>
+/// <typeparam name="T">The type of records to be stored, which must implement IDHRecord.</typeparam>
 public class DynamicHashing<T> where T : IDHRecord<T>, new()
 {
-    private DHNode<T> Root;
+    private DHNode<T> _root;
     public int MainBlockFactor { get; private set; }
     public int OverflowBlockFactor { get; private set; }
-    public int MaxBlockDepth { get; private set; }
-
     public int MaxHashSize { get; private set; }
-    //public List<DHBlock<T>> Blocks { get; private set; }
-
     public FileBlockManager<T> FileBlockManager { get; private set;}
 
+    /// <summary>
+    /// Initializes a new instance of the DynamicHashing class.
+    /// </summary>
+    /// <param name="mainBlockFactor">The block factor for the main file.</param>
+    /// <param name="overflowBlockFactor">The block factor for the overflow file.</param>
+    /// <param name="mainFilePath">The file path for the main file.</param>
+    /// <param name="overflowFilePath">The file path for the overflow file.</param>
+    /// <param name="maxHashSize">The maximum size of the hash. If null, it will be calculated based on the type T.</param>
     public DynamicHashing(int mainBlockFactor, int overflowBlockFactor, string mainFilePath, string overflowFilePath, int? maxHashSize = null)
     {
+        InitializeFiles(mainFilePath, overflowFilePath);
         MaxHashSize = maxHashSize ?? new T().GetHash().Length;
-        //TODO: DONT FORGET ABOUT THISSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
-        if (File.Exists(mainFilePath))
-        {
-            File.Delete(mainFilePath);
-        }
-
-        using (var fsMain = new FileStream(mainFilePath, FileMode.Create))
-        {
-            // Empty file is created, and FileStream is closed upon exiting the using block
-        }
-
-        if (File.Exists(overflowFilePath))
-        {
-            File.Delete(overflowFilePath);
-        }
-
-        using (var fsOverflow = new FileStream(overflowFilePath, FileMode.Create))
-        {
-            // Empty file is created, and FileStream is closed upon exiting the using block
-        }
-
-        // ... Initialization ...
-        FileBlockManager = new FileBlockManager<T>(mainFilePath, overflowFilePath, mainBlockFactor, overflowBlockFactor);
-
-        MaxBlockDepth = new T().GetHash().Length;
         MainBlockFactor = mainBlockFactor;
         OverflowBlockFactor = overflowBlockFactor;
+        FileBlockManager = new FileBlockManager<T>(mainFilePath, overflowFilePath, mainBlockFactor, overflowBlockFactor);
+        InitializeRootNode();
 
-        Root = new DHInternalNode<T>(this,null);
-
-        //var leftBlockAddress = FileBlockManager.GetFreeBlock(false);
-        //var leftBlock = new DHBlock<T>(mainBlockFactor, leftBlockAddress);
-        //leftBlock.WriteToBinaryFile(mainFilePath,leftBlockAddress);
-        ((DHInternalNode<T>)Root).AddLeftExternalNode(-1);
-
-        //var rightBlockAddress = FileBlockManager.GetFreeBlock(false);
-        //var rightBlock = new DHBlock<T>(mainBlockFactor, rightBlockAddress);
-        //rightBlock.WriteToBinaryFile(mainFilePath, rightBlockAddress);
-        ((DHInternalNode<T>)Root).AddRightExternalNode(-1);
-
-        Console.WriteLine("Root created");
-        Console.WriteLine(FileBlockManager.SequentialFileOutput(MaxHashSize));
-
+        OutputSequentialFile();
     }
 
+    /// <summary>
+    /// Inserts a record into the dynamic hashing structure.
+    /// </summary>
+    /// <param name="record">The record to insert.</param>
     public void Insert(IDHRecord<T> record)
     {
-        bool inserted = Root.Insert(record);
+        bool inserted = _root.Insert(record);
         Console.WriteLine(FileBlockManager.SequentialFileOutput(MaxHashSize));
     }
 
     /// <summary>
-    /// OLD IMPLEMENTATION
+    /// Initializes necessary files for dynamic hashing.
     /// </summary>
-    /// <param name="record"></param>
+    /// <param name="mainFilePath">The path for the main file.</param>
+    /// <param name="overflowFilePath">The path for the overflow file.</param>
+    private void InitializeFiles(string mainFilePath, string overflowFilePath)
+    {
+        DeleteFileIfExists(mainFilePath);
+        File.Create(mainFilePath).Close();
 
-    //public void Insert(DHRecord record)
-    //{
-    //    DHNode currentNode = Root;
-    //    var hash = record.GetHash();
+        DeleteFileIfExists(overflowFilePath);
+        File.Create(overflowFilePath).Close();
+    }
 
-    //    while(currentNode is DHInternalNode internalNode)
-    //    {
-    //        var nodeDepth = currentNode.Depth;
-    //        bool depthBit = hash[nodeDepth];
-    //        if (depthBit)
-    //        {
-    //            currentNode = internalNode.RightChild;
-    //        }
-    //        else
-    //        {
-    //            currentNode = internalNode.LeftChild;
-    //        }
-    //    }
+    /// <summary>
+    /// Deletes a file if it exists.
+    /// </summary>
+    /// <param name="filePath">The path of the file to delete.</param>
+    private void DeleteFileIfExists(string filePath)
+    {
+        if (File.Exists(filePath))
+        {
+            File.Delete(filePath);
+        }
+    }
 
-    //    if (currentNode is DHExternalNode<T> externalNode)
-    //    {
-    //        if(externalNode.RecordsCount < BlockFactor)
-    //        {
-    //            externalNode.RecordsCount++;
-    //            externalNode.BlockAddress = Blocks.Count - 1;
-    //            Blocks[externalNode.BlockAddress].AddRecord(record as T);
-    //        }
-    //        else 
-    //        {
-    //            var nodeAddress = externalNode.BlockAddress;
-    //            var parent = externalNode.Parent;
-    //            var newInternalNode = new DHInternalNode();
-    //            if(externalNode.Depth == 0)
-    //            {
-    //                Root = newInternalNode;
-    //            }
-    //            newInternalNode.Depth = externalNode.Depth;
-    //            newInternalNode.Parent = parent;
+    /// <summary>
+    /// Initializes the root node of the dynamic hashing structure.
+    /// </summary>
+    private void InitializeRootNode()
+    {
+        _root = new DHInternalNode<T>(this, null);
+        ((DHInternalNode<T>)_root).ChangeLeftExternalNodeAddress(-1);
+        ((DHInternalNode<T>)_root).ChangeRightExternalNodeAddress(-1);
+    }
 
-    //            newInternalNode.LeftChild = externalNode;
-    //            newInternalNode.RightChild = new DHExternalNode<T>();
-
-    //            newInternalNode.RightChild.Depth = newInternalNode.Depth + 1;
-    //            newInternalNode.LeftChild.Depth = newInternalNode.Depth + 1;
-
-    //            newInternalNode.RightChild.Parent = newInternalNode;
-    //            newInternalNode.LeftChild.Parent = newInternalNode;
-
-    //            var newBlock = new DHBlock<T>(BlockFactor);
-    //            Blocks.Add(newBlock);
-
-    //            var reInsertBlock = Blocks[nodeAddress];
-
-    //            foreach (var reInsertRecord in reInsertBlock.RecordsList)
-    //            {
-    //                var reInsertRecordHash = reInsertRecord.GetHash();
-    //                var reInsertRecordDepthBit = reInsertRecordHash[newInternalNode.Depth];
-    //                //TODO: We also need to delete that record from old one.
-    //                parent.Insert(reInsertRecord);
-                    
-    //            }
-
-    //        }
-
-          
-    //    }
-
-    //}
-
-    //public void Delete(DHRecord record)
-    //{
-    //    // Implement deletion logic
-    //}
-
-    //public DHRecord Find(DHRecord record)
-    //{
-    //    var = record.GetHash();
-    //}
-
-    // Additional methods for handling resizing, splitting, etc.
+    /// <summary>
+    /// Outputs the current state of the dynamic hashing structure to the console.
+    /// </summary>
+    private void OutputSequentialFile()
+    {
+        Console.WriteLine(FileBlockManager.SequentialFileOutput(MaxHashSize));
+    }
 }

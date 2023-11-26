@@ -21,13 +21,12 @@ public class FileBlockManager<T> where T : IDHRecord<T>, new()
     {
         this.MainFilePath = mainFilePath;
         this.OverflowFilePath = overflowFilePath;
-        this.firstFreeBlockMainFile = -1; // Initialize with no free block available
-        this.firstFreeBlockOverflowFile = -1; // Initialize with no free block available
+        this.firstFreeBlockMainFile = -1; 
+        this.firstFreeBlockOverflowFile = -1; 
         this.currentMainFileSize = 0;
         this.currentOverflowFileSize = 0;
         this.mainFileBlockFactor = mainFileBlockFactor;
         this.overflowFileBlockFactor = overflowFileBlockFactor;
-        // Initialize files if necessary
     }
 
     public int GetFreeBlock(bool isOverflow)
@@ -35,11 +34,6 @@ public class FileBlockManager<T> where T : IDHRecord<T>, new()
         int firstFreeBlock = isOverflow ? firstFreeBlockOverflowFile : firstFreeBlockMainFile;
         if (firstFreeBlock != -1)
         {
-            //// Read the block to find the address of the next free block
-            //DHBlock<T> freeBlock = ReadBlock(firstFreeBlockMainFile, false);
-            //firstFreeBlockMainFile = freeBlock.NextBlockAddress;
-
-            //return freeBlock.BlockAddress;
             return -99;
         }
         else
@@ -113,14 +107,10 @@ public class FileBlockManager<T> where T : IDHRecord<T>, new()
 
     private void ShrinkFile(bool isOverflow, int blockAddress)
     {
-        // Implement logic to shrink the file
-        // This involves reducing the file size and updating the first free block pointer
-        // if the first free block was the one being shrunk
-        // Adjust the current file size
         if (isOverflow)
         {
-            currentOverflowFileSize = blockAddress; // Assuming block size is 1
-                                                    // If the first free block is the one being removed, update the pointer
+            currentOverflowFileSize = blockAddress; 
+                                                    
             if (firstFreeBlockOverflowFile == blockAddress)
             {
                 firstFreeBlockOverflowFile = -1;
@@ -128,7 +118,7 @@ public class FileBlockManager<T> where T : IDHRecord<T>, new()
         }
         else
         {
-            currentMainFileSize = blockAddress; // Assuming block size is 1
+            currentMainFileSize = blockAddress; 
             if (firstFreeBlockMainFile == blockAddress)
             {
                 firstFreeBlockMainFile = -1;
@@ -140,9 +130,10 @@ public class FileBlockManager<T> where T : IDHRecord<T>, new()
     {
         StringBuilder output = new StringBuilder();
 
-        // Process the main file
+        output.AppendLine("\n---------------------------------------------------------------");
         output.AppendLine("Max Hash Size: " + maxHashSize + "\n");
 
+        // Process the main file
         output.AppendLine("Main Block Factor: " + mainFileBlockFactor);
         output.AppendLine("Main File Contents:");
         output.Append(ProcessFileSequentially(MainFilePath, mainFileBlockFactor));
@@ -174,14 +165,10 @@ public class FileBlockManager<T> where T : IDHRecord<T>, new()
             {
                 fileOutput.AppendLine($"    {record}");
             }
-            // Add more details as required
 
             currentAddress += block.GetSize();
         }
 
         return fileOutput.ToString();
     }
-
-
-
 }

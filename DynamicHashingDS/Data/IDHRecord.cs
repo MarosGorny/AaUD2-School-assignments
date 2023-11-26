@@ -125,14 +125,42 @@ public class DummyClass : IDHRecord<DummyClass>
 }
 
 
+/// <summary>
+/// Defines the required functionalities for a record to be used in dynamic hashing.
+/// </summary>
+/// <typeparam name="T">The type implementing this interface.</typeparam>
 public interface IDHRecord<T> where T : IDHRecord<T>
 {
+
+    /// <summary>
+    /// Gets the size of the record in bytes.
+    /// </summary>
+    /// <returns>The size of the record.</returns>
     int GetSize();
 
+    /// <summary>
+    /// Gets the hash representation of the record.
+    /// </summary>
+    /// <returns>A BitArray representing the hash of the record.</returns>
     BitArray GetHash();
+
+    /// <summary>
+    /// Determines whether the current record is equal to another record of the same type.
+    /// </summary>
+    /// <param name="other">The record to compare with this record.</param>
+    /// <returns>True if the specified record is equal to the current record; otherwise, false.</returns>
     bool MyEquals(T other);
 
+    /// <summary>
+    /// Converts the record into a byte array.
+    /// </summary>
+    /// <returns>A byte array representing the current record.</returns>
     byte[] ToByteArray();
 
+    /// <summary>
+    /// Creates a record from a byte array.
+    /// </summary>
+    /// <param name="byteArray">The byte array to create the record from.</param>
+    /// <returns>A new record instance created from the byte array.</returns>
     T FromByteArray(byte[] byteArray);
 }

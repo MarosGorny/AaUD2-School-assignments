@@ -6,7 +6,6 @@ internal class Program
 {
     static void Main(string[] args)
     {
-        Console.WriteLine("a");
         DummyClass dummy = new DummyClass();
         dummy.Cislo = 0;
 
@@ -26,7 +25,8 @@ internal class Program
 
 
 
-        var dynamicHashing = new DynamicHashing<DummyClass>(1,1,"testMain.bin","testFlow.bin", 2);
+        var dynamicHashing = new DynamicHashing<DummyClass>(2,2,"testMain.bin","testFlow.bin", 2);
+        dynamicHashing.Insert(dummy1);
         dynamicHashing.Insert(dummy1);
         dynamicHashing.Insert(dummy3);
         dynamicHashing.Insert(dummy);

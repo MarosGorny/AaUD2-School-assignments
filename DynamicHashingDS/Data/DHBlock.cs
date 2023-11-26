@@ -1,25 +1,44 @@
 ﻿namespace DynamicHashingDS.Data;
+
+/// <summary>
+/// Represents a block in a dynamic hashing data structure.
+/// </summary>
+/// <typeparam name="T">The type of records stored in the block.</typeparam>
 public class DHBlock<T> where T : IDHRecord<T>, new()
 {
-    public int BlockAddress { get; private set; } // Address of the block in the file
+    public int BlockAddress { get; private set; } //TODO: Do we need this?
     public int MaxRecordsCount { get; private set; }
     public int ValidRecordsCount { get; private set; } = 0;
     public List<IDHRecord<T>> RecordsList { get; private set; } = new List<IDHRecord<T>>();
-
     public int NextBlockAddress { get; set; } = -1; 
-    public int PreviousBlockAddress { get; set; } = -1; 
+    public int PreviousBlockAddress { get; set; } = -1;
 
+
+    /// <summary>
+    /// Initializes a new instance of the DHBlock class with a specified block factor.
+    /// </summary>
+    /// <param name="blockFactor">The block factor indicating the maximum number of records.</param>
     public DHBlock(int blockFactor)
     {
         MaxRecordsCount = blockFactor;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the DHBlock class with a specified block factor and block address.
+    /// </summary>
+    /// <param name="blockFactor">The block factor indicating the maximum number of records.</param>
+    /// <param name="blockAddress">The block address within the file.</param>
     public DHBlock(int blockFactor, int blockAddress)
     {
         MaxRecordsCount = blockFactor;
         BlockAddress = blockAddress;
     }
 
+    /// <summary>
+    /// Adds a record to the block.
+    /// </summary>
+    /// <param name="record">The record to add.</param>
+    /// <returns>True if the record was successfully added; otherwise, false.</returns>
     public bool AddRecord(IDHRecord<T> record)
     {
         if (ValidRecordsCount < MaxRecordsCount)
@@ -31,6 +50,10 @@ public class DHBlock<T> where T : IDHRecord<T>, new()
         return false;
     }
 
+    /// <summary>
+    /// TODO: Should rename 
+    /// Clears the block, resetting its state.
+    /// </summary>
     public void Clear()
     {
         NextBlockAddress = -1;
@@ -38,6 +61,11 @@ public class DHBlock<T> where T : IDHRecord<T>, new()
         ValidRecordsCount = 0;
     }
 
+    /// <summary>
+    /// Deletes a specified record from the block.
+    /// </summary>
+    /// <param name="record">The record to delete.</param>
+    /// <returns>True if the record was successfully deleted; otherwise, false.</returns>
     public bool DeleteRecord(T record)
     {
         var foundIndex = RecordsList.FindIndex(r => r.MyEquals(record));
@@ -59,6 +87,12 @@ public class DHBlock<T> where T : IDHRecord<T>, new()
         return false;
     }
 
+    /// <summary>
+    /// Attempts to find a record in the block.
+    /// </summary>
+    /// <param name="record">The record to find.</param>
+    /// <param name="foundRecord">When this method returns, contains the found record, if it exists; otherwise null.</param>
+    /// <returns>True if a record was found; otherwise, false.</returns>
     public bool TryFind(T record, out IDHRecord<T>? foundRecord)
     {
         foreach (var r in RecordsList)
@@ -69,16 +103,25 @@ public class DHBlock<T> where T : IDHRecord<T>, new()
                 return true;
             }
         }
-        foundRecord = default; 
+        foundRecord = null; 
         return false;
     }
 
+
+    /// <summary>
+    /// Gets the size of the block in bytes.
+    /// </summary>
+    /// <returns>The size of the block.</returns>
     public int GetSize()
     {
         int recordSize = new T().GetSize();
         return 4 + (MaxRecordsCount * recordSize); // 4 bytes for ValidRecordsCount
     }
 
+    /// <summary>
+    /// Converts the block to a byte array.
+    /// </summary>
+    /// <returns>A byte array representing the block.</returns>
     public byte[] ToByteArray()
     {
         byte[] blockBytes = new byte[GetSize()];
@@ -99,6 +142,10 @@ public class DHBlock<T> where T : IDHRecord<T>, new()
         return blockBytes;
     }
 
+    /// <summary>
+    /// Initializes the block from a byte array.
+    /// </summary>
+    /// <param name="byteArray">The byte array to initialize from.</param>
     public void FromByteArray(byte[] byteArray)
     {
         int recordSize = new T().GetSize();
@@ -119,6 +166,11 @@ public class DHBlock<T> where T : IDHRecord<T>, new()
         }
     }
 
+    /// <summary>
+    /// Writes the block to a binary file at a specified address.
+    /// </summary>
+    /// <param name="filePath">The file path to write to.</param>
+    /// <param name="blockAddress">The address at which to write the block.</param>
     public void WriteToBinaryFile(string filePath, int blockAddress)
     {
         byte[] blockBytes = ToByteArray();
@@ -136,6 +188,11 @@ public class DHBlock<T> where T : IDHRecord<T>, new()
         }
     }
 
+    /// <summary>
+    /// Reads a block from a binary file at a specified address.
+    /// </summary>
+    /// <param name="filePath">The file path to read from.</param>
+    /// <param name="blockAddress">The address at which to read the block.</param>
     public void ReadFromBinaryFile(string filePath, int blockAddress)
     {
         using (FileStream fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
@@ -154,21 +211,5 @@ public class DHBlock<T> where T : IDHRecord<T>, new()
             }
         }
     }
-
-
-    //public void ReadFromBinaryFile(string filePath)
-    //{
-    //    using (FileStream fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
-    //    {
-    //        using (BinaryReader binaryReader = new BinaryReader(fileStream))
-    //        {
-    //            // Read the entire block into a byte array
-    //            byte[] blockBytes = binaryReader.ReadBytes((int)fileStream.Length);
-
-    //            // Deserialize from the byte array
-    //            FromByteArray(blockBytes);
-    //        }
-    //    }
-    //}
 }
 
