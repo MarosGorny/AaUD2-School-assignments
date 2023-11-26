@@ -1,4 +1,6 @@
-﻿using System.Reflection.Metadata.Ecma335;
+﻿using DynamicHashingDS.DH;
+using System.Diagnostics.Metrics;
+using System.Reflection.Metadata.Ecma335;
 
 namespace DynamicHashingDS.Data;
 
@@ -14,7 +16,10 @@ public class DHBlock<T> where T : IDHRecord<T>, new()
     public List<IDHRecord<T>> RecordsList { get; private set; } = new List<IDHRecord<T>>();
     public int NextBlockAddress { get; set; } = -1; 
     public int PreviousBlockAddress { get; set; } = -1;
-    public int Depth { get; set; } = 0;
+    public string MainFilePath { get; private set; } = "";
+    public string OverflowFilePath { get; private set; } = "";
+    public int MainBlockFactor { get; private set; } = -1;
+    public int OverflowBlockFactor { get; private set; } = -1;
 
 
     /// <summary>
@@ -51,6 +56,18 @@ public class DHBlock<T> where T : IDHRecord<T>, new()
             return true;
         }
         return false;
+    }
+
+    public void SetFilePaths(string mainFilePath, string overflowFilePath)
+    {
+        MainFilePath = mainFilePath;
+        OverflowFilePath = overflowFilePath;
+    }
+
+    public void SetBlockFactors(int mainBlockFactor, int overflowBlockFactor)
+    {
+        MainBlockFactor = mainBlockFactor;
+        OverflowBlockFactor = overflowBlockFactor;
     }
 
     /// <summary>
@@ -98,28 +115,36 @@ public class DHBlock<T> where T : IDHRecord<T>, new()
         return null;
     }
 
-    /// <summary>
-    /// Attempts to find a record in the block. If the record is not found in the current block,
-    /// and there is a linked next block, the search continues in the next block.
-    /// </summary>
-    /// <param name="record">The record to find.</param>
-    /// <param name="foundRecord">When this method returns, contains the found record if it exists; otherwise null.</param>
-    /// <returns>True if a record was found in the current block or any linked next block; otherwise, false.</returns>
+
     public bool TryFind(IDHRecord<T> record, out IDHRecord<T>? foundRecord)
     {
-        foreach (var r in RecordsList)
-        {
-            if (r.MyEquals((T)record))
-            {
-                foundRecord = r;
-                return true; 
-            }
-        }
+        DHBlock<T> currentBlock = this;
 
-        if (NextBlockAddress != GlobalConstants.InvalidAddress)
+        int counter = 0;
+
+        while (currentBlock != null)
         {
-            // If the record is not found and there is a next block, the search should continue there.
-            throw new NotImplementedException("Continuation to next block not implemented.");
+            // Search within the current block
+            foreach (var r in currentBlock.RecordsList)
+            {
+                if (r.MyEquals((T)record))
+                {
+                    foundRecord = r;
+                    return true;
+                }
+            }
+
+            // Move to the next block if it exists
+            if (currentBlock.NextBlockAddress != GlobalConstants.InvalidAddress)
+            {
+                // Read the next block
+                currentBlock = ReadNextBlock(currentBlock.NextBlockAddress);
+            }
+            else
+            {
+                // No more blocks to search
+                break;
+            }
         }
 
         foundRecord = null;
@@ -181,7 +206,7 @@ public class DHBlock<T> where T : IDHRecord<T>, new()
         PreviousBlockAddress = BitConverter.ToInt32(byteArray, 8);
 
         // Deserialize the valid records
-        int offset = 12; // Start after the PreviousBlockAddress
+        int offset = 12; // Start after the PreviousBlockADdress
         RecordsList.Clear();
         for (int i = 0; i < ValidRecordsCount; i++)
         {
@@ -191,6 +216,7 @@ public class DHBlock<T> where T : IDHRecord<T>, new()
             RecordsList.Add(record);
             offset += recordSize;
         }
+
     }
 
     /// <summary>
@@ -237,6 +263,13 @@ public class DHBlock<T> where T : IDHRecord<T>, new()
                 FromByteArray(blockBytes);
             }
         }
+    }
+
+    private DHBlock<T> ReadNextBlock(int blockAddress)
+    {
+        var nextBlock = new DHBlock<T>(OverflowBlockFactor, blockAddress);
+        nextBlock.ReadFromBinaryFile(OverflowFilePath, blockAddress);
+        return nextBlock;
     }
 }
 

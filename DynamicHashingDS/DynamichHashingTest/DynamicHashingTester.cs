@@ -174,15 +174,32 @@ class DynamicHashingTester
         dummy3.Cislo = 3;
         dummy3.ID = 3;
 
+        DummyClass dummy5 = new DummyClass();
+        dummy5.Cislo = 5;
+        dummy5.ID = 5;
 
+        DummyClass dummy7 = new DummyClass();
+        dummy7.Cislo = 7;
+        dummy7.ID = 7;
 
 
         var dynamicHashing = new DynamicHashing<DummyClass>(1, 1, "testMain.bin", "testFlow.bin", 1,true);
 
+        IDHRecord<DummyClass> foundRecord;
+
         dynamicHashing.Insert(dummy1);
-        dynamicHashing.Insert(dummy1);
-        dynamicHashing.Insert(dummy1);
-        dynamicHashing.Insert(dummy1);
+        dynamicHashing.TryFind(dummy1, out foundRecord);
+        dynamicHashing.TryFind(dummy3, out foundRecord);
+
+        dynamicHashing.Insert(dummy3);
+        dynamicHashing.TryFind(dummy3, out foundRecord);
+        dynamicHashing.TryFind(dummy5, out foundRecord);
+        dynamicHashing.Insert(dummy5);
+        dynamicHashing.TryFind(dummy5, out foundRecord);
+        dynamicHashing.TryFind(dummy7, out foundRecord);
+        dynamicHashing.Insert(dummy7);
+        dynamicHashing.TryFind(dummy7, out foundRecord);
+
 
         //dynamicHashing.TryFind(dummy1, out var foundRecord);
         //Console.WriteLine("Found: " + foundRecord);

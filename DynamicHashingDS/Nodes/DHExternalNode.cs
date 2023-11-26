@@ -76,6 +76,8 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
         }
 
         var block = ReadCurrentBlock();
+        block.SetBlockFactors(dynamicHashing.MainBlockFactor, dynamicHashing.OverflowBlockFactor);
+        block.SetFilePaths(dynamicHashing.FileBlockManager.MainFilePath, dynamicHashing.FileBlockManager.OverflowFilePath);
         return block.TryFind(record, out foundRecord);
         throw new NotImplementedException();
     }
@@ -296,8 +298,6 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
                     block.NextBlockAddress = newBlock;
                     block.WriteToBinaryFile(dynamicHashing.FileBlockManager.MainFilePath, _blockAddress);
                     HandleOverflow(rec, finalExternalNode);
-                    //throw new NotImplementedException();
-                    //Add to overflow file
                 }
             }
         }
