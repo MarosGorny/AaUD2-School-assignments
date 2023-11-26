@@ -32,13 +32,13 @@ public class DynamicHashing<T> where T : IDHRecord<T>, new()
         FileBlockManager = new FileBlockManager<T>(mainFilePath, overflowFilePath, mainBlockFactor, overflowBlockFactor);
         InitializeRootNode();
 
-        OutputSequentialFile();
+        //OutputSequentialFile();
     }
 
     public IDHRecord<T>? Delete(IDHRecord<T> record)
     {
         IDHRecord<T>? deletedRecord = _root.Delete(record);
-        OutputSequentialFile();
+        //OutputSequentialFile();
         return deletedRecord;
     }
 
@@ -54,7 +54,7 @@ public class DynamicHashing<T> where T : IDHRecord<T>, new()
     public void Insert(IDHRecord<T> record)
     {
         bool inserted = _root.Insert(record);
-        Console.WriteLine(FileBlockManager.SequentialFileOutput(MaxHashSize));
+        //Console.WriteLine(FileBlockManager.SequentialFileOutput(MaxHashSize));
     }
 
     /// <summary>

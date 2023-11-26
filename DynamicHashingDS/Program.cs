@@ -1,11 +1,21 @@
 ﻿using DynamicHashingDS.Data;
 using DynamicHashingDS.DH;
+using DynamicHashingDS.DynamicHashingTest;
+using System.Reflection.Metadata;
 
 namespace DynamicHashingDS;
 internal class Program
 {
     static void Main(string[] args)
     {
+        DynamicHashingTester tester = new DynamicHashingTester(2, 2, 2);
+
+        for(int i = 0; i < 10; i++)
+        {
+            tester.RunRandomTest(10);
+        }
+        
+
         DummyClass dummy = new DummyClass();
         dummy.Cislo = 0;
 
@@ -29,14 +39,14 @@ internal class Program
 
         dynamicHashing.TryFind(dummy1, out var foundRecord);
         Console.WriteLine("Found: " +foundRecord);
-        Console.WriteLine("Deleted: " + dynamicHashing.Delete(dummy1));
+        //Console.WriteLine("Deleted: " + dynamicHashing.Delete(dummy1));
         
 
         dynamicHashing.Insert(dummy1);
 
         dynamicHashing.TryFind(dummy1, out var foundRecord1);
         Console.WriteLine("Found: " + foundRecord1);
-        Console.WriteLine("Deleted: " + dynamicHashing.Delete(dummy1));
+        //Console.WriteLine("Deleted: " + dynamicHashing.Delete(dummy1));
 
         dynamicHashing.Insert(dummy1);
 
@@ -44,7 +54,7 @@ internal class Program
         Console.WriteLine(foundRecord3);
 
         dynamicHashing.Insert(dummy3);
-        Console.WriteLine("Deleted: " + dynamicHashing.Delete(dummy3));
+        //Console.WriteLine("Deleted: " + dynamicHashing.Delete(dummy3));
         dynamicHashing.Insert(dummy3);
 
         dynamicHashing.TryFind(dummy3, out var foundRecord4);
@@ -53,7 +63,9 @@ internal class Program
         dynamicHashing.Insert(dummy);
         dynamicHashing.Insert(dummy2);
 
-        Console.WriteLine("Deleted: " + dynamicHashing.Delete(dummy));
+
+        var records = dynamicHashing.FileBlockManager.GetAllRecords(false);
+        //Console.WriteLine("Deleted: " + dynamicHashing.Delete(dummy));
 
 
         //var block = new DHBlock<DummyClass>(3,3);

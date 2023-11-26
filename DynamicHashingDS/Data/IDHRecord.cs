@@ -30,25 +30,10 @@ public class DummyClass : IDHRecord<DummyClass>
 
     public BitArray GetHash()
     {
-        //var hashValue = Cislo.GetHashCode();
-        //var hashValueBytes = BitConverter.GetBytes(hashValue);
-        //var hash = new BitArray(hashValueBytes);
-        //return hash;
-
         var hashValue = Cislo.GetHashCode();
         var hashValueBytes = BitConverter.GetBytes(hashValue);
-        var fullHash = new BitArray(hashValueBytes);
-
-        // Create a new BitArray with a size of 3 bits
-        var limitedHash = new BitArray(3);
-
-        // Copy the first 3 bits from the full hash to the limited hash
-        for (int i = 0; i < 3; i++)
-        {
-            limitedHash[i] = fullHash[i];
-        }
-
-        return limitedHash;
+        var hash = new BitArray(hashValueBytes);
+        return hash;
     }
 
     public int GetSize()

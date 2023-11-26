@@ -34,7 +34,7 @@ public class FileBlockManager<T> where T : IDHRecord<T>, new()
         int firstFreeBlock = isOverflow ? firstFreeBlockOverflowFile : firstFreeBlockMainFile;
         if (firstFreeBlock != -1)
         {
-            return -99;
+            throw new NotImplementedException("GetFreeBlock() is not implemented yet.");
         }
         else
         {
@@ -170,5 +170,24 @@ public class FileBlockManager<T> where T : IDHRecord<T>, new()
         }
 
         return fileOutput.ToString();
+    }
+
+    public List<IDHRecord<T>> GetAllRecords(bool fromOverflowFile)
+    {
+        string filePath = fromOverflowFile ? OverflowFilePath : MainFilePath;
+        List<IDHRecord<T>> allRecords = new List<IDHRecord<T>>();
+        int blockFactor = fromOverflowFile ? overflowFileBlockFactor : mainFileBlockFactor;
+        long fileSize = new FileInfo(filePath).Length;
+
+        for (int currentAddress = 0; currentAddress < fileSize;)
+        {
+            DHBlock<T> block = new DHBlock<T>(blockFactor, currentAddress);
+            block.ReadFromBinaryFile(filePath, currentAddress);
+            allRecords.AddRange(block.RecordsList);
+
+            currentAddress += block.GetSize();
+        }
+
+        return allRecords;
     }
 }

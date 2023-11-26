@@ -2,6 +2,7 @@
 using QuadTreeDS.SpatialItems;
 using System.Collections;
 using System.ComponentModel.DataAnnotations;
+using System.Text;
 
 namespace SemesterAssignment2.RealtyObjects;
 
@@ -53,7 +54,12 @@ public class Property : RealtyObject, IDHRecord<Property>
 
     public int GetSize()
     {
-        throw new NotImplementedException();
+        return sizeof(int)  // Size for ConscriptionNumber
+            + sizeof(int)  // Size for PropertyNumber
+            + 15 * sizeof(char)  // Size for Description (15 characters)
+            + sizeof(double) * 4  // Size for 2 GPS Points (each with 2 doubles for X and Y)
+            + sizeof(int) * 2 * 2  // Size for 2 GPS Point directions (Latitude and Longitude)
+            + sizeof(int) * 6; // Size for PositionedOnParcels (6 integers)
     }
 
     public BitArray GetHash()
@@ -61,36 +67,89 @@ public class Property : RealtyObject, IDHRecord<Property>
         throw new NotImplementedException();
     }
 
-    public bool MyEquals(IDHRecord<Property> other)
-    {
-        return this.ConscriptionNumber == (other as Property).ConscriptionNumber;
-    }
-
     public byte[] ToByteArray()
     {
-        throw new NotImplementedException();
+        using (var ms = new MemoryStream())
+        using (var writer = new BinaryWriter(ms))
+        {
+            writer.Write(ConscriptionNumber);
+            writer.Write(PropertyNumber);
+            writer.Write(Encoding.Unicode.GetBytes(Description.PadRight(15, '\0')));
+
+            // Serialize GPSRectangle
+            SerializeGPSPoint(writer, (GPSPoint)Bounds.LowerLeft);
+            SerializeGPSPoint(writer, (GPSPoint)Bounds.UpperRight);
+
+            // Serialize PositionedOnParcels
+            foreach (var parcelId in PositionedOnParcels)
+            {
+                writer.Write(parcelId);
+            }
+            // Pad remaining slots for parcels
+            for (int i = PositionedOnParcels.Count; i < 6; i++)
+            {
+                writer.Write(0); // Placeholder for empty parcel IDs
+            }
+
+            return ms.ToArray();
+        }
     }
 
-    public IDHRecord<Property> FromByteArray(byte[] byteArray)
+    private void SerializeGPSPoint(BinaryWriter writer, GPSPoint point)
     {
-        throw new NotImplementedException();
+        writer.Write((int)point.LatitudeDirection);
+        writer.Write((int)point.LongitudeDirection);
+        writer.Write(point.X);
+        writer.Write(point.Y);
+    }
+
+    private GPSPoint DeserializeGPSPoint(BinaryReader reader)
+    {
+        var latDir = (LatitudeDirection)reader.ReadInt32();
+        var longDir = (LongitudeDirection)reader.ReadInt32();
+        var x = reader.ReadDouble();
+        var y = reader.ReadDouble();
+        return new GPSPoint(latDir, x, longDir, y);
     }
 
     public bool MyEquals(Property other)
     {
-        throw new NotImplementedException();
+        return this.ConscriptionNumber == (other as Property).ConscriptionNumber
+            && this.PropertyNumber == (other as Property).PropertyNumber;
     }
 
-    Property IDHRecord<Property>.FromByteArray(byte[] byteArray)
+    public Property FromByteArray(byte[] byteArray)
     {
-        throw new NotImplementedException();
+        using (var ms = new MemoryStream(byteArray))
+        using (var reader = new BinaryReader(ms))
+        {
+            ConscriptionNumber = reader.ReadInt32();
+            PropertyNumber = reader.ReadInt32();
+            Description = Encoding.Unicode.GetString(reader.ReadBytes(15 * sizeof(char))).TrimEnd('\0');
+
+            // Deserialize GPSRectangle
+            var lowerLeft = DeserializeGPSPoint(reader);
+            var upperRight = DeserializeGPSPoint(reader);
+            Bounds = new GPSRectangle(lowerLeft, upperRight);
+
+            PositionedOnParcels.Clear();
+            for (int i = 0; i < 6; i++)
+            {
+                int parcelId = reader.ReadInt32();
+                if (parcelId != 0)
+                {
+                    PositionedOnParcels.Add(parcelId);
+                }
+            }
+        }
+        return this;
     }
 }
 
 /// <summary>
 /// Represents a parcel of land.
 /// </summary>
-public class Parcel : RealtyObject
+public class Parcel : RealtyObject, IDHRecord<Parcel>
 {
     public int ParcelNumber { get; set; }
     [StringLength(15)]
@@ -122,6 +181,31 @@ public class Parcel : RealtyObject
     public void RemoveProperty(int property)
     {
         OccupiedByProperties.Remove(property);
+    }
+
+    public int GetSize()
+    {
+        throw new NotImplementedException();
+    }
+
+    public BitArray GetHash()
+    {
+        throw new NotImplementedException();
+    }
+
+    public bool MyEquals(Parcel other)
+    {
+        throw new NotImplementedException();
+    }
+
+    public byte[] ToByteArray()
+    {
+        throw new NotImplementedException();
+    }
+
+    public Parcel FromByteArray(byte[] byteArray)
+    {
+        throw new NotImplementedException();
     }
 
     //public void ReleaseProperties()
