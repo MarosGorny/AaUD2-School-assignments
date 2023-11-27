@@ -51,6 +51,21 @@ public abstract class DHNode<T> where T : IDHRecord<T>, new()
     /// <returns>True if the insertion is successful, otherwise false.</returns>
     public abstract bool Insert(IDHRecord<T> record);
 
+    /// <summary>
+    /// Deletes a record from the node.
+    /// This is an abstract method that must be implemented in derived classes.
+    /// </summary>
+    /// <param name="record">The record to delete.</param>
+    /// <returns>The deleted record if successful; otherwise, null.</returns>
     public abstract IDHRecord<T>? Delete(IDHRecord<T> record);
+
+    /// <summary>
+    /// Attempts to find a record in the node.
+    /// This is an abstract method that must be implemented in derived classes.
+    /// </summary>
+    /// <param name="record">The record to find.</param>
+    /// <param name="foundRecord">When this method returns, contains the found record if it exists; otherwise null.</param>
+    /// <returns>True if a record was found; otherwise, false.</returns>
     public abstract bool TryFind(IDHRecord<T> record, out IDHRecord<T>? foundRecord);
+
 }

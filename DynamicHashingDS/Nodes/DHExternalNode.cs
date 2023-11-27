@@ -43,39 +43,28 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
     /// <returns>True if the record was inserted, or false if it needs to be handled as an overflow.</returns>
     public override bool Insert(IDHRecord<T> record)
     {
-        int blockFactor = dynamicHashing.MainBlockFactor;
-        // Existing logic to add record if there is space
-        if (_recordsCount < blockFactor)
+        if (_recordsCount < dynamicHashing.MainBlockFactor)
         {
-            this.AddRecord(record, blockFactor);
+            AddRecord(record, dynamicHashing.MainBlockFactor);
             return true;
         }
-        else
-        {
-            // Handle the case when the block is full
-            if (Depth < MaxHashSize) // Assuming MaxHashBits is the maximum depth based on the hash size
-            {
-                // Split the node and redistribute records
-                SplitNodeAndInsert(record);
-                return true;
-            }
-            else
-            {
-                // Handle overflow to overflow file
-                HandleOverflow(record, _fileBlockManager);
-                return true;
-            }
-        }
+
+        return Depth < MaxHashSize ? SplitNodeAndInsert(record) : HandleOverflow(record, _fileBlockManager);
     }
 
+    /// <summary>
+    /// Attempts to find a record in the external node.
+    /// </summary>
+    /// <param name="record">The record to find.</param>
+    /// <param name="foundRecord">When this method returns, contains the found record if it exists; otherwise null.</param>
+    /// <returns>True if the record is found in the current block; otherwise, false.</returns>
+    /// <remarks>
+    /// This method first checks if the current node is valid for the operation.
+    /// If valid, it proceeds to search for the record in the current block.
+    /// </remarks>
     public override bool TryFind(IDHRecord<T> record, out IDHRecord<T>? foundRecord)
     {
-        if(_recordsCount < 0 || _blockAddress == GlobalConstants.InvalidAddress)
-        {
-            foundRecord = null;
-            return false;
-        }
-        if(_fileBlockManager.CurrentMainFileSize == 0)
+        if (!IsValidNode())
         {
             foundRecord = null;
             return false;
@@ -83,42 +72,70 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
 
         var block = ReadCurrentBlock();
         return block.TryFind(record, out foundRecord);
-        throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// Deletes a specified record from the external node.
+    /// </summary>
+    /// <param name="record">The record to delete.</param>
+    /// <returns>The deleted record if it was successfully deleted; otherwise, null.</returns>
+    /// <remarks>
+    /// This method checks if the current node is valid and if the main file size is non-zero.
+    /// If the conditions are met, it attempts to delete the record from the current block.
+    /// After deletion, it performs necessary post-deletion actions like updating the block in the file.
+    /// </remarks>
     public override IDHRecord<T>? Delete(IDHRecord<T> record)
     {
-        if (_recordsCount < 0 || _blockAddress == GlobalConstants.InvalidAddress)
-        {
-            return null;
-        }
-        if(_fileBlockManager.CurrentMainFileSize == 0)
+        if (!IsValidNode() || _fileBlockManager.CurrentMainFileSize == 0)
         {
             return null;
         }
 
         var block = ReadCurrentBlock();
         var deletedRecord = block.Delete((T)record);
-        
-        if(block.ValidRecordsCount == 0)
-        {
-            //dynamicHashing.FileBlockManager.ReleaseBlock(_blockAddress, false);
-            dynamicHashing.FileBlockManager.ReleaseBlock(block, false);
-            _blockAddress = -1;
-        } else
-        {
-            block.WriteToBinaryFile(dynamicHashing.FileBlockManager.MainFilePath, _blockAddress);
-        }
-        
-        _recordsCount--;
+        HandlePostDeletionActions(block);
         return deletedRecord;
     }
+
+    /// <summary>
+    /// Handles actions required after a record is deleted from the node.
+    /// </summary>
+    /// <param name="block">The block from which the record was deleted.</param>
+    private void HandlePostDeletionActions(DHBlock<T> block)
+    {
+        // If there are no valid records left in the block after deletion
+        if (block.ValidRecordsCount == 0)
+        {
+            // Release the block if it's no longer needed
+            dynamicHashing.FileBlockManager.ReleaseBlock(block, false);
+            _blockAddress = -1;
+        }
+        else
+        {
+            // If there are still valid records, update the block in the file
+            block.WriteToBinaryFile(dynamicHashing.FileBlockManager.MainFilePath, _blockAddress);
+        }
+
+        // Decrement the count of records in the node
+        _recordsCount--;
+    }
+
+
+    /// <summary>
+    /// Checks if the current node is valid for operations like finding or deleting records.
+    /// </summary>
+    /// <returns>True if the node is valid; otherwise, false.</returns>
+    private bool IsValidNode()
+    {
+        return _recordsCount >= 0 && _blockAddress != GlobalConstants.InvalidAddress && _fileBlockManager.CurrentMainFileSize != 0;
+    }
+
 
     /// <summary>
     /// Splits the current node and redistributes records, handling the creation of new child nodes as necessary.
     /// </summary>
     /// <param name="record">The record to insert after splitting.</param>
-    private void SplitNodeAndInsert(IDHRecord<T> record)
+    private bool SplitNodeAndInsert(IDHRecord<T> record)
     {
         // Read the current block to redistribute records
         var currentBlock = ReadCurrentBlock();
@@ -143,6 +160,8 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
         }
 
         HandleFinalInsertionOrOverflow(allRecords, currentNode);
+
+        return true;
     }
 
     /// <summary>
@@ -321,7 +340,8 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
     /// </summary>
     /// <param name="record">The record causing overflow.</param>
     /// <param name="fileBlockManager">The file block manager handling overflow.</param>
-    private void HandleOverflow(IDHRecord<T> record, FileBlockManager<T> fileBlockManager)
+    /// <returns>True if the record was successfully handled; otherwise, false.</returns>
+    private bool HandleOverflow(IDHRecord<T> record, FileBlockManager<T> fileBlockManager)
     {
         // Implement logic to handle overflow
         throw new NotImplementedException();

@@ -15,6 +15,8 @@ public class DHBlock<T> where T : IDHRecord<T>, new()
     public int NextBlockAddress { get; set; } = -1; 
     public int PreviousBlockAddress { get; set; } = -1;
 
+    //TODO: If it's overflowBlock or not.
+    //TODO: Remember FileBlockManager? Maybe we should use it here too.
 
     /// <summary>
     /// Initializes a new instance of the DHBlock class with a specified block factor.
