@@ -10,15 +10,5 @@ internal class Program
     {
         DynamicHashingTester dynamicHashingTester = new DynamicHashingTester(-1,-1,-1);
         dynamicHashingTester.RunComplexTesting();
-
-
-
-
-
-
-
-
-        
-
     }
 }

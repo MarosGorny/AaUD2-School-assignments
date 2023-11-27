@@ -54,6 +54,18 @@ public class DHBlock<T> where T : IDHRecord<T>, new()
         return false;
     }
 
+    public bool AddRecords(List<IDHRecord<T>> records)
+    {
+        if (ValidRecordsCount + records.Count <= MaxRecordsCount)
+        {
+            RecordsList.AddRange(records);
+            ValidRecordsCount += records.Count;
+            return true;
+        }
+        throw new Exception("Too many records to add.");
+        //return false;
+    }
+
     /// <summary>
     /// TODO: Should rename 
     /// Clears the block, resetting its state.

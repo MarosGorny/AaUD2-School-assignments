@@ -86,14 +86,17 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
     /// </remarks>
     public override IDHRecord<T>? Delete(IDHRecord<T> record)
     {
-        if (!IsValidNode() || _fileBlockManager.CurrentMainFileSize == 0)
+        if (!IsValidNode())
         {
             return null;
         }
 
         var block = ReadCurrentBlock();
         var deletedRecord = block.Delete((T)record);
-        HandlePostDeletionActions(block);
+        if(deletedRecord != null)
+        {
+            HandlePostDeletionActions(block);
+        }
         return deletedRecord;
     }
 
@@ -230,11 +233,31 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
         DHBlock<T> currentBlock)
     {
         var newInternalNode = new DHInternalNode<T>(dynamicHashing, node.Parent);
-        dynamicHashing.FileBlockManager.ReleaseBlock(currentBlock, false);
+
+        // Assign block addresses based on whether each child contains records
+        int leftBlockAddress, rightBlockAddress;
+
+        if (containsLeft && !containsRight)
+        {
+            leftBlockAddress = currentBlock.BlockAddress;
+            rightBlockAddress = -1;
+        }
+        else if (!containsLeft && containsRight)
+        {
+            leftBlockAddress = -1;
+            rightBlockAddress = currentBlock.BlockAddress;
+        }
+        else // Both left and right contain records
+        {
+            leftBlockAddress = currentBlock.BlockAddress;
+            rightBlockAddress = dynamicHashing.FileBlockManager.GetFreeBlock(false);
+        }
+
+        //dynamicHashing.FileBlockManager.ReleaseBlock(currentBlock, false);
 
         // Assign block addresses to left and right children
-        int leftBlockAddress = containsLeft ? dynamicHashing.FileBlockManager.GetFreeBlock(false) : -1;
-        int rightBlockAddress = containsRight ? dynamicHashing.FileBlockManager.GetFreeBlock(false) : -1;
+        //int leftBlockAddress = containsLeft ? dynamicHashing.FileBlockManager.GetFreeBlock(false) : -1;
+        //int rightBlockAddress = containsRight ? dynamicHashing.FileBlockManager.GetFreeBlock(false) : -1;
 
         newInternalNode.ChangeLeftExternalNodeAddress(leftBlockAddress);
         newInternalNode.ChangeRightExternalNodeAddress(rightBlockAddress);
@@ -294,7 +317,8 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
         }
         else
         {
-            foreach (var rec in leftRecords) leftChild.AddRecord(rec, dynamicHashing.MainBlockFactor);
+            leftChild.AddRecords(leftRecords, dynamicHashing.MainBlockFactor);
+            //foreach (var rec in leftRecords) leftChild.AddRecord(rec, dynamicHashing.MainBlockFactor);
         }
         
         if (rightRecords.Count > dynamicHashing.MainBlockFactor)
@@ -304,7 +328,8 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
         }
         else
         {
-            foreach (var rec in rightRecords) rightChild.AddRecord(rec, dynamicHashing.MainBlockFactor);
+            rightChild.AddRecords(rightRecords, dynamicHashing.MainBlockFactor);
+            //foreach (var rec in rightRecords) rightChild.AddRecord(rec, dynamicHashing.MainBlockFactor);
         }
 
         return (nextSplittingNode, allRecords);
@@ -319,19 +344,23 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
     {
         if (node is DHExternalNode<T> finalExternalNode)
         {
-            for (int i = 0; i < remainingRecords.Count; i++)
+            // Determine the number of records to insert without causing overflow
+            int recordsToInsert = Math.Min(remainingRecords.Count, dynamicHashing.MainBlockFactor);
+            var recordsForInsertion = remainingRecords.Take(recordsToInsert).ToList();
+
+            // Add records in batch to the external node
+            finalExternalNode.AddRecords(recordsForInsertion, dynamicHashing.MainBlockFactor);
+
+            // Handle any remaining records that could not be inserted due to block factor limitations
+            var overflowRecords = remainingRecords.Skip(recordsToInsert).ToList();
+            if (overflowRecords.Any())
             {
-                var rec = remainingRecords[i];
-                if (i < dynamicHashing.MainBlockFactor)
-                {
-                    finalExternalNode.AddRecord(rec, dynamicHashing.MainBlockFactor);
-                }
-                else
-                {
-                    throw new NotImplementedException();
-                    //Add to overflow file
-                }
+                throw new NotImplementedException("Overflow not implemented.");
             }
+        } 
+        else
+        {
+            throw new NotImplementedException("Node is not an external node.");
         }
     }
 
@@ -359,6 +388,15 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
         block.AddRecord(record);
         block.WriteToBinaryFile(dynamicHashing.FileBlockManager.MainFilePath, _blockAddress);
         _recordsCount++;
+    }
+
+    private void AddRecords(List<IDHRecord<T>> records, int blockFactor)
+    {
+        EnsureBlockAddress();
+        var block = ReadOrCreateBlock(blockFactor);
+        block.AddRecords(records);
+        block.WriteToBinaryFile(dynamicHashing.FileBlockManager.MainFilePath, _blockAddress);
+        _recordsCount += records.Count;
     }
 
     /// <summary>
