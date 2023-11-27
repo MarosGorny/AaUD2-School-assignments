@@ -75,6 +75,11 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
             foundRecord = null;
             return false;
         }
+        if(_fileBlockManager.CurrentMainFileSize == 0)
+        {
+            foundRecord = null;
+            return false;
+        }
 
         var block = ReadCurrentBlock();
         return block.TryFind(record, out foundRecord);
@@ -87,10 +92,24 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
         {
             return null;
         }
+        if(_fileBlockManager.CurrentMainFileSize == 0)
+        {
+            return null;
+        }
 
         var block = ReadCurrentBlock();
         var deletedRecord = block.Delete((T)record);
-        block.WriteToBinaryFile(dynamicHashing.FileBlockManager.MainFilePath, _blockAddress);
+        
+        if(block.ValidRecordsCount == 0)
+        {
+            //dynamicHashing.FileBlockManager.ReleaseBlock(_blockAddress, false);
+            dynamicHashing.FileBlockManager.ReleaseBlock(block, false);
+            _blockAddress = -1;
+        } else
+        {
+            block.WriteToBinaryFile(dynamicHashing.FileBlockManager.MainFilePath, _blockAddress);
+        }
+        
         _recordsCount--;
         return deletedRecord;
     }
@@ -115,7 +134,7 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
             var (leftRecords, rightRecords) = RedistributeRecords(allRecords, currentNode);
 
             // Split the node and get the child nodes for redistribution
-            var (leftChild, rightChild) = SplitNode(leftRecords.Any(),rightRecords.Any(),currentNode);
+            var (leftChild, rightChild) = SplitNode(leftRecords.Any(),rightRecords.Any(),currentNode, currentBlock);
 
 
 
@@ -188,10 +207,11 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
     private (DHExternalNode<T> leftChild, DHExternalNode<T> rightChild) SplitNode(
         bool containsLeft, 
         bool containsRight,
-        DHExternalNode<T> node)
+        DHExternalNode<T> node,
+        DHBlock<T> currentBlock)
     {
         var newInternalNode = new DHInternalNode<T>(dynamicHashing, node.Parent);
-        dynamicHashing.FileBlockManager.ReleaseBlock(node._blockAddress, false);
+        dynamicHashing.FileBlockManager.ReleaseBlock(currentBlock, false);
 
         // Assign block addresses to left and right children
         int leftBlockAddress = containsLeft ? dynamicHashing.FileBlockManager.GetFreeBlock(false) : -1;

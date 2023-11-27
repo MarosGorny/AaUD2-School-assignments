@@ -38,7 +38,7 @@ public class DynamicHashing<T> where T : IDHRecord<T>, new()
     public IDHRecord<T>? Delete(IDHRecord<T> record)
     {
         IDHRecord<T>? deletedRecord = _root.Delete(record);
-        //OutputSequentialFile();
+        //Console.WriteLine(FileBlockManager.SequentialFileOutput(MaxHashSize));
         return deletedRecord;
     }
 

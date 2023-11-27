@@ -8,13 +8,37 @@ internal class Program
 {
     static void Main(string[] args)
     {
-        DynamicHashingTester tester = new DynamicHashingTester(2, 2, 2);
+        DynamicHashingTester tester = new DynamicHashingTester(1, 1, 1, useSelectedIds:true);
 
-        for(int i = 0; i < 10; i++)
+        for(int i = 0; i < 3; i++)
         {
-            tester.RunRandomTest(10);
+            tester.RunRandomTest(10000);
+            Console.WriteLine("Test " + i + " finished");
         }
-        
+
+        DynamicHashingTester tester1 = new DynamicHashingTester(2, 1, 2, useSelectedIds: true);
+
+        for (int i = 0; i < 3; i++)
+        {
+            tester1.RunRandomTest(10000);
+            Console.WriteLine("Test " + i + " finished");
+        }
+
+        DynamicHashingTester tester2 = new DynamicHashingTester(5, 1, 2, useSelectedIds: true);
+
+        for (int i = 0; i < 3; i++)
+        {
+            tester2.RunRandomTest(10000);
+            Console.WriteLine("Test " + i + " finished");
+        }
+
+        DynamicHashingTester tester3 = new DynamicHashingTester(2, 1, 5, useSelectedIds: true);
+
+        for (int i = 0; i < 3; i++)
+        {
+            tester3.RunRandomTest(10000);
+            Console.WriteLine("Test " + i + " finished");
+        }
 
         DummyClass dummy = new DummyClass();
         dummy.Cislo = 0;
