@@ -18,7 +18,7 @@ public abstract class RealtyObject : Rectangle
 /// <summary>
 /// Represents a real estate property.
 /// </summary>
-public class Property : RealtyObject, IDHRecord
+public class Property : RealtyObject, IDHRecord<Property>
 {
     public int ConscriptionNumber { get; set; }
     public List<Parcel> PositionedOnParcels { get; set; } = new List<Parcel>(); 
@@ -57,7 +57,7 @@ public class Property : RealtyObject, IDHRecord
         throw new NotImplementedException();
     }
 
-    public bool MyEquals(IDHRecord other)
+    public bool MyEquals(IDHRecord<Property> other)
     {
         return this.ConscriptionNumber == (other as Property).ConscriptionNumber;
     }
@@ -67,7 +67,17 @@ public class Property : RealtyObject, IDHRecord
         throw new NotImplementedException();
     }
 
-    public IDHRecord FromByteArray(byte[] byteArray)
+    public IDHRecord<Property> FromByteArray(byte[] byteArray)
+    {
+        throw new NotImplementedException();
+    }
+
+    public bool MyEquals(Property other)
+    {
+        throw new NotImplementedException();
+    }
+
+    Property IDHRecord<Property>.FromByteArray(byte[] byteArray)
     {
         throw new NotImplementedException();
     }

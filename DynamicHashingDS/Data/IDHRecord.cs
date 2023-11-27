@@ -4,15 +4,15 @@ using System.Text;
 
 namespace DynamicHashingDS.Data;
 
-public class DummyClass : IDHRecord
+public class DummyClass : IDHRecord<DummyClass>
 {
     public int Cislo { get; set; }
     public int ID { get; set; }
 
     [StringLength(14)]
-    public string Text { get; set; }
+    public string Text { get; set; } = "";
 
-    public IDHRecord FromByteArray(byte[] byteArray)
+    public DummyClass FromByteArray(byte[] byteArray)
     {
         using (var ms = new MemoryStream(byteArray))
         using (var reader = new BinaryReader(ms))
@@ -47,7 +47,29 @@ public class DummyClass : IDHRecord
         return size;
     }
 
-    public bool MyEquals(IDHRecord other)
+    public string GetHashString()
+    {
+        var hash = GetHash();
+        var sb = new StringBuilder();
+        int counter = 0;
+        for (int i = hash.Length - 1; i >= 0; i--)
+        {
+            sb.Append(hash[i] ? "1" : "0");
+            if(++counter % 8 == 0)
+            {
+                sb.Append(" ");
+            }
+        }
+
+        return sb.ToString();
+    }
+
+    public override string ToString()
+    {
+        return $"DummyClass(Hash: {GetHashString()},Cislo: {Cislo}, ID: {ID}, Text: {Text})";
+    }
+
+    public bool MyEquals(DummyClass other)
     {
         if (other is DummyClass otherDummy)
         {
@@ -88,35 +110,42 @@ public class DummyClass : IDHRecord
 }
 
 
-public interface IDHRecord
+/// <summary>
+/// Defines the required functionalities for a record to be used in dynamic hashing.
+/// </summary>
+/// <typeparam name="T">The type implementing this interface.</typeparam>
+public interface IDHRecord<T> where T : IDHRecord<T>
 {
+
+    /// <summary>
+    /// Gets the size of the record in bytes.
+    /// </summary>
+    /// <returns>The size of the record.</returns>
     int GetSize();
 
+    /// <summary>
+    /// Gets the hash representation of the record.
+    /// </summary>
+    /// <returns>A BitArray representing the hash of the record.</returns>
     BitArray GetHash();
-    bool MyEquals(IDHRecord other);
 
+    /// <summary>
+    /// Determines whether the current record is equal to another record of the same type.
+    /// </summary>
+    /// <param name="other">The record to compare with this record.</param>
+    /// <returns>True if the specified record is equal to the current record; otherwise, false.</returns>
+    bool MyEquals(T other);
+
+    /// <summary>
+    /// Converts the record into a byte array.
+    /// </summary>
+    /// <returns>A byte array representing the current record.</returns>
     byte[] ToByteArray();
 
-    IDHRecord FromByteArray(byte[] byteArray);
-
-    // Method to serialize the record to a byte array
-    //public byte[] ToByteArray()
-    //{
-    //    using (var memoryStream = new MemoryStream())
-    //    {
-    //        using (var binaryWriter = new BinaryWriter(memoryStream))
-    //        {
-    //            try
-    //            {
-    //                binaryWriter.Write(NejakyAtributInt);
-    //            }
-    //            catch (IOException e)
-    //            {
-    //                throw new InvalidOperationException("Error during conversion to byte array.", e);
-    //            }
-
-    //            return memoryStream.ToArray();
-    //        }
-    //    }
-    //}   
+    /// <summary>
+    /// Creates a record from a byte array.
+    /// </summary>
+    /// <param name="byteArray">The byte array to create the record from.</param>
+    /// <returns>A new record instance created from the byte array.</returns>
+    T FromByteArray(byte[] byteArray);
 }
