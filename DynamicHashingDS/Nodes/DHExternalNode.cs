@@ -10,7 +10,7 @@ namespace DynamicHashingDS.Nodes;
 /// <typeparam name="T">The type of the record.</typeparam>
 public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
 {
-    private int _recordsCount;
+    public int _recordsCount;  //FIXME: JUST FOR NOW PUBLIC
     private int _blockAddress;
     private readonly FileBlockManager<T> _fileBlockManager;
 
@@ -96,9 +96,37 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
         if(deletedRecord != null)
         {
             HandlePostDeletionActions(block);
+
+            ////Maybe use for striasanie, but check parents reffereces
+            //if (_recordsCount == 0 && Parent is DHInternalNode<T> parentInternal && parentInternal.Depth != 0)
+            //{
+            //    ShortenChain(parentInternal);
+            //}
         }
         return deletedRecord;
     }
+
+    private void ShortenChain(DHInternalNode<T> parentInternal)
+    {
+        DHExternalNode<T> nonEmptyChild = parentInternal.LeftChild == this ?
+                                  (DHExternalNode<T>)parentInternal.RightChild :
+                                  (DHExternalNode<T>)parentInternal.LeftChild;
+
+
+        var isLeftChild = ((DHInternalNode<T>)parentInternal.Parent).LeftChild == parentInternal;
+
+        if(isLeftChild)
+        {
+            ((DHInternalNode<T>)parentInternal.Parent).LeftChild = nonEmptyChild;
+        }
+        else
+        {
+            ((DHInternalNode<T>)parentInternal.Parent).RightChild = nonEmptyChild;
+        }
+
+        nonEmptyChild.Depth--;
+    }
+
 
     /// <summary>
     /// Handles actions required after a record is deleted from the node.
@@ -106,11 +134,13 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
     /// <param name="block">The block from which the record was deleted.</param>
     private void HandlePostDeletionActions(DHBlock<T> block)
     {
+        var oldAddress = _blockAddress;
         // If there are no valid records left in the block after deletion
         if (block.ValidRecordsCount == 0)
         {
             // Release the block if it's no longer needed
             dynamicHashing.FileBlockManager.ReleaseBlock(block, false);
+
             _blockAddress = -1;
         }
         else
@@ -118,6 +148,8 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
             // If there are still valid records, update the block in the file
             block.WriteToBinaryFile(dynamicHashing.FileBlockManager.MainFilePath, _blockAddress);
         }
+
+        //block.WriteToBinaryFile(dynamicHashing.FileBlockManager.MainFilePath, oldAddress);
 
         // Decrement the count of records in the node
         _recordsCount--;
@@ -140,11 +172,24 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
     /// <param name="record">The record to insert after splitting.</param>
     private bool SplitNodeAndInsert(IDHRecord<T> record)
     {
-        // Read the current block to redistribute records
         var currentBlock = ReadCurrentBlock();
+        var allRecords = new List<IDHRecord<T>>(currentBlock.RecordsList.Count + 1);
+        bool recordExists = false;
 
-        // Add the new record for redistribution
-        var allRecords = new List<IDHRecord<T>>(currentBlock.RecordsList) { record };
+        foreach (var existingRecord in currentBlock.RecordsList)
+        {
+            if (existingRecord.MyEquals((T)record))
+            {
+                recordExists = true;
+                return false;
+            }
+            allRecords.Add(existingRecord);
+        }
+
+        if (!recordExists)
+        {
+            allRecords.Add(record);
+        }
 
         var currentNode = this as DHExternalNode<T>;
 
@@ -156,13 +201,15 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
             // Split the node and get the child nodes for redistribution
             var (leftChild, rightChild) = SplitNode(leftRecords.Any(),rightRecords.Any(),currentNode, currentBlock);
 
-
-
             // Handle next iteration or final insertion
             (currentNode, allRecords) = PrepareNextIterationOrFinalInsertion(leftChild, rightChild, leftRecords, rightRecords);
         }
 
-        HandleFinalInsertionOrOverflow(allRecords, currentNode);
+        if(allRecords.Any() && currentNode != null)
+        {
+            HandleFinalInsertionOrOverflow(allRecords, currentNode);
+        }
+        
 
         return true;
     }
@@ -315,10 +362,9 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
             allRecords = leftRecords;
             nextSplittingNode = leftChild;
         }
-        else
+        else if (leftRecords.Count > 0)
         {
             leftChild.AddRecords(leftRecords, dynamicHashing.MainBlockFactor);
-            //foreach (var rec in leftRecords) leftChild.AddRecord(rec, dynamicHashing.MainBlockFactor);
         }
         
         if (rightRecords.Count > dynamicHashing.MainBlockFactor)
@@ -326,10 +372,10 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
             allRecords = rightRecords;
             nextSplittingNode = rightChild;
         }
-        else
+        else if(rightRecords.Count > 0)
         {
             rightChild.AddRecords(rightRecords, dynamicHashing.MainBlockFactor);
-            //foreach (var rec in rightRecords) rightChild.AddRecord(rec, dynamicHashing.MainBlockFactor);
+
         }
 
         return (nextSplittingNode, allRecords);
@@ -381,10 +427,18 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
     /// </summary>
     /// <param name="record">The record to add.</param>
     /// <param name="blockFactor">The block factor to be used.</param>
+    /// <exception cref="Exception">Thrown when the record already exists.</exception>
     private void AddRecord(IDHRecord<T> record, int blockFactor)
     {
         EnsureBlockAddress();
         var block = ReadOrCreateBlock(blockFactor);
+        foreach (var rec in block.RecordsList)
+        {
+            if (rec.Equals(record))
+            {
+                throw new Exception("Record already exists.");
+            }
+        }
         block.AddRecord(record);
         block.WriteToBinaryFile(dynamicHashing.FileBlockManager.MainFilePath, _blockAddress);
         _recordsCount++;
@@ -392,6 +446,7 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
 
     private void AddRecords(List<IDHRecord<T>> records, int blockFactor)
     {
+        //It's ok that we don't check for duplicates here, because we are adding records from a split node.
         EnsureBlockAddress();
         var block = ReadOrCreateBlock(blockFactor);
         block.AddRecords(records);

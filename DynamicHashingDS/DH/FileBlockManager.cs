@@ -158,7 +158,7 @@ public class FileBlockManager<T> where T : IDHRecord<T>, new()
 
     private void ClearBlockAndResetFirstFreeBlock(bool isOverflow, DHBlock<T> block)
     {
-        block.Clear();
+        block.ClearNextAndValid();
 
         if (isOverflow)
         {
@@ -203,93 +203,14 @@ public class FileBlockManager<T> where T : IDHRecord<T>, new()
         }
     }
 
-   
-
-    //public void ReleaseBlock(DHBlock<T> block, bool isOverflow)
-    //{
-    //    int firstFreeBlockAddress = isOverflow ? firstFreeBlockOverflowFile : firstFreeBlockMainFile;
-    //    int fileSize = isOverflow ? CurrentOverflowFileSize : CurrentMainFileSize;
-    //    string filePath = isOverflow ? OverflowFilePath : MainFilePath;
-    //    int blockFactor = isOverflow ? overflowFileBlockFactor : mainFileBlockFactor;
-
-    //    int recordSize = isOverflow ? new DHBlock<T>(overflowFileBlockFactor).GetSize() : new DHBlock<T>(mainFileBlockFactor).GetSize();
-
-    //    // If the block to release is at the end of the file, shrink the file
-    //    if (block.BlockAddress == fileSize - recordSize)
-    //    {
-    //        ShrinkFile(isOverflow, block.BlockAddress);
-    //    }
-    //    else
-    //    {
-    //        DHBlock<T> blockToRelease = block;
-
-    //        if(firstFreeBlockAddress == -1)
-    //        {
-    //            if (isOverflow)
-    //            {
-    //                firstFreeBlockOverflowFile = block.BlockAddress;
-    //            }
-    //            else
-    //            {
-    //                firstFreeBlockMainFile = block.BlockAddress;
-    //            }
-
-    //            firstFreeBlockAddress = block.BlockAddress;
-    //            blockToRelease.Clear();
-    //            blockToRelease.WriteToBinaryFile(filePath, block.BlockAddress);
-    //        }
-    //        else
-    //        {
-    //            if(firstFreeBlockAddress > block.BlockAddress)
-    //            {
-    //                // The block to release is before the current first free block
-    //                blockToRelease.Clear();
-    //                blockToRelease.PreviousBlockAddress = -1;
-    //                blockToRelease.NextBlockAddress = firstFreeBlockAddress;
-    //                blockToRelease.WriteToBinaryFile(filePath, block.BlockAddress);
-
-    //                // Update the previous first free block to point to the previous block
-    //                DHBlock<T> previousFirstFreeBlock = new DHBlock<T>(blockFactor, firstFreeBlockAddress);
-    //                previousFirstFreeBlock.ReadFromBinaryFile(filePath, firstFreeBlockAddress);
-    //                previousFirstFreeBlock.PreviousBlockAddress = blockToRelease.BlockAddress;
-    //                previousFirstFreeBlock.WriteToBinaryFile(filePath, firstFreeBlockAddress);
-    //            } 
-    //            else if (firstFreeBlockAddress < block.BlockAddress)
-    //            {
-    //                DHBlock<T> firstFreeBlock = new DHBlock<T>(blockFactor, firstFreeBlockAddress);
-    //                firstFreeBlock.ReadFromBinaryFile(filePath, firstFreeBlockAddress);
-
-    //                var oldNextAddress = firstFreeBlock.NextBlockAddress;
-
-    //                firstFreeBlock.NextBlockAddress = blockToRelease.BlockAddress;
-    //                firstFreeBlock.WriteToBinaryFile(filePath, firstFreeBlockAddress);
-
-    //                blockToRelease.Clear();
-    //                blockToRelease.PreviousBlockAddress = firstFreeBlockAddress;
-    //                blockToRelease.NextBlockAddress = oldNextAddress;
-    //                blockToRelease.WriteToBinaryFile(filePath, block.BlockAddress);
-
-    //                if(oldNextAddress != -1)
-    //                {
-    //                    DHBlock<T> oldNextBlock = new DHBlock<T>(blockFactor, oldNextAddress);
-    //                    oldNextBlock.ReadFromBinaryFile(filePath, oldNextAddress);
-    //                    oldNextBlock.PreviousBlockAddress = blockToRelease.BlockAddress;
-    //                    oldNextBlock.WriteToBinaryFile(filePath, oldNextAddress);
-    //                }
-
-    //            }
-    //            blockToRelease = new DHBlock<T>(blockFactor, firstFreeBlockAddress);
-    //            blockToRelease.ReadFromBinaryFile(filePath, firstFreeBlockAddress);
-    //        }
-    //    }
-    //}
-
     private void HandleBlockRelease(DHBlock<T> block, bool isOverflow, int firstFreeBlockAddress, string filePath)
     {
         if (firstFreeBlockAddress == -1)
         {
+            var oldAddress = block.BlockAddress;
             AddBlockToFreeList(block, isOverflow);
-            WriteBlockToFile(block, filePath);
+            block.WriteToBinaryFile(filePath, oldAddress);
+            //WriteBlockToFile(block, filePath);
         }
         else
         {
@@ -314,7 +235,7 @@ public class FileBlockManager<T> where T : IDHRecord<T>, new()
     private void InsertBlockBeforeFirstFreeBlock(DHBlock<T> blockToRelease, int firstFreeBlockAddress, string filePath, int blockFactor)
     {
         // Clear the block to release and set its next pointer to the current first free block
-        blockToRelease.Clear();
+        blockToRelease.ClearNextAndValid();
         blockToRelease.PreviousBlockAddress = -1;
         blockToRelease.NextBlockAddress = firstFreeBlockAddress;
         WriteBlockToFile(blockToRelease, filePath);
@@ -338,7 +259,7 @@ public class FileBlockManager<T> where T : IDHRecord<T>, new()
         WriteBlockToFile(firstFreeBlock, filePath);
 
         // Clear the new block and set its pointers, then update the file
-        blockToRelease.Clear();
+        blockToRelease.ClearNextAndValid();
         blockToRelease.PreviousBlockAddress = firstFreeBlockAddress;
         blockToRelease.NextBlockAddress = oldNextAddress;
         WriteBlockToFile(blockToRelease, filePath);
@@ -356,7 +277,8 @@ public class FileBlockManager<T> where T : IDHRecord<T>, new()
 
     private void AddBlockToFreeList(DHBlock<T> block, bool isOverflow)
     {
-        block.Clear();
+        block.ClearBlockNextAndValid();
+
         if (isOverflow)
         {
             firstFreeBlockOverflowFile = block.BlockAddress;
@@ -371,37 +293,6 @@ public class FileBlockManager<T> where T : IDHRecord<T>, new()
     {
         block.WriteToBinaryFile(filePath, block.BlockAddress);
     }
-
-    //private void ShrinkFile(bool isOverflow, int blockAddress)
-    //{
-    //    if (isOverflow)
-    //    {
-    //        CurrentOverflowFileSize = blockAddress; 
-                                                    
-    //        if (firstFreeBlockOverflowFile == blockAddress)
-    //        {
-    //            firstFreeBlockOverflowFile = -1;
-    //        }
-
-    //        using (FileStream fileStream = new FileStream(OverflowFilePath, FileMode.Open, FileAccess.Write))
-    //        {
-    //            fileStream.SetLength(blockAddress);
-    //        }
-    //    }
-    //    else
-    //    {
-    //        CurrentMainFileSize = blockAddress; 
-    //        if (firstFreeBlockMainFile == blockAddress || CurrentMainFileSize == 0)
-    //        {
-    //            firstFreeBlockMainFile = -1;
-    //        }
-
-    //        using (FileStream fileStream = new FileStream(MainFilePath, FileMode.Open, FileAccess.Write))
-    //        {
-    //            fileStream.SetLength(blockAddress);
-    //        }
-    //    }
-    //}
 
     private void ShrinkFile(bool isOverflow, int blockAddress)
     {
@@ -475,7 +366,7 @@ public class FileBlockManager<T> where T : IDHRecord<T>, new()
         {
             DHBlock<T> block = new DHBlock<T>(blockFactor, currentAddress);
             block.ReadFromBinaryFile(filePath, currentAddress);
-
+            
             fileOutput.AppendLine($"Block at Address {block.BlockAddress}:");
             fileOutput.AppendLine($"  Valid Records Count: {block.ValidRecordsCount}");
             fileOutput.AppendLine($"  Next Block Address: {block.NextBlockAddress}");
@@ -483,6 +374,11 @@ public class FileBlockManager<T> where T : IDHRecord<T>, new()
             foreach (var record in block.RecordsList)
             {
                 fileOutput.AppendLine($"    {record}");
+            }
+
+            if(block.BlockAddress != -1 && block.ValidRecordsCount == 0)
+            {
+                Console.WriteLine(  );
             }
 
             currentAddress += block.GetSize();

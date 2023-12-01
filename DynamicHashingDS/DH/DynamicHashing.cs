@@ -38,7 +38,9 @@ public class DynamicHashing<T> where T : IDHRecord<T>, new()
     public IDHRecord<T>? Delete(IDHRecord<T> record)
     {
         IDHRecord<T>? deletedRecord = _root.Delete(record);
+        //PrintNodeHierarchy(_root);
         //Console.WriteLine(FileBlockManager.SequentialFileOutput(MaxHashSize));
+        //Console.WriteLine();
         return deletedRecord;
     }
 
@@ -54,7 +56,9 @@ public class DynamicHashing<T> where T : IDHRecord<T>, new()
     public void Insert(IDHRecord<T> record)
     {
         bool inserted = _root.Insert(record);
+        //PrintNodeHierarchy(_root);
         //Console.WriteLine(FileBlockManager.SequentialFileOutput(MaxHashSize));
+        //Console.WriteLine();
     }
 
     /// <summary>
@@ -99,5 +103,19 @@ public class DynamicHashing<T> where T : IDHRecord<T>, new()
     private void OutputSequentialFile()
     {
         Console.WriteLine(FileBlockManager.SequentialFileOutput(MaxHashSize));
+    }
+
+    private void PrintNodeHierarchy(DHNode<T> node, int depth = 0)
+    {
+        if (node is DHInternalNode<T> internalNode)
+        {
+            Console.WriteLine($"{new string(' ', depth * 2)}Internal Node at Depth {depth}");
+            PrintNodeHierarchy(internalNode.LeftChild, depth + 1);
+            PrintNodeHierarchy(internalNode.RightChild, depth + 1);
+        }
+        else if (node is DHExternalNode<T> externalNode)
+        {
+            Console.WriteLine($"{new string(' ', depth * 2)}External Node at Depth {depth} with {externalNode._recordsCount} records");
+        }
     }
 }
