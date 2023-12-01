@@ -17,7 +17,7 @@ public abstract class DHNode<T> where T : IDHRecord<T>, new()
     /// <summary>
     /// Gets the depth of this node in the trie.
     /// </summary>
-    public int Depth { get; private set; }
+    public int Depth { get; set; }
 
     /// <summary>
     /// Gets the maximum size of the hash used for indexing.

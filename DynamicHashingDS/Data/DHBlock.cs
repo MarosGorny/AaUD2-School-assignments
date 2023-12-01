@@ -45,13 +45,39 @@ public class DHBlock<T> where T : IDHRecord<T>, new()
     /// <returns>True if the record was successfully added; otherwise, false.</returns>
     public bool AddRecord(IDHRecord<T> record)
     {
-        if (ValidRecordsCount < MaxRecordsCount)
+        if(ValidRecordsCount >= MaxRecordsCount)
         {
-            RecordsList.Add(record);
-            ValidRecordsCount++;
+            throw new Exception("Too many records to add.");
+            return false;
+        } 
+        else
+        {
+            if (RecordsList.Contains(record))
+            {
+                return false;
+            }
+
+            if (ValidRecordsCount < MaxRecordsCount)
+            {
+                RecordsList.Add(record);
+                ValidRecordsCount++;
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public bool AddRecords(List<IDHRecord<T>> records)
+    {
+        if (ValidRecordsCount + records.Count <= MaxRecordsCount)
+        {
+            RecordsList.AddRange(records);
+            ValidRecordsCount += records.Count;
             return true;
         }
-        return false;
+        throw new Exception("Too many records to add.");
+        //return false;
     }
 
     public bool AddRecords(List<IDHRecord<T>> records)
@@ -70,10 +96,18 @@ public class DHBlock<T> where T : IDHRecord<T>, new()
     /// TODO: Should rename 
     /// Clears the block, resetting its state.
     /// </summary>
-    public void Clear()
+    public void ClearNextAndValid()
     {
         NextBlockAddress = -1;
 
+        ValidRecordsCount = 0;
+    }
+
+    public void ClearBlockNextAndValid()
+    {
+        BlockAddress = -1;
+
+        NextBlockAddress = -1;
         ValidRecordsCount = 0;
     }
 

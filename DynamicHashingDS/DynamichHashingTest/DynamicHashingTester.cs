@@ -67,7 +67,7 @@ class DynamicHashingTester
     {
         _dynamicHashing = new DynamicHashing<DummyClass>(mainBlockFactor, overflowBlockFactor, "mainFilePath.dat", "overflowFilePath.dat", maxHashSize);
         _insertedRecords = new List<DummyClass>();
-        _random = new Random();
+        _random = new Random(2);
         _mainBlockFactor = mainBlockFactor;
         _overflowBlockFactor = overflowBlockFactor;
         _maxHashSize = maxHashSize;
@@ -142,6 +142,13 @@ class DynamicHashingTester
     {
         for (int i = 0; i < iterations; i++)
         {
+            //13 where it's bugged
+            if(i == 12)
+            {
+                //12 external has wrong parent
+                Console.WriteLine(  );
+            }
+
             PerformRandomOperation(i);
         }
     }
@@ -172,9 +179,10 @@ class DynamicHashingTester
             //Console.WriteLine("Record is null!");
             return;
         }
+        Console.WriteLine($"Inserted: {record}");
         _dynamicHashing.Insert(record);
         _insertedRecords.Add(record);
-        Console.WriteLine($"Inserted: {record}");
+        
     }
 
     public void DeleteRandomRecord()
@@ -190,10 +198,11 @@ class DynamicHashingTester
             int index = _random.Next(_insertedRecords.Count);
             var record = _insertedRecords[index];
 
+            Console.WriteLine($"Deleted: {record}");
             _dynamicHashing.Delete(record);
             _insertedRecords.RemoveAt(index);
             _availableIDs.Add(record.Cislo); // Add the deleted ID to the available IDs
-            Console.WriteLine($"Deleted: {record}");
+            
         }
     }
 
