@@ -10,7 +10,6 @@ internal class Program
     {
         DynamicHashingTester dynamicHashingTester = new DynamicHashingTester(-1, -1, -1);
         dynamicHashingTester.RunComplexTesting();
-
         //DynamicHashing<DummyClass> dynamicHashing = new DynamicHashing<DummyClass>(11, -1, "mainFile.txt", "overflowFile.txt", 11);
         //DummyClass dummyClass = new DummyClass();
         //dummyClass.Cislo = 10;

@@ -375,7 +375,6 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
         else if(rightRecords.Count > 0)
         {
             rightChild.AddRecords(rightRecords, dynamicHashing.MainBlockFactor);
-
         }
 
         return (nextSplittingNode, allRecords);
