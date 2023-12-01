@@ -124,7 +124,7 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
             ((DHInternalNode<T>)parentInternal.Parent).RightChild = nonEmptyChild;
         }
 
-        nonEmptyChild.Depth--;
+        //nonEmptyChild.Depth--; just for now
     }
 
 
