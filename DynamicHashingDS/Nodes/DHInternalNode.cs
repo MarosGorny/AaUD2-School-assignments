@@ -32,14 +32,6 @@ public class DHInternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
     /// <returns>True if the insertion is successful, otherwise false.</returns>
     public override bool Insert(IDHRecord<T> record)
     {
-        if(LeftChild.ToString().Substring(0,35).Contains("Left") && RightChild.ToString().Substring(0, 35).Contains("Left"))
-        {
-            Console.WriteLine();
-        } else if (LeftChild.ToString().Substring(0, 35).Contains("Right") && RightChild.ToString().Substring(0, 35).Contains("Right"))
-        {
-            Console.WriteLine();
-        }
-
         var externalNode = FindExternalNode(record.GetHash());
         return externalNode.Insert(record);
     }

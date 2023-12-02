@@ -1,6 +1,7 @@
 ﻿using DynamicHashingDS.Data;
 using DynamicHashingDS.DH;
 using System.Collections;
+using System.Security;
 
 namespace DynamicHashingDS.Nodes;
 
@@ -49,7 +50,7 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
             return true;
         }
 
-        return Depth < MaxHashSize ? SplitNodeAndInsert(record) : HandleOverflow(record, _fileBlockManager);
+        return Depth < MaxHashSize ? SplitNodeAndInsert(record) : HandleOverflow(record, _fileBlockManager, _blockAddress);
     }
 
     /// <summary>
@@ -409,16 +410,74 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
         }
     }
 
-    /// <summary>
-    /// Handles overflow situations by directing the record to an overflow mechanism.
-    /// </summary>
-    /// <param name="record">The record causing overflow.</param>
-    /// <param name="fileBlockManager">The file block manager handling overflow.</param>
-    /// <returns>True if the record was successfully handled; otherwise, false.</returns>
-    private bool HandleOverflow(IDHRecord<T> record, FileBlockManager<T> fileBlockManager)
+    //private bool HandleOverflow(IDHRecord<T> record, FileBlockManager<T> fileBlockManager, DHBlock<T> lastMainBlock)
+    private bool HandleOverflow(IDHRecord<T> record, FileBlockManager<T> fileBlockManager, int lastMainBlockAddress)
     {
-        // Implement logic to handle overflow
-        throw new NotImplementedException();
+
+        var currentBlock = new DHBlock<T>(fileBlockManager.MainFileBlockFactor, lastMainBlockAddress);
+        currentBlock.ReadFromBinaryFile(fileBlockManager.MainFilePath, lastMainBlockAddress);
+
+
+        if (currentBlock.NextBlockAddress == GlobalConstants.InvalidAddress)
+        {
+            DHBlock<T> firstOverflowBlock;
+            firstOverflowBlock = new DHBlock<T>(fileBlockManager.OverflowFileBlockFactor, fileBlockManager.GetFreeBlock(true));
+
+            firstOverflowBlock.PreviousBlockAddress = currentBlock.BlockAddress;
+            currentBlock.NextBlockAddress = firstOverflowBlock.BlockAddress;
+            currentBlock.WriteToBinaryFile(fileBlockManager.MainFilePath, currentBlock.BlockAddress);
+
+            firstOverflowBlock.AddRecord(record);
+            firstOverflowBlock.WriteToBinaryFile(fileBlockManager.OverflowFilePath, firstOverflowBlock.BlockAddress);
+
+            return true;
+        }
+
+        while (currentBlock.NextBlockAddress != GlobalConstants.InvalidAddress)
+        {
+            //Read next block
+            var nextBlock = new DHBlock<T>(fileBlockManager.OverflowFileBlockFactor, currentBlock.NextBlockAddress);        
+            nextBlock.ReadFromBinaryFile(fileBlockManager.OverflowFilePath, currentBlock.NextBlockAddress);
+
+            //Check if record already exists
+            foreach (var rec in nextBlock.RecordsList)
+            {
+                if (rec.MyEquals((T)record))
+                {
+                    return false;
+                }
+            }
+
+            //Check if it fits
+            if (nextBlock.ValidRecordsCount < fileBlockManager.OverflowFileBlockFactor)
+            {
+                nextBlock.AddRecord(record);
+                nextBlock.WriteToBinaryFile(fileBlockManager.OverflowFilePath, nextBlock.BlockAddress);
+                return true;
+            } 
+            else
+            {
+                //It didn't fit, now we can create new one or go to the another one. 
+                if(nextBlock.NextBlockAddress == GlobalConstants.InvalidAddress)
+                {
+                    var nextNextBlock = new DHBlock<T>(fileBlockManager.OverflowFileBlockFactor, fileBlockManager.GetFreeBlock(true));
+                    nextNextBlock.PreviousBlockAddress = nextBlock.BlockAddress;
+                    nextNextBlock.AddRecord(record);
+                    nextNextBlock.WriteToBinaryFile(fileBlockManager.OverflowFilePath, nextNextBlock.BlockAddress);
+
+                    nextBlock.NextBlockAddress = nextNextBlock.BlockAddress;
+                    nextBlock.WriteToBinaryFile(fileBlockManager.OverflowFilePath, nextBlock.BlockAddress);
+                    return true;
+                } 
+                else
+                {
+                    currentBlock = nextBlock;
+                }
+            }
+        }
+
+
+        return true;
     }
 
     /// <summary>

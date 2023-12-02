@@ -18,8 +18,8 @@ public class FileBlockManager<T> where T : IDHRecord<T>, new()
     private int firstFreeBlockMainFile; 
     private int firstFreeBlockOverflowFile; 
 
-    private int mainFileBlockFactor; 
-    private int overflowFileBlockFactor;
+    public int MainFileBlockFactor { get; private set;} 
+    public int OverflowFileBlockFactor { get; private set;}
 
     /// <summary>
     /// Initializes a new instance of the FileBlockManager class.
@@ -34,10 +34,10 @@ public class FileBlockManager<T> where T : IDHRecord<T>, new()
         this.OverflowFilePath = overflowFilePath;
         this.firstFreeBlockMainFile = -1; 
         this.firstFreeBlockOverflowFile = -1; 
-        this.CurrentMainFileSize = 0;
+        this.CurrentMainFileSize = 0; 
         this.CurrentOverflowFileSize = 0;
-        this.mainFileBlockFactor = mainFileBlockFactor;
-        this.overflowFileBlockFactor = overflowFileBlockFactor;
+        this.MainFileBlockFactor = mainFileBlockFactor;
+        this.OverflowFileBlockFactor = overflowFileBlockFactor;
     }
 
     /// <summary>
@@ -90,7 +90,7 @@ public class FileBlockManager<T> where T : IDHRecord<T>, new()
     {
         string filePath = fromOverflowFile ? OverflowFilePath : MainFilePath;
         List<IDHRecord<T>> allRecords = new List<IDHRecord<T>>();
-        int blockFactor = fromOverflowFile ? overflowFileBlockFactor : mainFileBlockFactor;
+        int blockFactor = fromOverflowFile ? OverflowFileBlockFactor : MainFileBlockFactor;
         long fileSize = new FileInfo(filePath).Length;
 
         for (int currentAddress = 0; currentAddress < fileSize;)
@@ -126,7 +126,7 @@ public class FileBlockManager<T> where T : IDHRecord<T>, new()
 
     private DHBlock<T> InitializeBlock(bool isOverflow, int blockAddress)
     {
-        int blockFactor = isOverflow ? overflowFileBlockFactor : mainFileBlockFactor;
+        int blockFactor = isOverflow ? OverflowFileBlockFactor : MainFileBlockFactor;
         return new DHBlock<T>(blockFactor, blockAddress);
     }
 
@@ -147,7 +147,7 @@ public class FileBlockManager<T> where T : IDHRecord<T>, new()
 
     private int GetRecordSize(bool isOverflow)
     {
-        int blockFactor = isOverflow ? overflowFileBlockFactor : mainFileBlockFactor;
+        int blockFactor = isOverflow ? OverflowFileBlockFactor : MainFileBlockFactor;
         return new DHBlock<T>(blockFactor).GetSize();
     }
 
@@ -186,7 +186,7 @@ public class FileBlockManager<T> where T : IDHRecord<T>, new()
         
         int originalAddress = isOverflow ? CurrentOverflowFileSize : CurrentMainFileSize;
 
-        int blockSize = new DHBlock<T>(mainFileBlockFactor, -1).GetSize();
+        int blockSize = isOverflow ? new DHBlock<T>(OverflowFileBlockFactor, -1).GetSize() : new DHBlock<T>(MainFileBlockFactor, -1).GetSize();
         IncreaseFileSize(isOverflow, blockSize);
         return originalAddress;
     }
@@ -220,7 +220,7 @@ public class FileBlockManager<T> where T : IDHRecord<T>, new()
 
     private void UpdateFreeBlockList(DHBlock<T> blockToRelease, bool isOverflow, int firstFreeBlockAddress, string filePath)
     {
-        int blockFactor = isOverflow ? overflowFileBlockFactor : mainFileBlockFactor;
+        int blockFactor = isOverflow ? OverflowFileBlockFactor : MainFileBlockFactor;
 
         if (firstFreeBlockAddress > blockToRelease.BlockAddress)
         {
@@ -341,16 +341,16 @@ public class FileBlockManager<T> where T : IDHRecord<T>, new()
         output.AppendLine("Max Hash Size: " + maxHashSize + "\n");
 
         // Process the main file
-        output.AppendLine("Main Block Factor: " + mainFileBlockFactor);
+        output.AppendLine("Main Block Factor: " + MainFileBlockFactor);
         output.AppendLine("First free block: " + firstFreeBlockMainFile);
         output.AppendLine("Main File Contents:");
-        output.Append(ProcessFileSequentially(MainFilePath, mainFileBlockFactor));
+        output.Append(ProcessFileSequentially(MainFilePath, MainFileBlockFactor));
 
         // Process the overflow file
-        output.AppendLine("\nOverflow Block Factor: " + overflowFileBlockFactor);
+        output.AppendLine("\nOverflow Block Factor: " + OverflowFileBlockFactor);
         output.AppendLine("First free block: " + firstFreeBlockOverflowFile);
         output.AppendLine("Overflow File Contents:");
-        output.Append(ProcessFileSequentially(OverflowFilePath, overflowFileBlockFactor));
+        output.Append(ProcessFileSequentially(OverflowFilePath, OverflowFileBlockFactor));
 
         return output.ToString();
     }
