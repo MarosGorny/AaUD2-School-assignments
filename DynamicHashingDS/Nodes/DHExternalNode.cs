@@ -11,6 +11,8 @@ namespace DynamicHashingDS.Nodes;
 /// <typeparam name="T">The type of the record.</typeparam>
 public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
 {
+    public int TotalRecordsCount = 0;
+
     public int _recordsCount;  //FIXME: JUST FOR NOW PUBLIC
     private int _blockAddress;
     private readonly FileBlockManager<T> _fileBlockManager;
@@ -47,10 +49,17 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
         if (_recordsCount < dynamicHashing.MainBlockFactor)
         {
             AddRecord(record, dynamicHashing.MainBlockFactor);
+            TotalRecordsCount++;
             return true;
         }
 
-        return Depth < MaxHashSize ? SplitNodeAndInsert(record) : HandleOverflow(record, _fileBlockManager, _blockAddress);
+        bool inserted = Depth < MaxHashSize ? SplitNodeAndInsert(record) : HandleOverflow(record, _fileBlockManager, _blockAddress);
+        if(inserted)
+        {
+            TotalRecordsCount++;
+        }
+
+        return inserted;
     }
 
     /// <summary>
@@ -94,15 +103,31 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
 
         var block = ReadCurrentBlock();
         var deletedRecord = block.Delete((T)record);
+        
+        // If the record was deleted, handle post-deletion actions
         if(deletedRecord != null)
         {
-            HandlePostDeletionActions(block);
+            HandlePostDeletionActions(block,false);
 
             ////Maybe use for striasanie, but check parents reffereces
             //if (_recordsCount == 0 && Parent is DHInternalNode<T> parentInternal && parentInternal.Depth != 0)
             //{
             //    ShortenChain(parentInternal);
             //}
+        } 
+        else
+        {
+            while (block.NextBlockAddress != GlobalConstants.InvalidAddress)
+            {
+                block = new DHBlock<T>(dynamicHashing.FileBlockManager.OverflowFileBlockFactor, block.NextBlockAddress);
+                block.ReadFromBinaryFile(dynamicHashing.FileBlockManager.OverflowFilePath, block.NextBlockAddress);
+                deletedRecord = block.Delete((T)record);
+                if (deletedRecord != null)
+                {
+                    HandlePostDeletionActions(block, true);
+                    break;
+                }
+            }
         }
         return deletedRecord;
     }
@@ -133,14 +158,14 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
     /// Handles actions required after a record is deleted from the node.
     /// </summary>
     /// <param name="block">The block from which the record was deleted.</param>
-    private void HandlePostDeletionActions(DHBlock<T> block)
+    private void HandlePostDeletionActions(DHBlock<T> block, bool isOverflow)
     {
         var oldAddress = _blockAddress;
         // If there are no valid records left in the block after deletion
         if (block.ValidRecordsCount == 0)
         {
             // Release the block if it's no longer needed
-            dynamicHashing.FileBlockManager.ReleaseBlock(block, false);
+            dynamicHashing.FileBlockManager.ReleaseBlock(block, isOverflow);
 
             _blockAddress = -1;
         }
@@ -198,9 +223,13 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
         {
             // Redistribute records between left and right child nodes
             var (leftRecords, rightRecords) = RedistributeRecords(allRecords, currentNode);
+            
+            int leftTotalRecords = leftRecords.Count;
+            int rightTotalRecords = rightRecords.Count;
+
 
             // Split the node and get the child nodes for redistribution
-            var (leftChild, rightChild) = SplitNode(leftRecords.Any(),rightRecords.Any(),currentNode, currentBlock);
+            var (leftChild, rightChild) = SplitNode(leftRecords.Count, rightRecords.Count, currentNode, currentBlock);
 
             // Handle next iteration or final insertion
             (currentNode, allRecords) = PrepareNextIterationOrFinalInsertion(leftChild, rightChild, leftRecords, rightRecords);
@@ -275,8 +304,8 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
     /// <param name="node">The current node to split.</param>
     /// <returns>A tuple containing the left and right child nodes.</returns>
     private (DHExternalNode<T> leftChild, DHExternalNode<T> rightChild) SplitNode(
-        bool containsLeft, 
-        bool containsRight,
+        int leftRecords, 
+        int rightRecords,
         DHExternalNode<T> node,
         DHBlock<T> currentBlock)
     {
@@ -285,12 +314,12 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
         // Assign block addresses based on whether each child contains records
         int leftBlockAddress, rightBlockAddress;
 
-        if (containsLeft && !containsRight)
+        if (leftRecords != 0 && rightRecords == 0)
         {
             leftBlockAddress = currentBlock.BlockAddress;
             rightBlockAddress = -1;
         }
-        else if (!containsLeft && containsRight)
+        else if (leftRecords == 0 && rightRecords != 0)
         {
             leftBlockAddress = -1;
             rightBlockAddress = currentBlock.BlockAddress;
@@ -307,8 +336,8 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
         //int leftBlockAddress = containsLeft ? dynamicHashing.FileBlockManager.GetFreeBlock(false) : -1;
         //int rightBlockAddress = containsRight ? dynamicHashing.FileBlockManager.GetFreeBlock(false) : -1;
 
-        newInternalNode.ChangeLeftExternalNodeAddress(leftBlockAddress);
-        newInternalNode.ChangeRightExternalNodeAddress(rightBlockAddress);
+        newInternalNode.ChangeLeftExternalNodeAddress(leftBlockAddress, leftRecords);
+        newInternalNode.ChangeRightExternalNodeAddress(rightBlockAddress, rightRecords);
 
         UpdateParentChildReference(newInternalNode, node);
 
@@ -455,25 +484,24 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
                 nextBlock.WriteToBinaryFile(fileBlockManager.OverflowFilePath, nextBlock.BlockAddress);
                 return true;
             } 
+
+            //It didn't fit, now we can create new one or go to the another one. 
+            if(nextBlock.NextBlockAddress == GlobalConstants.InvalidAddress)
+            {
+                var nextNextBlock = new DHBlock<T>(fileBlockManager.OverflowFileBlockFactor, fileBlockManager.GetFreeBlock(true));
+                nextNextBlock.PreviousBlockAddress = nextBlock.BlockAddress;
+                nextNextBlock.AddRecord(record);
+                nextNextBlock.WriteToBinaryFile(fileBlockManager.OverflowFilePath, nextNextBlock.BlockAddress);
+
+                nextBlock.NextBlockAddress = nextNextBlock.BlockAddress;
+                nextBlock.WriteToBinaryFile(fileBlockManager.OverflowFilePath, nextBlock.BlockAddress);
+                return true;
+            } 
             else
             {
-                //It didn't fit, now we can create new one or go to the another one. 
-                if(nextBlock.NextBlockAddress == GlobalConstants.InvalidAddress)
-                {
-                    var nextNextBlock = new DHBlock<T>(fileBlockManager.OverflowFileBlockFactor, fileBlockManager.GetFreeBlock(true));
-                    nextNextBlock.PreviousBlockAddress = nextBlock.BlockAddress;
-                    nextNextBlock.AddRecord(record);
-                    nextNextBlock.WriteToBinaryFile(fileBlockManager.OverflowFilePath, nextNextBlock.BlockAddress);
-
-                    nextBlock.NextBlockAddress = nextNextBlock.BlockAddress;
-                    nextBlock.WriteToBinaryFile(fileBlockManager.OverflowFilePath, nextBlock.BlockAddress);
-                    return true;
-                } 
-                else
-                {
-                    currentBlock = nextBlock;
-                }
+                currentBlock = nextBlock;
             }
+
         }
 
 

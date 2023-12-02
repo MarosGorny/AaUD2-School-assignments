@@ -72,9 +72,6 @@ internal class Program
         dummyClass9.ID = 9;
         dummyClass9.Text = "9";
         dynamicHashing.Insert(dummyClass9);
-
-
-
         
         Console.ReadLine();
     }
