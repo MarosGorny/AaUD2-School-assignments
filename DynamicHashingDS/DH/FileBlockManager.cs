@@ -426,12 +426,13 @@ public class FileBlockManager<T> where T : IDHRecord<T>, new()
 
     public DHBlock<T> GetPreviousBlockBasedOnType(int previousBlockAddress, int actualBlockAddress)
     {
+        DHBlock<T> previousBlock = new DHBlock<T>(MainFileBlockFactor, previousBlockAddress);
+
         bool previousIsMain = false;
         try
         {
-            DHBlock<T> previousBlockTry = new DHBlock<T>(MainFileBlockFactor, previousBlockAddress);
-            previousBlockTry.ReadFromBinaryFile(MainFilePath, previousBlockAddress);
-            if (previousBlockTry.NextBlockAddress == actualBlockAddress)
+            previousBlock.ReadFromBinaryFile(MainFilePath, previousBlockAddress);
+            if (previousBlock.NextBlockAddress == actualBlockAddress)
             {
                 previousIsMain = true;
             }
@@ -440,18 +441,15 @@ public class FileBlockManager<T> where T : IDHRecord<T>, new()
         {
             previousIsMain = false;
         }
-
-        DHBlock<T> previousBlock;
-
-        if (previousIsMain)
+        finally
         {
-            previousBlock = new DHBlock<T>(MainFileBlockFactor, previousBlockAddress);
-            previousBlock.ReadFromBinaryFile(MainFilePath, previousBlockAddress);
-        }
-        else
-        {
-            previousBlock = new DHBlock<T>(OverflowFileBlockFactor, previousBlockAddress);
-            previousBlock.ReadFromBinaryFile(OverflowFilePath, previousBlockAddress);
+            if (!previousIsMain)
+            {
+
+                previousBlock = new DHBlock<T>(OverflowFileBlockFactor, previousBlockAddress);
+                previousBlock.ReadFromBinaryFile(OverflowFilePath, previousBlockAddress);
+            }
+            
         }
 
         return previousBlock;

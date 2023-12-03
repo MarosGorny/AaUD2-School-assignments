@@ -103,7 +103,8 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
 
         bool prepareShakeDown;
         bool mainBlockHasEmptySpace = false;
-        Stack<DHBlock<T>> blocksWithEmptySpaces = new Stack<DHBlock<T>>();
+        List<DHBlock<T>> blocksWithEmptySpaces = new List<DHBlock<T>>();
+        //Stack<DHBlock<T>> blocksWithEmptySpaces = new Stack<DHBlock<T>>();
         if ( TotalRecordsCount <= dynamicHashing.MainBlockFactor)
         {
             prepareShakeDown = false;
@@ -118,7 +119,7 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
 
         if (prepareShakeDown && block.ValidRecordsCount < _fileBlockManager.MainFileBlockFactor)
         {
-            blocksWithEmptySpaces.Push(block);
+            blocksWithEmptySpaces.Add(block);
             mainBlockHasEmptySpace = true;
         }
 
@@ -127,6 +128,7 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
         {
 
             TotalRecordsCount--;
+            block.WriteToBinaryFile(dynamicHashing.FileBlockManager.MainFilePath, block.BlockAddress);
             HandlePostDeletionActions(block,false, blocksWithEmptySpaces, mainBlockHasEmptySpace);
 
             ////Maybe use for striasanie, but check parents reffereces
@@ -150,7 +152,7 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
 
                 if (prepareShakeDown && block.ValidRecordsCount < _fileBlockManager.OverflowFileBlockFactor)
                 {
-                    blocksWithEmptySpaces.Push(block);
+                    blocksWithEmptySpaces.Add(block);
                 }
 
                 if (deletedRecord != null)
@@ -197,8 +199,8 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
     /// <param name="block">The block from which the record was deleted.</param>
     private void HandlePostDeletionActions(
         DHBlock<T> block, 
-        bool isOverflow, 
-        Stack<DHBlock<T>> blocksWithEmptySpaces, 
+        bool isOverflow,
+        List<DHBlock<T>> blocksWithEmptySpaces, 
         bool mainBlockHasEmptySpace
         )
     {
@@ -212,7 +214,7 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
                 tempBlock.ReadFromBinaryFile(dynamicHashing.FileBlockManager.OverflowFilePath, findingLastBlock.NextBlockAddress);
                 if(tempBlock.ValidRecordsCount < _fileBlockManager.OverflowFileBlockFactor)
                 {
-                    blocksWithEmptySpaces.Push(tempBlock);
+                    blocksWithEmptySpaces.Add(tempBlock);
                 }
                 findingLastBlock = tempBlock;
             }
@@ -221,10 +223,11 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
             var takingRecordsFrom = findingLastBlock;
             var takenRecords = new List<IDHRecord<T>>();
 
+            takingRecordsFrom.ReadFromBinaryFile(dynamicHashing.FileBlockManager.OverflowFilePath, takingRecordsFrom.BlockAddress);
             //Take records from the last block
             while (recordsNeeded > 0)
             {
-                takingRecordsFrom.ReadFromBinaryFile(dynamicHashing.FileBlockManager.OverflowFilePath, takingRecordsFrom.BlockAddress);
+                
                 var previousBlockAddress = takingRecordsFrom.PreviousBlockAddress;
 
                 if(recordsNeeded < _fileBlockManager.OverflowFileBlockFactor && takingRecordsFrom.ValidRecordsCount <= recordsNeeded)
@@ -246,31 +249,40 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
                         break;
                     }
                 }
-                if (takingRecordsFrom.ValidRecordsCount == 0)
+
+                var oldBlock = takingRecordsFrom;
+
+                if (recordsNeeded > 0)
                 {
-                    dynamicHashing.FileBlockManager.ReleaseBlock(takingRecordsFrom, true);
-                    //TODO: FIXME problem is, that if I release that block, then in the stack will be block, which is not in the file anymore
+                    takingRecordsFrom = dynamicHashing.FileBlockManager.GetPreviousBlockBasedOnType(previousBlockAddress, takingRecordsFrom.BlockAddress);
+                    //takingRecordsFrom = new DHBlock<T>(dynamicHashing.FileBlockManager.OverflowFileBlockFactor, previousBlockAddress);
+                    //takingRecordsFrom.ReadFromBinaryFile(dynamicHashing.FileBlockManager.OverflowFilePath, previousBlockAddress);
+
+                    //recordsNeeded -= takingRecordsFrom.ValidRecordsCount;
+                }
+
+                if (oldBlock.ValidRecordsCount == 0)
+                {
+                    dynamicHashing.FileBlockManager.ReleaseBlock(oldBlock, true);
+                    blocksWithEmptySpaces.Remove(oldBlock);
                     
                 } 
                 else
                 {
-                    takingRecordsFrom.WriteToBinaryFile(dynamicHashing.FileBlockManager.OverflowFilePath, takingRecordsFrom.BlockAddress);
+                    oldBlock.WriteToBinaryFile(dynamicHashing.FileBlockManager.OverflowFilePath, oldBlock.BlockAddress);
                 }
 
-                if(recordsNeeded > 0)
-                {
-                    takingRecordsFrom = new DHBlock<T>(dynamicHashing.FileBlockManager.OverflowFileBlockFactor, previousBlockAddress);
-                    takingRecordsFrom.ReadFromBinaryFile(dynamicHashing.FileBlockManager.OverflowFilePath, previousBlockAddress);
 
-                    //recordsNeeded -= takingRecordsFrom.ValidRecordsCount;
-                }
             }
 
             //Now I just need to add them to the empty spaces
             int emptySpaces = blocksWithEmptySpaces.Count;
             for (global::System.Int32 i = 0; i < emptySpaces; i++)
             {
-                var blockWithEmptySpace = blocksWithEmptySpaces.Pop();
+                
+                var blockWithEmptySpace = blocksWithEmptySpaces[blocksWithEmptySpaces.Count-1];
+                blocksWithEmptySpaces.RemoveAt(blocksWithEmptySpaces.Count-1);
+
                 if(blocksWithEmptySpaces.Count == 0 && mainBlockHasEmptySpace)
                 {
                     blockWithEmptySpace.ReadFromBinaryFile(dynamicHashing.FileBlockManager.MainFilePath, blockWithEmptySpace.BlockAddress);

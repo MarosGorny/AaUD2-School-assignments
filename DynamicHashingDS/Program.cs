@@ -11,7 +11,7 @@ internal class Program
         //DynamicHashingTester dynamicHashingTester = new DynamicHashingTester(-1, -1, -1);
         //dynamicHashingTester.RunComplexTesting();
         
-        DynamicHashing<DummyClass> dynamicHashing = new DynamicHashing<DummyClass>(2, 2, "mainFile.bin", "overflowFile.bin", 1);
+        DynamicHashing<DummyClass> dynamicHashing = new DynamicHashing<DummyClass>(2, 3, "mainFile.bin", "overflowFile.bin", 1);
         DummyClass dummyClass = new DummyClass();
         dummyClass.Cislo = 0;
         dummyClass.ID = 0;
@@ -88,10 +88,19 @@ internal class Program
         dynamicHashing.Delete(dummyClass5);
         dynamicHashing.Delete(dummyClass3);
 
-        dynamicHashing.Delete(dummyClass2);
+        dynamicHashing.Delete(dummyClass2); //FIXME: ITS CRASHING ON THIS
         dynamicHashing.Delete(dummyClass4);
 
         dynamicHashing.Delete(dummyClass1);
+        dynamicHashing.Delete(dummyClass);
+
+        dynamicHashing.Insert(dummyClass9);
+        dynamicHashing.Insert(dummyClass7);
+        dynamicHashing.Insert(dummyClass5);
+        dynamicHashing.Insert(dummyClass8);
+        dynamicHashing.Insert(dummyClass6);
+
+
 
         Console.ReadLine();
     }
