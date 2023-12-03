@@ -91,10 +91,11 @@ public class DHBlock<T> where T : IDHRecord<T>, new()
         ValidRecordsCount = 0;
     }
 
-    public void ClearBlockNextAndValid()
+    public void ClearBlockPreviousNextAndValid()
     {
         BlockAddress = -1;
 
+        PreviousBlockAddress = -1;
         NextBlockAddress = -1;
         ValidRecordsCount = 0;
     }
@@ -124,11 +125,11 @@ public class DHBlock<T> where T : IDHRecord<T>, new()
             return deletedRecord;
         }
 
-        if(NextBlockAddress != GlobalConstants.InvalidAddress)
-        {
-            // If the record is not found and there is a next block, the search should continue there.
-            throw new NotImplementedException("Continuation to next block not implemented.");
-        }
+        //if(NextBlockAddress != GlobalConstants.InvalidAddress)
+        //{
+        //    // If the record is not found and there is a next block, the search should continue there.
+        //    throw new NotImplementedException("Continuation to next block not implemented.");
+        //}
 
         return null;
     }
@@ -269,6 +270,23 @@ public class DHBlock<T> where T : IDHRecord<T>, new()
 
                 // Deserialize from the byte array
                 FromByteArray(blockBytes);
+            }
+        }
+    }
+
+    public void ReadBlockInfoFromBinaryFile(string filePath, int blockAddress)
+    {
+        using (FileStream fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+        {
+            using (BinaryReader binaryReader = new BinaryReader(fileStream))
+            {
+                // Seek to the specified block address
+                fileStream.Seek(blockAddress, SeekOrigin.Begin);
+
+                // Read only the ValidRecordsCount, PreviousBlockAddress, and NextBlockAddress
+                ValidRecordsCount = binaryReader.ReadInt32();
+                PreviousBlockAddress = binaryReader.ReadInt32();
+                NextBlockAddress = binaryReader.ReadInt32();
             }
         }
     }

@@ -101,13 +101,33 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
             return null;
         }
 
+        bool prepareShakeDown;
+        bool mainBlockHasEmptySpace = false;
+        Stack<DHBlock<T>> blocksWithEmptySpaces = new Stack<DHBlock<T>>();
+        if ( TotalRecordsCount <= dynamicHashing.MainBlockFactor)
+        {
+            prepareShakeDown = false;
+        } 
+        else
+        {
+            prepareShakeDown = (TotalRecordsCount - _fileBlockManager.MainFileBlockFactor) % _fileBlockManager.OverflowFileBlockFactor == 1;
+        }
+
         var block = ReadCurrentBlock();
         var deletedRecord = block.Delete((T)record);
-        
-        // If the record was deleted, handle post-deletion actions
-        if(deletedRecord != null)
+
+        if (prepareShakeDown && block.ValidRecordsCount < _fileBlockManager.MainFileBlockFactor)
         {
-            HandlePostDeletionActions(block,false);
+            blocksWithEmptySpaces.Push(block);
+            mainBlockHasEmptySpace = true;
+        }
+
+        // If the record was deleted, handle post-deletion actions
+        if (deletedRecord != null)
+        {
+
+            TotalRecordsCount--;
+            HandlePostDeletionActions(block,false, blocksWithEmptySpaces, mainBlockHasEmptySpace);
 
             ////Maybe use for striasanie, but check parents reffereces
             //if (_recordsCount == 0 && Parent is DHInternalNode<T> parentInternal && parentInternal.Depth != 0)
@@ -117,14 +137,31 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
         } 
         else
         {
+            bool isFirstIteration = true;
+
             while (block.NextBlockAddress != GlobalConstants.InvalidAddress)
             {
+
                 block = new DHBlock<T>(dynamicHashing.FileBlockManager.OverflowFileBlockFactor, block.NextBlockAddress);
-                block.ReadFromBinaryFile(dynamicHashing.FileBlockManager.OverflowFilePath, block.NextBlockAddress);
+                block.ReadFromBinaryFile(dynamicHashing.FileBlockManager.OverflowFilePath, block.BlockAddress);
+                
+
                 deletedRecord = block.Delete((T)record);
+
+                if (prepareShakeDown && block.ValidRecordsCount < _fileBlockManager.OverflowFileBlockFactor)
+                {
+                    blocksWithEmptySpaces.Push(block);
+                }
+
                 if (deletedRecord != null)
                 {
-                    HandlePostDeletionActions(block, true);
+                    TotalRecordsCount--;
+                    block.WriteToBinaryFile(dynamicHashing.FileBlockManager.OverflowFilePath, block.BlockAddress);
+                    if(isFirstIteration && block.NextBlockAddress == GlobalConstants.InvalidAddress)
+                    {
+                        blocksWithEmptySpaces.Clear();
+                    }
+                    HandlePostDeletionActions(block, true, blocksWithEmptySpaces, mainBlockHasEmptySpace);
                     break;
                 }
             }
@@ -158,27 +195,145 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
     /// Handles actions required after a record is deleted from the node.
     /// </summary>
     /// <param name="block">The block from which the record was deleted.</param>
-    private void HandlePostDeletionActions(DHBlock<T> block, bool isOverflow)
+    private void HandlePostDeletionActions(
+        DHBlock<T> block, 
+        bool isOverflow, 
+        Stack<DHBlock<T>> blocksWithEmptySpaces, 
+        bool mainBlockHasEmptySpace
+        )
     {
-        var oldAddress = _blockAddress;
-        // If there are no valid records left in the block after deletion
-        if (block.ValidRecordsCount == 0)
+        var findingLastBlock = block;
+        if(blocksWithEmptySpaces.Count > 0)
         {
-            // Release the block if it's no longer needed
-            dynamicHashing.FileBlockManager.ReleaseBlock(block, isOverflow);
+            //Go to the last block and add it to the stack if it has empty space
+            while(findingLastBlock.NextBlockAddress != GlobalConstants.InvalidAddress)
+            {
+                var tempBlock = new DHBlock<T>(dynamicHashing.FileBlockManager.OverflowFileBlockFactor, findingLastBlock.NextBlockAddress);
+                tempBlock.ReadFromBinaryFile(dynamicHashing.FileBlockManager.OverflowFilePath, findingLastBlock.NextBlockAddress);
+                if(tempBlock.ValidRecordsCount < _fileBlockManager.OverflowFileBlockFactor)
+                {
+                    blocksWithEmptySpaces.Push(tempBlock);
+                }
+                findingLastBlock = tempBlock;
+            }
 
-            _blockAddress = -1;
-        }
+            int recordsNeeded = _fileBlockManager.OverflowFileBlockFactor;
+            var takingRecordsFrom = findingLastBlock;
+            var takenRecords = new List<IDHRecord<T>>();
+
+            //Take records from the last block
+            while (recordsNeeded > 0)
+            {
+                takingRecordsFrom.ReadFromBinaryFile(dynamicHashing.FileBlockManager.OverflowFilePath, takingRecordsFrom.BlockAddress);
+                var previousBlockAddress = takingRecordsFrom.PreviousBlockAddress;
+
+                if(recordsNeeded < _fileBlockManager.OverflowFileBlockFactor && takingRecordsFrom.ValidRecordsCount <= recordsNeeded)
+                {
+                    break;
+                } 
+
+
+                for (global::System.Int32 i = takingRecordsFrom.ValidRecordsCount-1; i >= 0; i--)
+                {
+                    if (recordsNeeded > 0)
+                    {
+                        var taken = takingRecordsFrom.Delete((T)takingRecordsFrom.RecordsList[i]);
+                        takenRecords.Add(taken);
+                        recordsNeeded--;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                if (takingRecordsFrom.ValidRecordsCount == 0)
+                {
+                    dynamicHashing.FileBlockManager.ReleaseBlock(takingRecordsFrom, true);
+                    //TODO: FIXME problem is, that if I release that block, then in the stack will be block, which is not in the file anymore
+                    
+                } 
+                else
+                {
+                    takingRecordsFrom.WriteToBinaryFile(dynamicHashing.FileBlockManager.OverflowFilePath, takingRecordsFrom.BlockAddress);
+                }
+
+                if(recordsNeeded > 0)
+                {
+                    takingRecordsFrom = new DHBlock<T>(dynamicHashing.FileBlockManager.OverflowFileBlockFactor, previousBlockAddress);
+                    takingRecordsFrom.ReadFromBinaryFile(dynamicHashing.FileBlockManager.OverflowFilePath, previousBlockAddress);
+
+                    //recordsNeeded -= takingRecordsFrom.ValidRecordsCount;
+                }
+            }
+
+            //Now I just need to add them to the empty spaces
+            int emptySpaces = blocksWithEmptySpaces.Count;
+            for (global::System.Int32 i = 0; i < emptySpaces; i++)
+            {
+                var blockWithEmptySpace = blocksWithEmptySpaces.Pop();
+                if(blocksWithEmptySpaces.Count == 0 && mainBlockHasEmptySpace)
+                {
+                    blockWithEmptySpace.ReadFromBinaryFile(dynamicHashing.FileBlockManager.MainFilePath, blockWithEmptySpace.BlockAddress);
+                } 
+                else
+                {
+                    blockWithEmptySpace.ReadFromBinaryFile(dynamicHashing.FileBlockManager.OverflowFilePath, blockWithEmptySpace.BlockAddress);
+                }
+
+                int freeSpaces = blockWithEmptySpace.MaxRecordsCount - blockWithEmptySpace.ValidRecordsCount;
+                var recordsToAdd = takenRecords.TakeLast(freeSpaces).ToList();
+                takenRecords.RemoveRange(takenRecords.Count - freeSpaces, freeSpaces);
+
+                blockWithEmptySpace.AddRecords(recordsToAdd);
+
+                if (blocksWithEmptySpaces.Count == 0 && mainBlockHasEmptySpace)
+                {
+                    blockWithEmptySpace.WriteToBinaryFile(dynamicHashing.FileBlockManager.MainFilePath, blockWithEmptySpace.BlockAddress);
+                }
+                else
+                {
+                    blockWithEmptySpace.WriteToBinaryFile(dynamicHashing.FileBlockManager.OverflowFilePath, blockWithEmptySpace.BlockAddress);
+                }
+
+                    
+                //var newBlockTest = new DHBlock<T>(dynamicHashing.FileBlockManager.OverflowFileBlockFactor, blockWithEmptySpace.BlockAddress);
+                //newBlockTest.ReadFromBinaryFile(dynamicHashing.FileBlockManager.OverflowFilePath, blockWithEmptySpace.BlockAddress);
+            }
+
+            _recordsCount = _fileBlockManager.MainFileBlockFactor;
+            
+        } 
         else
         {
-            // If there are still valid records, update the block in the file
-            block.WriteToBinaryFile(dynamicHashing.FileBlockManager.MainFilePath, _blockAddress);
+            var oldAddress = _blockAddress;
+            // If there are no valid records left in the block after deletion
+            if (block.NextBlockAddress == GlobalConstants.InvalidAddress &&  block.ValidRecordsCount == 0)
+            {
+                // Release the block if it's no longer needed
+                dynamicHashing.FileBlockManager.ReleaseBlock(block, isOverflow);
+
+                //_blockAddress = -1;
+            }
+            else
+            {
+                // If there are still valid records, update the block in the file
+                if (isOverflow)
+                {
+                    block.WriteToBinaryFile(dynamicHashing.FileBlockManager.OverflowFilePath, block.BlockAddress);
+                }
+                else
+                {
+                    block.WriteToBinaryFile(dynamicHashing.FileBlockManager.MainFilePath, block.BlockAddress);
+                }
+
+
+            }
+            // Decrement the count of records in the node
+
+            //_recordsCount--; Dont know if this is correct fix ->
+            _recordsCount = block.RecordsList.Count;
         }
 
-        //block.WriteToBinaryFile(dynamicHashing.FileBlockManager.MainFilePath, oldAddress);
-
-        // Decrement the count of records in the node
-        _recordsCount--;
     }
 
 
