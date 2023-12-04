@@ -91,10 +91,11 @@ public class DHBlock<T> where T : IDHRecord<T>, new()
         ValidRecordsCount = 0;
     }
 
-    public void ClearBlockNextAndValid()
+    public void ClearBlockPreviousNextAndValid()
     {
         BlockAddress = -1;
 
+        PreviousBlockAddress = -1;
         NextBlockAddress = -1;
         ValidRecordsCount = 0;
     }
@@ -124,11 +125,11 @@ public class DHBlock<T> where T : IDHRecord<T>, new()
             return deletedRecord;
         }
 
-        if(NextBlockAddress != GlobalConstants.InvalidAddress)
-        {
-            // If the record is not found and there is a next block, the search should continue there.
-            throw new NotImplementedException("Continuation to next block not implemented.");
-        }
+        //if(NextBlockAddress != GlobalConstants.InvalidAddress)
+        //{
+        //    // If the record is not found and there is a next block, the search should continue there.
+        //    throw new NotImplementedException("Continuation to next block not implemented.");
+        //}
 
         return null;
     }
@@ -151,11 +152,13 @@ public class DHBlock<T> where T : IDHRecord<T>, new()
             }
         }
 
-        if (NextBlockAddress != GlobalConstants.InvalidAddress)
-        {
-            // If the record is not found and there is a next block, the search should continue there.
-            throw new NotImplementedException("Continuation to next block not implemented.");
-        }
+        //if (NextBlockAddress != GlobalConstants.InvalidAddress)
+        //{
+        //    // If the record is not found and there is a next block, the search should continue there.
+        //    throw new NotImplementedException("Continuation to next block not implemented.");
+        //}
+
+
 
         foundRecord = null;
         return false;
@@ -169,7 +172,10 @@ public class DHBlock<T> where T : IDHRecord<T>, new()
     public int GetSize()
     {
         int recordSize = new T().GetSize();
-        return 4 + (MaxRecordsCount * recordSize); // 4 bytes for ValidRecordsCount
+        return sizeof(int) // ValidRecordsCount
+            + sizeof(int) // PreviousBlockAddress
+            + sizeof(int) // NextBlockAddress
+            + (MaxRecordsCount * recordSize); // 4 bytes for ValidRecordsCount
     }
 
     /// <summary>
@@ -180,12 +186,13 @@ public class DHBlock<T> where T : IDHRecord<T>, new()
     {
         byte[] blockBytes = new byte[GetSize()];
 
-        // Serialize the ValidRecordsCount
-        Buffer.BlockCopy(BitConverter.GetBytes(ValidRecordsCount), 0, blockBytes, 0, 4);
+        // Serialize the ValidRecordsCount, PreviousBlockAddress, and NextBlockAddress
+        Buffer.BlockCopy(BitConverter.GetBytes(ValidRecordsCount), 0, blockBytes, 0, 4); //ValidRecordsCount
+        Buffer.BlockCopy(BitConverter.GetBytes(PreviousBlockAddress), 0, blockBytes, 4, 4); //Previous block
+        Buffer.BlockCopy(BitConverter.GetBytes(NextBlockAddress), 0, blockBytes, 8, 4); //next Block
 
         int recordSize = new T().GetSize();
-        // Serialize the valid records
-        int offset = 4; // Start after the ValidRecordsCount
+        int offset = 12; // Start after the ValidRecordsCount, PreviousBlockAddress, and NextBlockAddress
         for (int i = 0; i < ValidRecordsCount; i++)
         {
             byte[] recordBytes = RecordsList[i].ToByteArray();
@@ -196,6 +203,7 @@ public class DHBlock<T> where T : IDHRecord<T>, new()
         return blockBytes;
     }
 
+
     /// <summary>
     /// Initializes the block from a byte array.
     /// </summary>
@@ -204,11 +212,12 @@ public class DHBlock<T> where T : IDHRecord<T>, new()
     {
         int recordSize = new T().GetSize();
 
-        // Deserialize the ValidRecordsCount
-        ValidRecordsCount = BitConverter.ToInt32(byteArray, 0);
 
-        // Deserialize the valid records
-        int offset = 4; // Start after the ValidRecordsCount
+        ValidRecordsCount = BitConverter.ToInt32(byteArray, 0); //ValidRecordsCount
+        PreviousBlockAddress = BitConverter.ToInt32(byteArray, 4); //Previous block
+        NextBlockAddress = BitConverter.ToInt32(byteArray, 8); //next Block
+
+        int offset = 12; // Start after the ValidRecordsCount, PreviousBlockAddress, and NextBlockAddress
         RecordsList.Clear();
         for (int i = 0; i < ValidRecordsCount; i++)
         {
@@ -219,6 +228,7 @@ public class DHBlock<T> where T : IDHRecord<T>, new()
             offset += recordSize;
         }
     }
+
 
     /// <summary>
     /// Writes the block to a binary file at a specified address.
@@ -262,6 +272,23 @@ public class DHBlock<T> where T : IDHRecord<T>, new()
 
                 // Deserialize from the byte array
                 FromByteArray(blockBytes);
+            }
+        }
+    }
+
+    public void ReadBlockInfoFromBinaryFile(string filePath, int blockAddress)
+    {
+        using (FileStream fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+        {
+            using (BinaryReader binaryReader = new BinaryReader(fileStream))
+            {
+                // Seek to the specified block address
+                fileStream.Seek(blockAddress, SeekOrigin.Begin);
+
+                // Read only the ValidRecordsCount, PreviousBlockAddress, and NextBlockAddress
+                ValidRecordsCount = binaryReader.ReadInt32();
+                PreviousBlockAddress = binaryReader.ReadInt32();
+                NextBlockAddress = binaryReader.ReadInt32();
             }
         }
     }

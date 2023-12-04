@@ -17,6 +17,7 @@ class DynamicHashingTester
     private int _maxHashSize;
     private int _mainBlockFactor;
     private int _overflowBlockFactor;
+    private int _blockSize;
 
     public DynamicHashingTester(int mainBlockFactor, int overflowBlockFactor, int maxHashSize, 
                                 double insertProbability = 0.33, double deleteProbability = 0.33, double findProbability = 0.34, bool useSelectedIds = false)
@@ -24,6 +25,10 @@ class DynamicHashingTester
         InitializeDynamicHashing(mainBlockFactor, overflowBlockFactor, maxHashSize);
         InitializeProbabilities(insertProbability, deleteProbability, findProbability);
         InitializeTestEnvironment(useSelectedIds, mainBlockFactor, maxHashSize);
+
+        //GetMainBlock size
+        var mainBlock = new DHBlock<DummyClass>(_mainBlockFactor, _maxHashSize);
+        _blockSize = mainBlock.GetSize();
     }
 
     public void RunComplexTesting()
@@ -33,31 +38,64 @@ class DynamicHashingTester
 
             for (int j = 1; j < 12; j = j + 5)
             {
-                DynamicHashingTester tester = new DynamicHashingTester(j, -1, i, useSelectedIds: true);
-                tester.RunRandomTest(10000);
+                //DynamicHashingTester tester = new DynamicHashingTester(j, -1, i, useSelectedIds: true);
+                //tester.RunRandomTest(10000, false);
 
-                DynamicHashingTester tester2 = new DynamicHashingTester(j, -1, i,
-                    insertProbability: 0.8,
-                    deleteProbability: 0.1,
-                    findProbability: 0.1,
-                    useSelectedIds: true);
-                tester2.RunRandomTest(10000);
+                //DynamicHashingTester tester2 = new DynamicHashingTester(j, -1, i,
+                //    insertProbability: 0.8,
+                //    deleteProbability: 0.1,
+                //    findProbability: 0.1,
+                //    useSelectedIds: true);
+                //tester2.RunRandomTest(10000,false);
 
-                DynamicHashingTester tester3 = new DynamicHashingTester(j, -1, i,
-                    insertProbability: 0.1,
-                    deleteProbability: 0.8,
-                    findProbability: 0.1,
-                    useSelectedIds: true);
-                tester3.InsertBatch(j * i);
-                tester2.RunRandomTest(10000);
+                //DynamicHashingTester tester3 = new DynamicHashingTester(j, -1, i,
+                //    insertProbability: 0.1,
+                //    deleteProbability: 0.8,
+                //    findProbability: 0.1,
+                //    useSelectedIds: true);
+                //tester3.InsertBatch(j * i);
+                //tester2.RunRandomTest(10000, false);
 
-                DynamicHashingTester tester4 = new DynamicHashingTester(j, -1, i,
-                    insertProbability: 0.1,
-                    deleteProbability: 0.1,
-                    findProbability: 0.8,
-                    useSelectedIds: true);
-                tester4.InsertBatch(j * i);
-                tester2.RunRandomTest(10000);
+                //DynamicHashingTester tester4 = new DynamicHashingTester(j, -1, i,
+                //    insertProbability: 0.1,
+                //    deleteProbability: 0.1,
+                //    findProbability: 0.8,
+                //    useSelectedIds: true);
+                //tester4.InsertBatch(j * i);
+                //tester2.RunRandomTest(10000, false);
+
+                /////////////////////////////////
+                
+                for (int k = 1; k < 3; k++)
+                {
+                    DynamicHashingTester tester = new DynamicHashingTester(j, k, i, useSelectedIds: false);
+                    tester.RunRandomTest(1000, true);
+
+                    DynamicHashingTester tester2 = new DynamicHashingTester(j, k, i,
+                        insertProbability: 0.8,
+                        deleteProbability: 0.1,
+                        findProbability: 0.1,
+                        useSelectedIds: false);
+                    tester2.RunRandomTest(1000, true);
+
+                    DynamicHashingTester tester3 = new DynamicHashingTester(j, k, i,
+                        insertProbability: 0.1,
+                        deleteProbability: 0.8,
+                        findProbability: 0.1,
+                        useSelectedIds: false);
+                    tester3.InsertBatch(j * i);
+                    tester2.RunRandomTest(1000, true);
+
+                    DynamicHashingTester tester4 = new DynamicHashingTester(j, k, i,
+                        insertProbability: 0.1,
+                        deleteProbability: 0.1,
+                        findProbability: 0.8,
+                        useSelectedIds: false);
+                    tester4.InsertBatch(j * i);
+                    tester2.RunRandomTest(1000, true);
+                }
+
+
 
             }
         }
@@ -95,8 +133,8 @@ class DynamicHashingTester
     {
         return new DummyClass
         {
-            Cislo = _random.Next(0, 1000),
-            ID = _random.Next(0, 1000),
+            Cislo = _random.Next(0, 10000),
+            ID = _random.Next(0, 10000),
             Text = GenerateRandomString(14)
         };
     }
@@ -120,11 +158,11 @@ class DynamicHashingTester
         };
     }
 
-    public void RunRandomTest(int iterations)
+    public void RunRandomTest(int iterations, bool withOverFlowFile)
     {
         ResetAvailableIDsAndDynamicHashing();
-        PerformRandomOperations(iterations);
-        VerifyStructure();
+        PerformRandomOperations(iterations, withOverFlowFile);
+        VerifyStructure(withOverFlowFile);
     }
 
     private void ResetAvailableIDsAndDynamicHashing()
@@ -138,30 +176,37 @@ class DynamicHashingTester
         }
     }
 
-    private void PerformRandomOperations(int iterations)
+    private void PerformRandomOperations(int iterations, bool withOverFlowFile)
     {
         for (int i = 0; i < iterations; i++)
         {
             //13 where it's bugged
-            if(i == 12)
+            if(i == 214)
             {
                 //12 external has wrong parent
                 Console.WriteLine(  );
             }
 
-            PerformRandomOperation(i);
+            PerformRandomOperation(i,withOverFlowFile);
         }
     }
 
-    private void PerformRandomOperation(int iteration)
+    private void PerformRandomOperation(int iteration, bool withOverflowFile)
     {
         double action = _random.NextDouble();
         Console.Write($"I:{iteration + 1} ");
 
-        var structureRecords = _dynamicHashing.FileBlockManager.GetAllRecords(false);
+        var structureRecords = _dynamicHashing.FileBlockManager.GetAllRecords(withOverflowFile);
         if (_insertedRecords.Count != structureRecords.Count)
         {
            throw new Exception("Verification failed! Lists contain different items.");
+        }
+
+        double maxFileSize = Math.Pow(2, _maxHashSize) * _blockSize;
+        if (_dynamicHashing.FileBlockManager.CurrentMainFileSize > maxFileSize)
+        {
+            Console.WriteLine("Main file is too big!");
+            throw new Exception("Main file is too big!");
         }
 
         if (action < _insertProbability)
@@ -170,13 +215,14 @@ class DynamicHashingTester
             DeleteRandomRecord();
         else
             FindRandomRecord();
+
+
     }
     public void InsertRandomRecord()
     {
         var record = _useSelectedIds ? GenerateRandomRecordFromIds() : GenerateRandomRecord();
-        if(record == null)
+        if (record == null)
         {
-            //Console.WriteLine("Record is null!");
             return;
         }
         Console.WriteLine($"Inserted: {record}");
@@ -187,11 +233,21 @@ class DynamicHashingTester
 
     public void DeleteRandomRecord()
     {
-        if (_insertedRecords.Count == 0)
+        if (!_useSelectedIds || _insertedRecords.Count == 0)
         {
             var record = GenerateRandomRecord();
-            _dynamicHashing.Delete(record);
-            Console.WriteLine($"Deleted non existing record: {record}");
+            var deletedRecord =  _dynamicHashing.Delete(record);
+
+            if(deletedRecord != null)
+            {
+                Console.WriteLine($"Deleted record: {deletedRecord}");
+                _insertedRecords.Remove((DummyClass)deletedRecord);
+            }
+            else
+            {
+                Console.WriteLine($"Record deletion not found: {record}");
+            }
+
         } 
         else
         {
@@ -208,26 +264,38 @@ class DynamicHashingTester
 
     public void FindRandomRecord()
     {
-        if (_insertedRecords.Count == 0)
+        bool found = false;
+        IDHRecord<DummyClass> foundRecord = null;
+        DummyClass record = null;
+
+        if (!_useSelectedIds || _insertedRecords.Count == 0)
         {
-            var record = GenerateRandomRecord();
-            _dynamicHashing.TryFind(record, out var foundRecord);
-            Console.WriteLine($"Find non existing record: {foundRecord}");
+            record = GenerateRandomRecord();
+            found = _dynamicHashing.TryFind(record, out foundRecord);
+            Console.WriteLine($"Find record {record}: {foundRecord}");
         }
         else
         {
 
             int index = _random.Next(_insertedRecords.Count);
-            var record = _insertedRecords[index];
+            record = _insertedRecords[index];
 
-            var found = _dynamicHashing.TryFind(record, out var foundRecord);
-            if (!found)
-            {
-                Console.WriteLine($"Record not found: {record}");
-                return;
-            }
+            found = _dynamicHashing.TryFind(record, out foundRecord);
+
 
             Console.WriteLine($"Found: {foundRecord}");
+        }
+
+        if (_insertedRecords.Contains(record) && !found)
+        {
+            Console.WriteLine($"Record not found, even it's inside: {foundRecord}");
+            throw new Exception("Record not found event it's inside!");
+            return;
+        }
+
+        if (foundRecord is not null && !foundRecord.MyEquals(record))
+        {
+            throw new Exception("Found record is not the same as the searched record!");
         }
     }
 
@@ -253,11 +321,14 @@ class DynamicHashingTester
     }
 
 
-    public void VerifyStructure()
+    public void VerifyStructure(bool withOverFlowFile)
     {
         int insertedRecordsCount = _insertedRecords.Count;
-        var structureRecords = _dynamicHashing.FileBlockManager.GetAllRecords(false);
+        var structureRecords = _dynamicHashing.FileBlockManager.GetAllRecords(withOverFlowFile);
         int recordsInStructure = structureRecords.Count;
+
+
+
 
         if (insertedRecordsCount != recordsInStructure)
         {
@@ -338,7 +409,6 @@ class DynamicHashingTester
         dynamicHashing.Insert(dummy2);
 
 
-        var records = dynamicHashing.FileBlockManager.GetAllRecords(false);
         //Console.WriteLine("Deleted: " + dynamicHashing.Delete(dummy));
 
 

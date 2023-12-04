@@ -38,7 +38,7 @@ public class DynamicHashing<T> where T : IDHRecord<T>, new()
     public IDHRecord<T>? Delete(IDHRecord<T> record)
     {
         IDHRecord<T>? deletedRecord = _root.Delete(record);
-        //PrintNodeHierarchy(_root);
+        ////PrintNodeHierarchy(_root);
         //Console.WriteLine(FileBlockManager.SequentialFileOutput(MaxHashSize));
         //Console.WriteLine();
         return deletedRecord;
@@ -58,7 +58,7 @@ public class DynamicHashing<T> where T : IDHRecord<T>, new()
         bool inserted = _root.Insert(record);
         //PrintNodeHierarchy(_root);
         //Console.WriteLine(FileBlockManager.SequentialFileOutput(MaxHashSize));
-        //Console.WriteLine();
+        Console.WriteLine();
     }
 
     /// <summary>
@@ -93,8 +93,8 @@ public class DynamicHashing<T> where T : IDHRecord<T>, new()
     private void InitializeRootNode()
     {
         _root = new DHInternalNode<T>(this, null);
-        ((DHInternalNode<T>)_root).ChangeLeftExternalNodeAddress(-1);
-        ((DHInternalNode<T>)_root).ChangeRightExternalNodeAddress(-1);
+        ((DHInternalNode<T>)_root).ChangeLeftExternalNodeAddress(-1,0);
+        ((DHInternalNode<T>)_root).ChangeRightExternalNodeAddress(-1,0);
     }
 
     /// <summary>

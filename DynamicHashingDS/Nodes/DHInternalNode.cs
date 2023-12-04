@@ -19,7 +19,10 @@ public class DHInternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
     /// </summary>
     /// <param name="dynamicHashing">The dynamic hashing instance associated with this node.</param>
     /// <param name="parent">The parent node of this internal node.</param>
-    public DHInternalNode(DynamicHashing<T> dynamicHashing, DHNode<T>? parent) : base(dynamicHashing, parent!)
+    public DHInternalNode(
+        DynamicHashing<T> dynamicHashing, 
+        DHNode<T>? parent 
+        ) : base(dynamicHashing, parent!)
     {
         LeftChild = new DHExternalNode<T>(this.dynamicHashing, this, -1);
         RightChild = new DHExternalNode<T>(this.dynamicHashing, this, -1);
@@ -32,14 +35,6 @@ public class DHInternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
     /// <returns>True if the insertion is successful, otherwise false.</returns>
     public override bool Insert(IDHRecord<T> record)
     {
-        if(LeftChild.ToString().Substring(0,35).Contains("Left") && RightChild.ToString().Substring(0, 35).Contains("Left"))
-        {
-            Console.WriteLine();
-        } else if (LeftChild.ToString().Substring(0, 35).Contains("Right") && RightChild.ToString().Substring(0, 35).Contains("Right"))
-        {
-            Console.WriteLine();
-        }
-
         var externalNode = FindExternalNode(record.GetHash());
         return externalNode.Insert(record);
     }
@@ -98,11 +93,12 @@ public class DHInternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
     /// </summary>
     /// <param name="blockAddress">The new block address for the left external node.</param>
     /// <exception cref="InvalidOperationException">Thrown when the LeftChild is not an external node.</exception>
-    public void ChangeLeftExternalNodeAddress(int blockAddress)
+    public void ChangeLeftExternalNodeAddress(int blockAddress, int totalRecords)
     {
         if (LeftChild is DHExternalNode<T> leftChild)
         {
             leftChild.SetBlockAddress(blockAddress);
+            leftChild.TotalRecordsCount = totalRecords;
         }
         else
         {
@@ -116,11 +112,12 @@ public class DHInternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
     /// </summary>
     /// <param name="blockAddress">The new block address for the right external node.</param>
     /// <exception cref="InvalidOperationException">Thrown when the RightChild is not an external node.</exception>
-    public void ChangeRightExternalNodeAddress(int blockAddress)
+    public void ChangeRightExternalNodeAddress(int blockAddress, int totalRecords)
     {
         if (RightChild is DHExternalNode<T> rightChild)
         {
             rightChild.SetBlockAddress(blockAddress);
+            rightChild.TotalRecordsCount = totalRecords;
         }
         else
         {
