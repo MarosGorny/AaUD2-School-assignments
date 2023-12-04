@@ -4,6 +4,144 @@ using System.Text;
 
 namespace DynamicHashingDS.Data;
 
+public class Osoba : IDHRecord<Osoba>
+{
+    [StringLength(10)]
+    public string Meno { get; set; } = "";
+    [StringLength(12)]
+    public string Priezvisko { get; set; } = "";
+    [StringLength(15)]
+    public string Popis { get; set; } = "";
+
+    public Osoba FromByteArray(byte[] byteArray)
+    {
+        using (var ms = new MemoryStream(byteArray))
+        using (var reader = new BinaryReader(ms))
+        {
+            // Read the Text as a UTF-16 encoded string
+            var menoTextBytes = reader.ReadBytes(10 * sizeof(char));
+            this.Meno = Encoding.Unicode.GetString(menoTextBytes).TrimEnd('\0', ' '); // Trimming any padding
+
+            var priezviskoTextBytes = reader.ReadBytes(12 * sizeof(char));
+            this.Priezvisko = Encoding.Unicode.GetString(priezviskoTextBytes).TrimEnd('\0', ' '); // Trimming any padding
+
+            var popisTextBytes = reader.ReadBytes(15 * sizeof(char));
+            this.Popis = Encoding.Unicode.GetString(popisTextBytes).TrimEnd('\0', ' '); // Trimming any padding
+        }
+
+        return this;
+    }
+
+    public BitArray GetHash()
+    {
+        var MenoPriezvisko = Meno + Priezvisko;
+
+        var hashValue = MenoPriezvisko.GetHashCode();
+        var hashValueBytes = BitConverter.GetBytes(hashValue);
+        var hash = new BitArray(hashValueBytes);
+        return hash;
+    }
+
+    public int GetSize()
+    {
+        int size = 0;
+
+        size += 10 * sizeof(char); // Size for Meno
+        size += 12 * sizeof(char); // Size for Priezvisko
+        size += 15 * sizeof(char); // Size for Popis
+
+        return size;
+    }
+
+    public string GetHashString()
+    {
+        var hash = GetHash();
+        var sb = new StringBuilder();
+        int counter = 0;
+        for (int i = hash.Length - 1; i >= 0; i--)
+        {
+            sb.Append(hash[i] ? "1" : "0");
+            if (++counter % 8 == 0)
+            {
+                sb.Append(" ");
+            }
+        }
+
+        return sb.ToString();
+    }
+
+    public override string ToString()
+    {
+        return $"Osoba(Hash: {GetHashString()},Meno: {Meno}, Priezvisko: {Priezvisko}, Popis: {Popis})";
+    }
+
+    public bool MyEquals(Osoba other)
+    {
+        if (other is Osoba otherOsoba)
+        {
+            return this.Meno == otherOsoba.Meno && this.Priezvisko == otherOsoba.Priezvisko;
+        }
+
+        return false;
+    }
+
+    public byte[] ToByteArray()
+    {
+        using (var ms = new MemoryStream())
+        using (var writer = new BinaryWriter(ms))
+        {
+            byte[] textBytesMeno;
+            if (Meno != null)
+            {
+                string paddedText = Meno.PadRight(10, '\0');
+                textBytesMeno = Encoding.Unicode.GetBytes(paddedText);
+                if (textBytesMeno.Length != 20)
+                {
+                    throw new InvalidOperationException("The encoded text does not meet the expected length of 20 bytes.");
+                }
+            }
+            else
+            {
+                textBytesMeno = new byte[20]; // Create an array of 20 null bytes
+            }
+            writer.Write(textBytesMeno);
+
+            byte[] textBytesPriezvisko;
+            if (Priezvisko != null)
+            {
+                string paddedText = Priezvisko.PadRight(12, '\0');
+                textBytesPriezvisko = Encoding.Unicode.GetBytes(paddedText);
+                if (textBytesPriezvisko.Length != 24)
+                {
+                    throw new InvalidOperationException("The encoded text does not meet the expected length of 24 bytes.");
+                }
+            }
+            else
+            {
+                textBytesPriezvisko = new byte[24]; // Create an array of 24 null bytes
+            }
+            writer.Write(textBytesPriezvisko);
+
+            byte[] textBytesPopis;
+            if (Popis != null)
+            {
+                string paddedText = Popis.PadRight(15, '\0');
+                textBytesPopis = Encoding.Unicode.GetBytes(paddedText);
+                if (textBytesPopis.Length != 30)
+                {
+                    throw new InvalidOperationException("The encoded text does not meet the expected length of 30 bytes.");
+                }
+            }
+            else
+            {
+                textBytesPopis = new byte[30]; // Create an array of 30 null bytes
+            }
+            writer.Write(textBytesPopis);
+            return ms.ToArray();
+        }
+    }
+}
+
 public class DummyClass : IDHRecord<DummyClass>
 {
     public int Cislo { get; set; }

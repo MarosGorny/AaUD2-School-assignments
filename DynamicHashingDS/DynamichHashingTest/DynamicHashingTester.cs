@@ -6,12 +6,13 @@ using System.Collections.Generic;
 namespace DynamicHashingDS.DynamicHashingTest;
 class DynamicHashingTester
 {
-    private DynamicHashing<DummyClass> _dynamicHashing;
-    private List<DummyClass> _insertedRecords;
+    //private DynamicHashing<DummyClass> _dynamicHashing;
+    private DynamicHashing<Osoba> _dynamicHashing;
+    private List<Osoba> _insertedRecords;
     private Random _random;
     private double _insertProbability, _deleteProbability, _findProbability;
 
-    private HashSet<int> _availableIDs;
+    private HashSet<string> _availableNamesSurnames;
     private bool _useSelectedIds = false;
     private int _idRange;
     private int _maxHashSize;
@@ -27,7 +28,7 @@ class DynamicHashingTester
         InitializeTestEnvironment(useSelectedIds, mainBlockFactor, maxHashSize);
 
         //GetMainBlock size
-        var mainBlock = new DHBlock<DummyClass>(_mainBlockFactor, _maxHashSize);
+        var mainBlock = new DHBlock<Osoba>(_mainBlockFactor, _maxHashSize);
         _blockSize = mainBlock.GetSize();
     }
 
@@ -103,8 +104,9 @@ class DynamicHashingTester
 
     private void InitializeDynamicHashing(int mainBlockFactor, int overflowBlockFactor, int maxHashSize)
     {
-        _dynamicHashing = new DynamicHashing<DummyClass>(mainBlockFactor, overflowBlockFactor, "mainFilePath.dat", "overflowFilePath.dat", maxHashSize);
-        _insertedRecords = new List<DummyClass>();
+        _dynamicHashing = new DynamicHashing<Osoba>(mainBlockFactor, overflowBlockFactor, "mainFilePath.dat", "overflowFilePath.dat", maxHashSize);
+
+        _insertedRecords = new List<Osoba>();
         _random = new Random(2);
         _mainBlockFactor = mainBlockFactor;
         _overflowBlockFactor = overflowBlockFactor;
@@ -122,39 +124,40 @@ class DynamicHashingTester
     {
         _useSelectedIds = useSelectedIds;
         _idRange = mainBlockFactor * maxHashSize;
-        _availableIDs = new HashSet<int>();
-        for (int i = 0; i < _idRange; i++)
+
+        _availableNamesSurnames = new HashSet<string>();
+        for(int i = 0; i < _idRange; i++)
         {
-            _availableIDs.Add(i);
+            _availableNamesSurnames.Add(GenerateRandomString(10) + GenerateRandomString(12));
         }
     }
 
-    public DummyClass GenerateRandomRecord()
+    public Osoba GenerateRandomRecord()
     {
-        return new DummyClass
+        return new Osoba
         {
-            Cislo = _random.Next(0, 10000),
-            ID = _random.Next(0, 10000),
-            Text = GenerateRandomString(14)
+            Meno = GenerateRandomString(10),
+            Priezvisko = GenerateRandomString(12),
+            Popis = GenerateRandomString(15),
         };
     }
 
-    private DummyClass GenerateRandomRecordFromIds()
+    private Osoba GenerateRandomRecordFromIds()
     {
-        if (_availableIDs.Count == 0 && _useSelectedIds)
+        if(_availableNamesSurnames.Count == 0 && _useSelectedIds)
         {
             Console.WriteLine("Trie is full !!");
             return null;
         }
-        int randomIDIndex = _random.Next(_availableIDs.Count);
-        int selectedID = _availableIDs.ElementAt(randomIDIndex);
-        _availableIDs.Remove(selectedID);
+        int randomIDIndex = _random.Next(_availableNamesSurnames.Count);
+        string selectedNameSurname = _availableNamesSurnames.ElementAt(randomIDIndex);
+        _availableNamesSurnames.Remove(selectedNameSurname);
 
-        return new DummyClass
+        return new Osoba
         {
-            Cislo = selectedID,
-            ID = _random.Next(0, 1000),
-            Text = GenerateRandomString(14)
+            Meno = GenerateRandomString(10),
+            Priezvisko = GenerateRandomString(12),
+            Popis = GenerateRandomString(15),
         };
     }
 
@@ -168,11 +171,11 @@ class DynamicHashingTester
     private void ResetAvailableIDsAndDynamicHashing()
     {
         _insertedRecords.Clear();
-        _availableIDs.Clear();
-        _dynamicHashing = new DynamicHashing<DummyClass>(_mainBlockFactor, _overflowBlockFactor, "mainFilePath.dat", "overflowFilePath.dat", _maxHashSize);
+        _availableNamesSurnames.Clear();
+        _dynamicHashing = new DynamicHashing<Osoba>(_mainBlockFactor, _overflowBlockFactor, "mainFilePath.dat", "overflowFilePath.dat", _maxHashSize);
         for (int i = 0; i < _idRange; i++)
         {
-            _availableIDs.Add(i);
+            _availableNamesSurnames.Add(GenerateRandomString(10) + GenerateRandomString(12));
         }
     }
 
@@ -241,7 +244,7 @@ class DynamicHashingTester
             if(deletedRecord != null)
             {
                 Console.WriteLine($"Deleted record: {deletedRecord}");
-                _insertedRecords.Remove((DummyClass)deletedRecord);
+                _insertedRecords.Remove((Osoba)deletedRecord);
             }
             else
             {
@@ -257,7 +260,7 @@ class DynamicHashingTester
             Console.WriteLine($"Deleted: {record}");
             _dynamicHashing.Delete(record);
             _insertedRecords.RemoveAt(index);
-            _availableIDs.Add(record.Cislo); // Add the deleted ID to the available IDs
+            _availableNamesSurnames.Add(record.Meno + record.Priezvisko);
             
         }
     }
@@ -265,8 +268,8 @@ class DynamicHashingTester
     public void FindRandomRecord()
     {
         bool found = false;
-        IDHRecord<DummyClass> foundRecord = null;
-        DummyClass record = null;
+        IDHRecord<Osoba> foundRecord = null;
+        Osoba record = null;
 
         if (!_useSelectedIds || _insertedRecords.Count == 0)
         {
@@ -306,9 +309,10 @@ class DynamicHashingTester
           .Select(s => s[_random.Next(s.Length)]).ToArray());
     }
 
-    public List<DummyClass> InsertBatch(int count)
+
+    public List<Osoba> InsertBatch(int count)
     {
-        List<DummyClass> batchRecords = new List<DummyClass>();
+        List<Osoba> batchRecords = new List<Osoba>();
         for (int i = 0; i < count; i++)
         {
             var record = _useSelectedIds ? GenerateRandomRecordFromIds() : GenerateRandomRecord();
@@ -342,7 +346,8 @@ class DynamicHashingTester
             var found = false;
             foreach (var item2 in structureRecords)
             {
-                if (item.MyEquals((DummyClass)item2))
+                //if (item.MyEquals((DummyClass)item2))
+                if (item.MyEquals((Osoba)item2))
                 {
                     found = true;
                     break;
