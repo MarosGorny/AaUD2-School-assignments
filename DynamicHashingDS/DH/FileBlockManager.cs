@@ -126,13 +126,13 @@ public class FileBlockManager<T> where T : IDHRecord<T>, new()
     /// <summary>
     /// Retrieves all records from either the main file or the overflow file.
     /// </summary>
-    /// <param name="fromOverflowFile">Specifies whether to retrieve from the overflow file.</param>
+    /// <param name="alsoFromOverflowFile">Specifies whether to retrieve from the overflow file.</param>
     /// <returns>A list of all records retrieved.</returns>
-    public List<IDHRecord<T>> GetAllRecords(bool fromOverflowFile)
+    public List<IDHRecord<T>> GetAllRecords(bool alsoFromOverflowFile)
     {
-        string filePath = fromOverflowFile ? OverflowFilePath : MainFilePath;
+        string filePath =  MainFilePath;
         List<IDHRecord<T>> allRecords = new List<IDHRecord<T>>();
-        int blockFactor = fromOverflowFile ? OverflowFileBlockFactor : MainFileBlockFactor;
+        int blockFactor = MainFileBlockFactor;
         long fileSize = new FileInfo(filePath).Length;
 
         for (int currentAddress = 0; currentAddress < fileSize;)
@@ -143,6 +143,25 @@ public class FileBlockManager<T> where T : IDHRecord<T>, new()
 
             currentAddress += block.GetSize();
         }
+
+
+        if(alsoFromOverflowFile)
+        {
+            filePath = OverflowFilePath;
+            blockFactor = OverflowFileBlockFactor;
+            fileSize = new FileInfo(filePath).Length;
+
+            for (int currentAddress = 0; currentAddress < fileSize;)
+            {
+                DHBlock<T> block = new DHBlock<T>(blockFactor, currentAddress);
+                block.ReadFromBinaryFile(filePath, currentAddress);
+                allRecords.AddRange(block.RecordsList);
+
+                currentAddress += block.GetSize();
+            }
+        }
+
+
 
         return allRecords;
     }

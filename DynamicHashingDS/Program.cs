@@ -8,21 +8,21 @@ internal class Program
 {
     static void Main(string[] args)
     {
-        DynamicHashingTester dynamicHashingTester = new DynamicHashingTester(-1, -1, -1);
-        dynamicHashingTester.RunComplexTesting();
+        //DynamicHashingTester dynamicHashingTester = new DynamicHashingTester(-1, -1, -1);
+        //dynamicHashingTester.RunComplexTesting();
 
-        //DynamicHashing<DummyClass> dynamicHashing = new DynamicHashing<DummyClass>(1, 2, "mainFile.bin", "overflowFile.bin", 4);
-        //DummyClass dummyClass = new DummyClass();
-        //dummyClass.Cislo = 4;
-        //dummyClass.ID = 0;
-        //dummyClass.Text = "0";
-        //dynamicHashing.Insert(dummyClass);
+        DynamicHashing<DummyClass> dynamicHashing = new DynamicHashing<DummyClass>(1, 1, "mainFile.bin", "overflowFile.bin", 2);
+        DummyClass dummyClass = new DummyClass();
+        dummyClass.Cislo = 0;
+        dummyClass.ID = 0;
+        dummyClass.Text = "0";
+        dynamicHashing.Insert(dummyClass);
 
-        //DummyClass dummyClass1 = new DummyClass();
-        //dummyClass1.Cislo = 8;
-        //dummyClass1.ID = 1;
-        //dummyClass1.Text = "1";
-        //dynamicHashing.Insert(dummyClass1);
+        DummyClass dummyClass1 = new DummyClass();
+        dummyClass1.Cislo = 8;
+        dummyClass1.ID = 1;
+        dummyClass1.Text = "1";
+        dynamicHashing.Insert(dummyClass1);
 
         //dynamicHashing.Delete(dummyClass);
 

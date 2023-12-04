@@ -81,7 +81,20 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
         }
 
         var block = ReadCurrentBlock();
-        return block.TryFind(record, out foundRecord);
+
+        while (block.NextBlockAddress != GlobalConstants.InvalidAddress)
+        {
+            if (block.TryFind(record, out foundRecord))
+            {
+                return true;
+            }
+
+            block = new DHBlock<T>(dynamicHashing.FileBlockManager.OverflowFileBlockFactor, block.NextBlockAddress);
+            block.ReadFromBinaryFile(dynamicHashing.FileBlockManager.OverflowFilePath, block.BlockAddress);
+        }
+
+        foundRecord = null;
+        return false;
     }
 
     /// <summary>

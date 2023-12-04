@@ -152,11 +152,13 @@ public class DHBlock<T> where T : IDHRecord<T>, new()
             }
         }
 
-        if (NextBlockAddress != GlobalConstants.InvalidAddress)
-        {
-            // If the record is not found and there is a next block, the search should continue there.
-            throw new NotImplementedException("Continuation to next block not implemented.");
-        }
+        //if (NextBlockAddress != GlobalConstants.InvalidAddress)
+        //{
+        //    // If the record is not found and there is a next block, the search should continue there.
+        //    throw new NotImplementedException("Continuation to next block not implemented.");
+        //}
+
+
 
         foundRecord = null;
         return false;
