@@ -39,14 +39,14 @@ class DynamicHashingTester
             for (int j = 1; j < 12; j = j + 5)
             {
                 //DynamicHashingTester tester = new DynamicHashingTester(j, -1, i, useSelectedIds: true);
-                //tester.RunRandomTest(10000);
+                //tester.RunRandomTest(10000, false);
 
                 //DynamicHashingTester tester2 = new DynamicHashingTester(j, -1, i,
                 //    insertProbability: 0.8,
                 //    deleteProbability: 0.1,
                 //    findProbability: 0.1,
                 //    useSelectedIds: true);
-                //tester2.RunRandomTest(10000);
+                //tester2.RunRandomTest(10000,false);
 
                 //DynamicHashingTester tester3 = new DynamicHashingTester(j, -1, i,
                 //    insertProbability: 0.1,
@@ -54,7 +54,7 @@ class DynamicHashingTester
                 //    findProbability: 0.1,
                 //    useSelectedIds: true);
                 //tester3.InsertBatch(j * i);
-                //tester2.RunRandomTest(10000);
+                //tester2.RunRandomTest(10000, false);
 
                 //DynamicHashingTester tester4 = new DynamicHashingTester(j, -1, i,
                 //    insertProbability: 0.1,
@@ -62,14 +62,14 @@ class DynamicHashingTester
                 //    findProbability: 0.8,
                 //    useSelectedIds: true);
                 //tester4.InsertBatch(j * i);
-                //tester2.RunRandomTest(10000);
+                //tester2.RunRandomTest(10000, false);
 
                 /////////////////////////////////
-                ///
-                for(int k = 1; k < 3; k++)
+                
+                for (int k = 1; k < 3; k++)
                 {
-                    DynamicHashingTester tester = new DynamicHashingTester(1, 1, 11, useSelectedIds: false);
-                    tester.RunRandomTest(1000, true) ;
+                    DynamicHashingTester tester = new DynamicHashingTester(j, k, i, useSelectedIds: false);
+                    tester.RunRandomTest(1000, true);
 
                     DynamicHashingTester tester2 = new DynamicHashingTester(j, k, i,
                         insertProbability: 0.8,
@@ -86,7 +86,7 @@ class DynamicHashingTester
                     tester3.InsertBatch(j * i);
                     tester2.RunRandomTest(1000, true);
 
-                    DynamicHashingTester tester4 = new DynamicHashingTester(j,k, i,
+                    DynamicHashingTester tester4 = new DynamicHashingTester(j, k, i,
                         insertProbability: 0.1,
                         deleteProbability: 0.1,
                         findProbability: 0.8,
@@ -95,7 +95,7 @@ class DynamicHashingTester
                     tester2.RunRandomTest(1000, true);
                 }
 
-               
+
 
             }
         }
@@ -181,7 +181,7 @@ class DynamicHashingTester
         for (int i = 0; i < iterations; i++)
         {
             //13 where it's bugged
-            if(i == 6)
+            if(i == 214)
             {
                 //12 external has wrong parent
                 Console.WriteLine(  );
@@ -221,9 +221,8 @@ class DynamicHashingTester
     public void InsertRandomRecord()
     {
         var record = _useSelectedIds ? GenerateRandomRecordFromIds() : GenerateRandomRecord();
-        if(record == null)
+        if (record == null)
         {
-            throw new Exception("Record is null!");
             return;
         }
         Console.WriteLine($"Inserted: {record}");
@@ -294,7 +293,7 @@ class DynamicHashingTester
             return;
         }
 
-        if (foundRecord is not null && foundRecord != record)
+        if (foundRecord is not null && !foundRecord.MyEquals(record))
         {
             throw new Exception("Found record is not the same as the searched record!");
         }

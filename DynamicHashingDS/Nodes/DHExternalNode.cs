@@ -82,15 +82,20 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
 
         var block = ReadCurrentBlock();
 
+        if (block.TryFind(record, out foundRecord))
+        {
+            return true;
+        }
+
         while (block.NextBlockAddress != GlobalConstants.InvalidAddress)
         {
+            block = new DHBlock<T>(dynamicHashing.FileBlockManager.OverflowFileBlockFactor, block.NextBlockAddress);
+            block.ReadFromBinaryFile(dynamicHashing.FileBlockManager.OverflowFilePath, block.BlockAddress);
+
             if (block.TryFind(record, out foundRecord))
             {
                 return true;
             }
-
-            block = new DHBlock<T>(dynamicHashing.FileBlockManager.OverflowFileBlockFactor, block.NextBlockAddress);
-            block.ReadFromBinaryFile(dynamicHashing.FileBlockManager.OverflowFilePath, block.BlockAddress);
         }
 
         foundRecord = null;
@@ -678,12 +683,55 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
 
             // Add records in batch to the external node
             finalExternalNode.AddRecords(recordsForInsertion, dynamicHashing.MainBlockFactor);
+            
 
+            
             // Handle any remaining records that could not be inserted due to block factor limitations
             var overflowRecords = remainingRecords.Skip(recordsToInsert).ToList();
             if (overflowRecords.Any())
             {
-                throw new NotImplementedException("Overflow not implemented.");
+                var currentBlock = new DHBlock<T>(dynamicHashing.FileBlockManager.MainFileBlockFactor, finalExternalNode._blockAddress);
+                currentBlock.ReadFromBinaryFile(dynamicHashing.FileBlockManager.MainFilePath, finalExternalNode._blockAddress);
+                bool isFirstIteration = true;
+                while (currentBlock.NextBlockAddress != GlobalConstants.InvalidAddress)
+                {
+                    
+                    if(currentBlock.ValidRecordsCount < dynamicHashing.FileBlockManager.OverflowFileBlockFactor)
+                    {
+                       int recordsToInsertOverflow = Math.Min(overflowRecords.Count, dynamicHashing.FileBlockManager.OverflowFileBlockFactor - currentBlock.ValidRecordsCount);
+                        recordsForInsertion = overflowRecords.Take(recordsToInsertOverflow).ToList();
+                        currentBlock.AddRecords(recordsForInsertion);
+                        currentBlock.WriteToBinaryFile(dynamicHashing.FileBlockManager.OverflowFilePath, currentBlock.BlockAddress);
+                        overflowRecords = overflowRecords.Skip(recordsToInsertOverflow).ToList();
+                        if(overflowRecords.Count == 0)
+                        {
+                            break;
+                        }
+
+                    }
+                    currentBlock.ReadBlockInfoFromBinaryFile(dynamicHashing.FileBlockManager.OverflowFilePath, currentBlock.NextBlockAddress);
+                    isFirstIteration = false;
+                }
+
+                if(currentBlock.NextBlockAddress == GlobalConstants.InvalidAddress && overflowRecords.Count > 0)
+                {
+                    var newBlock = new DHBlock<T>(dynamicHashing.FileBlockManager.OverflowFileBlockFactor, dynamicHashing.FileBlockManager.GetFreeBlock(true));
+                    newBlock.PreviousBlockAddress = currentBlock.BlockAddress;
+                    newBlock.AddRecords(overflowRecords);
+                    newBlock.WriteToBinaryFile(dynamicHashing.FileBlockManager.OverflowFilePath, newBlock.BlockAddress);
+                    currentBlock.NextBlockAddress = newBlock.BlockAddress;
+                    if(isFirstIteration)
+                    {
+                        currentBlock.WriteToBinaryFile(dynamicHashing.FileBlockManager.MainFilePath, currentBlock.BlockAddress);
+                    } 
+                    else
+                    {
+                        currentBlock.WriteToBinaryFile(dynamicHashing.FileBlockManager.OverflowFilePath, currentBlock.BlockAddress);
+                    }
+                    //currentBlock.WriteToBinaryFile(dynamicHashing.FileBlockManager.OverflowFilePath, currentBlock.BlockAddress);
+                }
+
+
             }
         } 
         else
