@@ -317,13 +317,86 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
         } 
         else
         {
-            var oldAddress = _blockAddress;
+            var previousOldAddress = block.PreviousBlockAddress;
             // If there are no valid records left in the block after deletion
             if (block.NextBlockAddress == GlobalConstants.InvalidAddress &&  block.ValidRecordsCount == 0)
             {
+                
+                
                 // Release the block if it's no longer needed
                 dynamicHashing.FileBlockManager.ReleaseBlock(block, isOverflow);
+                if(previousOldAddress == GlobalConstants.InvalidAddress)
+                {
+                    _blockAddress = -1;
+                } 
 
+                DHNode<T> brotherNode = null;
+                DHExternalNode<T> actualNode = this;
+                
+
+                // remove unnecessary internal nodes.
+                bool isLeftChild = ((DHInternalNode<T>)Parent).LeftChild == this;
+                if (isLeftChild)
+                {
+                    brotherNode = ((DHInternalNode<T>)Parent).RightChild;
+                }
+                else
+                {
+                    brotherNode = ((DHInternalNode<T>)Parent).LeftChild;
+                }
+
+                int actualNodeRecordsCount = actualNode._recordsCount - 1; //RecordCount-- is on the end, so we need to do this
+
+                while(brotherNode is DHExternalNode<T> externalBrother && 
+                    (externalBrother._recordsCount == 0 || actualNodeRecordsCount == 0) &&
+                    actualNode.Parent.Parent is not null
+                    )
+                {
+                    DHInternalNode<T> newParent = actualNode.Parent.Parent as DHInternalNode<T>;
+                    var actualNodeParent = actualNode.Parent as DHInternalNode<T>;
+                    bool isParentLeftChild = newParent.LeftChild == actualNodeParent;
+                    actualNode.Parent = null;
+                    actualNodeParent.LeftChild = null;
+                    actualNodeParent.RightChild = null;
+
+                    actualNode.Parent = newParent;
+                    externalBrother.Parent = newParent;
+                    actualNode.Depth--;
+                    externalBrother.Depth--;
+
+                    if(externalBrother._recordsCount == 0)
+                    {
+                        if(isParentLeftChild)
+                        {
+                            newParent.LeftChild = actualNode;
+                            brotherNode = newParent.RightChild;
+                        } 
+                        else
+                        {
+                            newParent.RightChild = actualNode;
+                            brotherNode = newParent.LeftChild;
+                        }
+                    }
+                    else
+                    {
+                        if (isParentLeftChild)
+                        {
+                            newParent.LeftChild = externalBrother;
+                            actualNode = externalBrother;
+                            brotherNode = newParent.RightChild;
+                        }
+                        else
+                        {
+                            newParent.RightChild = externalBrother;
+                            actualNode = externalBrother;
+                            brotherNode = newParent.LeftChild;
+                        }
+                    }
+
+                    actualNodeRecordsCount = actualNode._recordsCount;
+
+                }
+                
                 //_blockAddress = -1;
             }
             else
@@ -716,6 +789,9 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
         {
             _blockAddress = dynamicHashing.FileBlockManager.GetFreeBlock(false);
         }
+
+
+
     }
 
 

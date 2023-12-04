@@ -17,6 +17,7 @@ class DynamicHashingTester
     private int _maxHashSize;
     private int _mainBlockFactor;
     private int _overflowBlockFactor;
+    private int _blockSize;
 
     public DynamicHashingTester(int mainBlockFactor, int overflowBlockFactor, int maxHashSize, 
                                 double insertProbability = 0.33, double deleteProbability = 0.33, double findProbability = 0.34, bool useSelectedIds = false)
@@ -24,6 +25,10 @@ class DynamicHashingTester
         InitializeDynamicHashing(mainBlockFactor, overflowBlockFactor, maxHashSize);
         InitializeProbabilities(insertProbability, deleteProbability, findProbability);
         InitializeTestEnvironment(useSelectedIds, mainBlockFactor, maxHashSize);
+
+        //GetMainBlock size
+        var mainBlock = new DHBlock<DummyClass>(_mainBlockFactor, _maxHashSize);
+        _blockSize = mainBlock.GetSize();
     }
 
     public void RunComplexTesting()
@@ -143,7 +148,7 @@ class DynamicHashingTester
         for (int i = 0; i < iterations; i++)
         {
             //13 where it's bugged
-            if(i == 12)
+            if(i == 71)
             {
                 //12 external has wrong parent
                 Console.WriteLine(  );
@@ -164,12 +169,21 @@ class DynamicHashingTester
            throw new Exception("Verification failed! Lists contain different items.");
         }
 
+        double maxFileSize = Math.Pow(2, _maxHashSize) * _blockSize;
+        if (_dynamicHashing.FileBlockManager.CurrentMainFileSize > maxFileSize)
+        {
+            Console.WriteLine("Main file is too big!");
+            throw new Exception("Main file is too big!");
+        }
+
         if (action < _insertProbability)
             InsertRandomRecord();
         else if (action < _deleteProbability)
             DeleteRandomRecord();
         else
             FindRandomRecord();
+
+
     }
     public void InsertRandomRecord()
     {
@@ -258,6 +272,9 @@ class DynamicHashingTester
         int insertedRecordsCount = _insertedRecords.Count;
         var structureRecords = _dynamicHashing.FileBlockManager.GetAllRecords(false);
         int recordsInStructure = structureRecords.Count;
+
+
+
 
         if (insertedRecordsCount != recordsInStructure)
         {

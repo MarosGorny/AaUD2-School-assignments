@@ -38,9 +38,9 @@ public class DynamicHashing<T> where T : IDHRecord<T>, new()
     public IDHRecord<T>? Delete(IDHRecord<T> record)
     {
         IDHRecord<T>? deletedRecord = _root.Delete(record);
-        PrintNodeHierarchy(_root);
-        Console.WriteLine(FileBlockManager.SequentialFileOutput(MaxHashSize));
-        Console.WriteLine();
+        ////PrintNodeHierarchy(_root);
+        //Console.WriteLine(FileBlockManager.SequentialFileOutput(MaxHashSize));
+        //Console.WriteLine();
         return deletedRecord;
     }
 
@@ -56,8 +56,8 @@ public class DynamicHashing<T> where T : IDHRecord<T>, new()
     public void Insert(IDHRecord<T> record)
     {
         bool inserted = _root.Insert(record);
-        PrintNodeHierarchy(_root);
-        Console.WriteLine(FileBlockManager.SequentialFileOutput(MaxHashSize));
+        //PrintNodeHierarchy(_root);
+        //Console.WriteLine(FileBlockManager.SequentialFileOutput(MaxHashSize));
         Console.WriteLine();
     }
 
