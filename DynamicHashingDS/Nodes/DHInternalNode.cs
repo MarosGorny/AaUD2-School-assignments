@@ -132,7 +132,7 @@ public class DHInternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
     /// <returns>The next child node to continue the insertion.</returns>
     private DHNode<T> Navigate(BitArray hash)
     {
-        var position = Depth < MaxHashSize ? Depth : MaxHashSize - 1;
+        var position = Depth < dynamicHashing.MaxHashSize ? Depth : dynamicHashing.MaxHashSize - 1;
         return hash[position] ? RightChild : LeftChild;
     }
 

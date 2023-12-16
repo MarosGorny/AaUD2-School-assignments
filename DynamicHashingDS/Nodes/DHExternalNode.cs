@@ -13,9 +13,8 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
 {
     public int TotalRecordsCount = 0;
 
-    public int _recordsCount;  //FIXME: JUST FOR NOW PUBLIC
+    public int _recordsCount; 
     private int _blockAddress;
-    private readonly FileBlockManager<T> _fileBlockManager;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DHExternalNode{T}"/> class.
@@ -27,7 +26,6 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
     {
         _recordsCount = 0;
         _blockAddress = blockAdress;
-        _fileBlockManager = dynamicHashing.FileBlockManager;
     }
 
     /// <summary>
@@ -53,7 +51,7 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
             return true;
         }
 
-        bool inserted = Depth < MaxHashSize ? SplitNodeAndInsert(record) : HandleOverflow(record, _fileBlockManager, _blockAddress);
+        bool inserted = Depth < dynamicHashing.MaxHashSize ? SplitNodeAndInsert(record) : HandleOverflow(record, dynamicHashing.FileBlockManager, _blockAddress);
         if(inserted)
         {
             TotalRecordsCount++;
@@ -129,13 +127,13 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
         } 
         else
         {
-            prepareShakeDown = (TotalRecordsCount - _fileBlockManager.MainFileBlockFactor) % _fileBlockManager.OverflowFileBlockFactor == 1;
+            prepareShakeDown = (TotalRecordsCount - dynamicHashing.FileBlockManager.MainFileBlockFactor) % dynamicHashing.FileBlockManager.OverflowFileBlockFactor == 1;
         }
 
         var block = ReadCurrentBlock();
         var deletedRecord = block.Delete((T)record);
 
-        if (prepareShakeDown && block.ValidRecordsCount < _fileBlockManager.MainFileBlockFactor)
+        if (prepareShakeDown && block.ValidRecordsCount < dynamicHashing.FileBlockManager.MainFileBlockFactor)
         {
             blocksWithEmptySpaces.Add(block);
             mainBlockHasEmptySpace = true;
@@ -168,7 +166,7 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
 
                 deletedRecord = block.Delete((T)record);
 
-                if (prepareShakeDown && block.ValidRecordsCount < _fileBlockManager.OverflowFileBlockFactor)
+                if (prepareShakeDown && block.ValidRecordsCount < dynamicHashing.FileBlockManager.OverflowFileBlockFactor)
                 {
                     blocksWithEmptySpaces.Add(block);
                 }
@@ -230,14 +228,14 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
             {
                 var tempBlock = new DHBlock<T>(dynamicHashing.FileBlockManager.OverflowFileBlockFactor, findingLastBlock.NextBlockAddress);
                 tempBlock.ReadFromBinaryFile(dynamicHashing.FileBlockManager.OverFlowFileStream, findingLastBlock.NextBlockAddress);
-                if(tempBlock.ValidRecordsCount < _fileBlockManager.OverflowFileBlockFactor)
+                if(tempBlock.ValidRecordsCount < dynamicHashing.FileBlockManager.OverflowFileBlockFactor)
                 {
                     blocksWithEmptySpaces.Add(tempBlock);
                 }
                 findingLastBlock = tempBlock;
             }
 
-            int recordsNeeded = _fileBlockManager.OverflowFileBlockFactor;
+            int recordsNeeded = dynamicHashing.FileBlockManager.OverflowFileBlockFactor;
             var takingRecordsFrom = findingLastBlock;
             var takenRecords = new List<IDHRecord<T>>();
 
@@ -248,7 +246,7 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
                 
                 var previousBlockAddress = takingRecordsFrom.PreviousBlockAddress;
 
-                if(recordsNeeded < _fileBlockManager.OverflowFileBlockFactor && takingRecordsFrom.ValidRecordsCount <= recordsNeeded)
+                if(recordsNeeded < dynamicHashing.FileBlockManager.OverflowFileBlockFactor && takingRecordsFrom.ValidRecordsCount <= recordsNeeded)
                 {
                     break;
                 } 
@@ -330,7 +328,7 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
                 //newBlockTest.ReadFromBinaryFile(dynamicHashing.FileBlockManager.OverflowFilePath, blockWithEmptySpace.BlockAddress);
             }
 
-            _recordsCount = _fileBlockManager.MainFileBlockFactor;
+            _recordsCount = dynamicHashing.FileBlockManager.MainFileBlockFactor;
             
         } 
         else
@@ -446,7 +444,7 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
     /// <returns>True if the node is valid; otherwise, false.</returns>
     private bool IsValidNode()
     {
-        return _recordsCount >= 0 && _blockAddress != GlobalConstants.InvalidAddress && _fileBlockManager.CurrentMainFileSize != 0;
+        return _recordsCount >= 0 && _blockAddress != GlobalConstants.InvalidAddress && dynamicHashing.FileBlockManager.CurrentMainFileSize != 0;
     }
 
 
@@ -521,7 +519,7 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
     /// <returns>True if the node should be split; otherwise, false.</returns>
     private bool ShouldSplit(List<IDHRecord<T>> records, DHNode<T> node)
     {
-        return records.Count > dynamicHashing.MainBlockFactor && node.Depth < MaxHashSize;
+        return records.Count > dynamicHashing.MainBlockFactor && node.Depth < dynamicHashing.MaxHashSize;
     }
 
     /// <summary>

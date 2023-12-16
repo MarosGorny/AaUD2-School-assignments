@@ -21,19 +21,24 @@ public abstract class RealtyObject : Rectangle
 /// </summary>
 public class Property : RealtyObject, IDHRecord<Property>
 {
-    public int ConscriptionNumber { get; set; } = -1;
+    public int ConscriptionNumber { get; set; }
 
     [Key]
-    public int PropertyNumber { get; set; } = -1;
+    public int PropertyNumber { get; set; }
 
     [StringLength(15)]
     public string Description { get; set; } = "";
     public List<int> PositionedOnParcels { get; private set; } = new List<int>();
 
-    public Property(int conscriptionNumber, string description, GPSRectangle gpsRectangle)
+    public Property() : base("Default Description", new GPSRectangle(new GPSPoint(), new GPSPoint()))
+    {
+    }
+
+    public Property(int propertyNumber, int conscriptionNumber, string description, GPSRectangle gpsRectangle)
         : base(description, gpsRectangle)
     {
         ConscriptionNumber = conscriptionNumber;
+        PropertyNumber = propertyNumber;
         this.SetLowerLeft(gpsRectangle.LowerLeft as GPSPoint);
         this.SetUpperRight(gpsRectangle.UpperRight as GPSPoint);
     }
@@ -64,30 +69,11 @@ public class Property : RealtyObject, IDHRecord<Property>
             + sizeof(int) * 6; // Size for PositionedOnParcels (6 integers)
     }
 
-    public override int GetHashCode()
-    {
-        int hash = 11;
-        int prime = 293;
 
-        try
-        {
-            checked
-            {
-                hash = hash * prime + ConscriptionNumber.GetHashCode();
-                hash = hash * prime + PropertyNumber.GetHashCode();
-            }
-        }
-        catch (OverflowException)
-        {
-            throw new OverflowException("Overflow occurred in GetHashCode method");
-        }
-
-        return hash;
-    }
 
     public BitArray GetHash()
     {
-        int hashCode = this.GetHashCode();
+        int hashCode = PropertyNumber.GetHashCode();
         byte[] bytes = BitConverter.GetBytes(hashCode);
         return new BitArray(bytes);
     }
@@ -127,8 +113,10 @@ public class Property : RealtyObject, IDHRecord<Property>
         if (other is null)
             return false;
 
-        return this.ConscriptionNumber == (other as Property).ConscriptionNumber
-            && this.PropertyNumber == (other as Property).PropertyNumber;
+        //return this.ConscriptionNumber == (other as Property).ConscriptionNumber
+        //    && this.PropertyNumber == (other as Property).PropertyNumber;
+
+        return this.PropertyNumber == (other as Property).PropertyNumber;
     }
 
     public Property FromByteArray(byte[] byteArray)
@@ -187,6 +175,11 @@ public class Parcel : RealtyObject, IDHRecord<Parcel>
         this.SetLowerLeft(gpsRectangle.LowerLeft as GPSPoint);
     }
 
+    public Parcel() : base("Default Description", new GPSRectangle(new GPSPoint(), new GPSPoint()))
+    {
+    }
+
+
     public bool TryAddProperty(int property)
     {
         if (OccupiedByProperties.Count < 5)
@@ -212,35 +205,9 @@ public class Parcel : RealtyObject, IDHRecord<Parcel>
         return size;
     }
 
-    public override int GetHashCode()
-    {
-        int hash = 11; 
-        int prime = 293; 
-
-        try
-        {
-            checked
-            {
-                hash = hash * prime + ParcelNumber.GetHashCode();
-
-                //foreach (var property in OccupiedByProperties)
-                //{
-                //    hash = hash * prime + property.GetHashCode();
-                //}
-            }
-        }
-        catch (OverflowException)
-        {
-            throw new OverflowException("Overflow occurred in GetHashCode method of Parcel");
-        }
-
-        return hash;
-    }
-
-
     public BitArray GetHash()
     {
-        int hashCode = this.GetHashCode();
+        int hashCode = ParcelNumber.GetHashCode();
         byte[] bytes = BitConverter.GetBytes(hashCode);
         return new BitArray(bytes);
     }

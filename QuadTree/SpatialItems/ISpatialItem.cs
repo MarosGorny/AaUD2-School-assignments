@@ -219,6 +219,16 @@ public class GPSPoint : Point
     public LatitudeDirection LatitudeDirection { get; set; }
     public LongitudeDirection LongitudeDirection { get; set; }
 
+    public GPSPoint()
+    : base(0.0, 0.0) // Default values for X and Y
+    {
+
+        LatitudeDirection = LatitudeDirection.N; 
+        LongitudeDirection = LongitudeDirection.E; 
+        X = 0.0 * (double)LatitudeDirection;
+        Y = 0.0 * (double)LongitudeDirection;
+    }
+
     public GPSPoint(LatitudeDirection latDir, double latVal, LongitudeDirection longDir, double longVal)
         : base(latVal, longVal)
     {
@@ -277,10 +287,10 @@ public class GPSPoint : Point
         size += sizeof(double); // Size for X
         size += sizeof(double); // Size for Y
 
-        size += sizeof(int); // Size for LatitudeDirection
-        size += sizeof(int); // Size for LongitudeDirection
-        size += sizeof(double); // Size for X
-        size += sizeof(double); // Size for Y
+        //size += sizeof(int); // Size for LatitudeDirection
+        //size += sizeof(int); // Size for LongitudeDirection
+        //size += sizeof(double); // Size for X
+        //size += sizeof(double); // Size for Y
 
         return size;
     }

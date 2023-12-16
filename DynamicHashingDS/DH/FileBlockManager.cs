@@ -523,4 +523,33 @@ public class FileBlockManager<T> where T : IDHRecord<T>, new()
 
         return fileOutput.ToString();
     }
+
+    //private List<T> GetAllRecordsFromFile(FileStream fileStream, int blockFactor)
+    //{
+    //    List<T> allRecords = new List<T>();
+
+    //    int currentAddress = 0;
+    //    long fileSize = fileStream.Length;
+
+    //    while (currentAddress < fileSize)
+    //    {
+    //        DHBlock<T> block = new DHBlock<T>(blockFactor, currentAddress);
+    //        block.ReadFromBinaryFile(fileStream, currentAddress);
+
+    //        // Cast each record to T and add to the list of all records
+    //        foreach (var record in block.RecordsList)
+    //        {
+    //            if (record is T castedRecord)
+    //            {
+    //                allRecords.Add(castedRecord);
+    //            }
+    //        }
+
+    //        currentAddress += block.GetSize();
+    //    }
+
+    //    return allRecords;
+    //}
+
+
 }

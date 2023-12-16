@@ -19,10 +19,6 @@ public abstract class DHNode<T> where T : IDHRecord<T>, new()
     /// </summary>
     public int Depth { get; set; }
 
-    /// <summary>
-    /// Gets the maximum size of the hash used for indexing.
-    /// </summary>
-    protected int MaxHashSize { get; private set; }
 
     /// <summary>
     /// The DynamicHashing instance to which this node belongs.
@@ -37,7 +33,6 @@ public abstract class DHNode<T> where T : IDHRecord<T>, new()
     public DHNode(DynamicHashing<T> dynamicHashing, DHNode<T> parent)
     {
         this.dynamicHashing = dynamicHashing;
-        MaxHashSize = dynamicHashing.MaxHashSize;
 
         Parent = parent;
         Depth = Parent == null ? 0 : Parent.Depth + 1;

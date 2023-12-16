@@ -129,6 +129,11 @@ public class DynamicHashing<T> where T : IDHRecord<T>, new()
         ((DHInternalNode<T>)_root).ChangeRightExternalNodeAddress(-1,0);
     }
 
+    public List<IDHRecord<T>> GetAllRecords()
+    {
+        return FileBlockManager.GetAllRecords(true);
+    }
+
     /// <summary>
     /// Outputs the current state of the dynamic hashing structure to the console.
     /// </summary>
