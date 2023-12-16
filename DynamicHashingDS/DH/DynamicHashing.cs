@@ -10,10 +10,17 @@ namespace DynamicHashingDS.DH;
 public class DynamicHashing<T> where T : IDHRecord<T>, new()
 {
     private DHNode<T> _root;
+    private FileStream _mainFileStream;
+    private FileStream _overflowFileStream;
+
+    private string _mainFilePath;
+    private string _overflowFilePath;
+
     public int MainBlockFactor { get; private set; }
     public int OverflowBlockFactor { get; private set; }
     public int MaxHashSize { get; private set; }
     public FileBlockManager<T> FileBlockManager { get; private set;}
+
 
     /// <summary>
     /// Initializes a new instance of the DynamicHashing class.
@@ -25,14 +32,26 @@ public class DynamicHashing<T> where T : IDHRecord<T>, new()
     /// <param name="maxHashSize">The maximum size of the hash. If null, it will be calculated based on the type T.</param>
     public DynamicHashing(int mainBlockFactor, int overflowBlockFactor, string mainFilePath, string overflowFilePath, int? maxHashSize = null)
     {
+
+
         InitializeFiles(mainFilePath, overflowFilePath);
         MaxHashSize = maxHashSize ?? new T().GetHash().Length;
         MainBlockFactor = mainBlockFactor;
         OverflowBlockFactor = overflowBlockFactor;
-        FileBlockManager = new FileBlockManager<T>(mainFilePath, overflowFilePath, mainBlockFactor, overflowBlockFactor);
+        FileBlockManager = new FileBlockManager<T>(_mainFileStream, _overflowFileStream, mainBlockFactor, overflowBlockFactor);
         InitializeRootNode();
 
         //OutputSequentialFile();
+    }
+
+    public void CloseFileStreams()
+    {
+        _mainFileStream?.Close();
+        _overflowFileStream?.Close();
+
+        // Set the file stream references to null after closing
+        _mainFileStream = null;
+        _overflowFileStream = null;
     }
 
     public IDHRecord<T>? Delete(IDHRecord<T> record)
@@ -68,11 +87,24 @@ public class DynamicHashing<T> where T : IDHRecord<T>, new()
     /// <param name="overflowFilePath">The path for the overflow file.</param>
     private void InitializeFiles(string mainFilePath, string overflowFilePath)
     {
+
+        // Close existing file streams if they are open
+        CloseFileStreams();
+
         DeleteFileIfExists(mainFilePath);
-        File.Create(mainFilePath).Close();
+        //File.Create(mainFilePath).Close();
 
         DeleteFileIfExists(overflowFilePath);
-        File.Create(overflowFilePath).Close();
+        //File.Create(overflowFilePath).Close();
+
+        _mainFileStream = new FileStream(mainFilePath, FileMode.OpenOrCreate, FileAccess.ReadWrite);
+        _overflowFileStream = new FileStream(overflowFilePath, FileMode.OpenOrCreate, FileAccess.ReadWrite);
+        _mainFilePath = mainFilePath;
+        _overflowFilePath = overflowFilePath;
+
+        // Clear the contents of the files
+        _mainFileStream.SetLength(0);
+        _overflowFileStream.SetLength(0);
     }
 
     /// <summary>
@@ -117,5 +149,25 @@ public class DynamicHashing<T> where T : IDHRecord<T>, new()
         {
             Console.WriteLine($"{new string(' ', depth * 2)}External Node at Depth {depth} with {externalNode._recordsCount} records");
         }
+    }
+
+    public void Reset()
+    {
+        // Close the file streams
+        CloseFileStreams();
+
+        // Re-open the file streams
+        _mainFileStream = new FileStream(_mainFilePath, FileMode.OpenOrCreate, FileAccess.ReadWrite);
+        _overflowFileStream = new FileStream(_overflowFilePath, FileMode.OpenOrCreate, FileAccess.ReadWrite);
+
+        // Reset other internal states as needed
+        // For example, re-initialize the root node, clear records, etc.
+        InitializeRootNode();
+    }
+
+
+    ~DynamicHashing()
+    {
+        CloseFileStreams();
     }
 }

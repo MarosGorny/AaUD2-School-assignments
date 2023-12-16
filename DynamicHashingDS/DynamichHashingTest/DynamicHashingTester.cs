@@ -23,77 +23,72 @@ class DynamicHashingTester
     public DynamicHashingTester(int mainBlockFactor, int overflowBlockFactor, int maxHashSize, 
                                 double insertProbability = 0.33, double deleteProbability = 0.33, double findProbability = 0.34, bool useSelectedIds = false)
     {
-        InitializeDynamicHashing(mainBlockFactor, overflowBlockFactor, maxHashSize);
-        InitializeProbabilities(insertProbability, deleteProbability, findProbability);
-        InitializeTestEnvironment(useSelectedIds, mainBlockFactor, maxHashSize);
+        //InitializeDynamicHashing(mainBlockFactor, overflowBlockFactor, maxHashSize);
+        //InitializeProbabilities(insertProbability, deleteProbability, findProbability);
+        //InitializeTestEnvironment(useSelectedIds, mainBlockFactor, maxHashSize);
 
         //GetMainBlock size
         var mainBlock = new DHBlock<Osoba>(_mainBlockFactor, _maxHashSize);
         _blockSize = mainBlock.GetSize();
+
+        Reinitialize(1, 1, 1, useSelectedIds: false);
+        RunRandomTest(1000, true);
     }
 
     public void RunComplexTesting()
     {
+
+        //DynamicHashingTester tester = new DynamicHashingTester(1, 1, 1); // Initialize with default values
+
         for (int i = 1; i < 21; i = i + 10)
         {
 
             for (int j = 1; j < 12; j = j + 5)
             {
-                //DynamicHashingTester tester = new DynamicHashingTester(j, -1, i, useSelectedIds: true);
-                //tester.RunRandomTest(10000, false);
+                //Reinitialize(j, -1, i, useSelectedIds: true);
+                //RunRandomTest(1000, false);
 
-                //DynamicHashingTester tester2 = new DynamicHashingTester(j, -1, i,
-                //    insertProbability: 0.8,
-                //    deleteProbability: 0.1,
-                //    findProbability: 0.1,
-                //    useSelectedIds: true);
-                //tester2.RunRandomTest(10000,false);
+                //Reinitialize(j, -1, i,
+                //                       insertProbability: 0.8,
+                //                                          deleteProbability: 0.1,
+                //                                                             findProbability: 0.1,
+                //                                                                                useSelectedIds: true);
+                //RunRandomTest(1000, false);
 
-                //DynamicHashingTester tester3 = new DynamicHashingTester(j, -1, i,
-                //    insertProbability: 0.1,
-                //    deleteProbability: 0.8,
-                //    findProbability: 0.1,
-                //    useSelectedIds: true);
-                //tester3.InsertBatch(j * i);
-                //tester2.RunRandomTest(10000, false);
+                //Reinitialize(j, -1, i,
+                //                       insertProbability: 0.1,
+                //                                          deleteProbability: 0.8,
+                //                                                             findProbability: 0.1,
+                //                                                                                useSelectedIds: true);
+                //InsertBatch(j * i);
+                //RunRandomTest(1000, false);
 
-                //DynamicHashingTester tester4 = new DynamicHashingTester(j, -1, i,
+                //Reinitialize(j, -1, i,
                 //    insertProbability: 0.1,
                 //    deleteProbability: 0.1,
                 //    findProbability: 0.8,
                 //    useSelectedIds: true);
-                //tester4.InsertBatch(j * i);
-                //tester2.RunRandomTest(10000, false);
+                //InsertBatch(j * i);
+                //RunRandomTest(1000, false);
 
                 /////////////////////////////////
-                
+
                 for (int k = 1; k < 3; k++)
                 {
-                    DynamicHashingTester tester = new DynamicHashingTester(j, k, i, useSelectedIds: false);
-                    tester.RunRandomTest(1000, true);
+                    //DynamicHashingTester tester = new DynamicHashingTester(j, k, i, useSelectedIds: false);
+                    Reinitialize(j, k, i, useSelectedIds: false);
+                    RunRandomTest(10000, true);
 
-                    DynamicHashingTester tester2 = new DynamicHashingTester(j, k, i,
-                        insertProbability: 0.8,
-                        deleteProbability: 0.1,
-                        findProbability: 0.1,
-                        useSelectedIds: false);
-                    tester2.RunRandomTest(1000, true);
+                    Reinitialize(j, k, i, 0.8, 0.1, 0.1, false);
+                    RunRandomTest(10000, true);
 
-                    DynamicHashingTester tester3 = new DynamicHashingTester(j, k, i,
-                        insertProbability: 0.1,
-                        deleteProbability: 0.8,
-                        findProbability: 0.1,
-                        useSelectedIds: false);
-                    tester3.InsertBatch(j * i);
-                    tester2.RunRandomTest(1000, true);
+                    Reinitialize(j, k, i, 0.1, 0.8, 0.1, false);
+                    InsertBatch(j * i);
+                    RunRandomTest(10000, true);
 
-                    DynamicHashingTester tester4 = new DynamicHashingTester(j, k, i,
-                        insertProbability: 0.1,
-                        deleteProbability: 0.1,
-                        findProbability: 0.8,
-                        useSelectedIds: false);
-                    tester4.InsertBatch(j * i);
-                    tester2.RunRandomTest(1000, true);
+                    Reinitialize(j, k, i, 0.1, 0.1, 0.8, false);
+                    InsertBatch(j * i);
+                    RunRandomTest(10000, true);
                 }
 
 
@@ -102,8 +97,45 @@ class DynamicHashingTester
         }
     }
 
+
+    public void Reinitialize(int mainBlockFactor, int overflowBlockFactor, int maxHashSize,
+                            double insertProbability = 0.33, double deleteProbability = 0.33,
+                            double findProbability = 0.34, bool useSelectedIds = false)
+    {
+        // Reinitialize the properties
+        _mainBlockFactor = mainBlockFactor;
+        _overflowBlockFactor = overflowBlockFactor;
+        _maxHashSize = maxHashSize;
+        _insertProbability = insertProbability;
+        _deleteProbability = deleteProbability + insertProbability;
+        _findProbability = findProbability;
+        _useSelectedIds = useSelectedIds;
+
+        var mainBlock = new DHBlock<Osoba>(_mainBlockFactor, _maxHashSize);
+        _blockSize = mainBlock.GetSize();
+
+        ResetData();
+
+        // Reinitialize the dynamic hashing instance
+        InitializeDynamicHashing(mainBlockFactor, overflowBlockFactor, maxHashSize);
+
+
+
+        // Reinitialize the test environment
+        InitializeTestEnvironment(useSelectedIds, mainBlockFactor, maxHashSize);
+
+
+
+
+    }
+
     private void InitializeDynamicHashing(int mainBlockFactor, int overflowBlockFactor, int maxHashSize)
     {
+        if (_dynamicHashing != null)
+        {
+            _dynamicHashing.CloseFileStreams();
+        }
+
         _dynamicHashing = new DynamicHashing<Osoba>(mainBlockFactor, overflowBlockFactor, "mainFilePath.dat", "overflowFilePath.dat", maxHashSize);
 
         _insertedRecords = new List<Osoba>();
@@ -163,16 +195,32 @@ class DynamicHashingTester
 
     public void RunRandomTest(int iterations, bool withOverFlowFile)
     {
-        ResetAvailableIDsAndDynamicHashing();
+        GetAvailableData();
         PerformRandomOperations(iterations, withOverFlowFile);
         VerifyStructure(withOverFlowFile);
+
+        _dynamicHashing.Reset();
     }
 
-    private void ResetAvailableIDsAndDynamicHashing()
+    private void ResetData()
     {
-        _insertedRecords.Clear();
-        _availableNamesSurnames.Clear();
-        _dynamicHashing = new DynamicHashing<Osoba>(_mainBlockFactor, _overflowBlockFactor, "mainFilePath.dat", "overflowFilePath.dat", _maxHashSize);
+        if(_insertedRecords != null)
+            _insertedRecords.Clear();
+
+        if(_availableNamesSurnames != null)
+            _availableNamesSurnames.Clear();
+    }
+
+    private void GetAvailableData()
+    {
+
+
+        //if (_dynamicHashing != null)
+        //{
+        //    _dynamicHashing.CloseFileStreams();
+        //}
+
+        //_dynamicHashing = new DynamicHashing<Osoba>(_mainBlockFactor, _overflowBlockFactor, "mainFilePath.dat", "overflowFilePath.dat", _maxHashSize);
         for (int i = 0; i < _idRange; i++)
         {
             _availableNamesSurnames.Add(GenerateRandomString(10) + GenerateRandomString(12));
@@ -184,7 +232,7 @@ class DynamicHashingTester
         for (int i = 0; i < iterations; i++)
         {
             //13 where it's bugged
-            if(i == 214)
+            if(i == 3)
             {
                 //12 external has wrong parent
                 Console.WriteLine(  );

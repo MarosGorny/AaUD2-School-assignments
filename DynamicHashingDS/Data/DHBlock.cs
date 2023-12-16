@@ -1,4 +1,6 @@
-﻿using System.Reflection.Metadata.Ecma335;
+﻿using System.IO;
+using System.Reflection.Metadata.Ecma335;
+using System.Text;
 
 namespace DynamicHashingDS.Data;
 
@@ -230,67 +232,55 @@ public class DHBlock<T> where T : IDHRecord<T>, new()
     }
 
 
-    /// <summary>
-    /// Writes the block to a binary file at a specified address.
-    /// </summary>
-    /// <param name="filePath">The file path to write to.</param>
-    /// <param name="blockAddress">The address at which to write the block.</param>
-    public void WriteToBinaryFile(string filePath, int blockAddress)
+
+    public void WriteToBinaryFile(FileStream fileStream, int blockAddress)
     {
         byte[] blockBytes = ToByteArray();
 
-        using (FileStream fileStream = new FileStream(filePath, FileMode.OpenOrCreate, FileAccess.Write))
-        {
-            using (BinaryWriter binaryWriter = new BinaryWriter(fileStream))
-            {
-                // Seek to the specified block address
-                fileStream.Seek(blockAddress, SeekOrigin.Begin);
+        // Assuming fileStream is already open and set up for writing
+        // Seek to the specified block address
+        fileStream.Seek(blockAddress, SeekOrigin.Begin);
 
-                // Write the block at the current position
-                binaryWriter.Write(blockBytes);
-            }
-        }
+        // Write the block at the current position
+        // Write the block at the current position
+        BinaryWriter binaryWriter = new BinaryWriter(fileStream, Encoding.Default, leaveOpen: true);
+        binaryWriter.Write(blockBytes);
+
+        // Optionally, you can flush the writer to ensure data is written to the file
+        //binaryWriter.Flush();
     }
 
-    /// <summary>
-    /// Reads a block from a binary file at a specified address.
-    /// </summary>
-    /// <param name="filePath">The file path to read from.</param>
-    /// <param name="blockAddress">The address at which to read the block.</param>
-    public void ReadFromBinaryFile(string filePath, int blockAddress)
+    public void ReadFromBinaryFile(FileStream fileStream, int blockAddress)
     {
-        using (FileStream fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
-        {
-            using (BinaryReader binaryReader = new BinaryReader(fileStream))
-            {
-                // Seek to the specified block address
-                fileStream.Seek(blockAddress, SeekOrigin.Begin);
+        // Seek to the specified block address
+        fileStream.Seek(blockAddress, SeekOrigin.Begin);
 
-                // Read the block at the current position
-                int blockSize = GetSize(); 
-                byte[] blockBytes = binaryReader.ReadBytes(blockSize);
+        // Read the block at the current position
+        BinaryReader binaryReader = new BinaryReader(fileStream, Encoding.Default, leaveOpen: true);
+        int blockSize = GetSize();
+        byte[] blockBytes = binaryReader.ReadBytes(blockSize);
 
-                // Deserialize from the byte array
-                FromByteArray(blockBytes);
-            }
-        }
+        // Deserialize from the byte array
+        FromByteArray(blockBytes);
+
+        // Optionally, you can explicitly dispose of the binaryReader when done
+        //binaryReader.Dispose();
+
     }
 
-    public void ReadBlockInfoFromBinaryFile(string filePath, int blockAddress)
+    public void ReadBlockInfoFromBinaryFile(FileStream fileStream, int blockAddress)
     {
-        using (FileStream fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
-        {
-            using (BinaryReader binaryReader = new BinaryReader(fileStream))
-            {
-                // Seek to the specified block address
-                fileStream.Seek(blockAddress, SeekOrigin.Begin);
+        fileStream.Seek(blockAddress, SeekOrigin.Begin);
 
-                // Read only the ValidRecordsCount, PreviousBlockAddress, and NextBlockAddress
-                ValidRecordsCount = binaryReader.ReadInt32();
-                PreviousBlockAddress = binaryReader.ReadInt32();
-                NextBlockAddress = binaryReader.ReadInt32();
-            }
-        }
+        // Read only the ValidRecordsCount, PreviousBlockAddress, and NextBlockAddress
+        BinaryReader binaryReader = new BinaryReader(fileStream, Encoding.Default, leaveOpen: true);
+        ValidRecordsCount = binaryReader.ReadInt32();
+        PreviousBlockAddress = binaryReader.ReadInt32();
+        NextBlockAddress = binaryReader.ReadInt32();
+
+        // Optionally, you can explicitly dispose of the binaryReader when done
+        //binaryReader.Dispose();
+
     }
 }
 

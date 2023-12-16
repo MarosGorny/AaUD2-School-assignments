@@ -90,7 +90,7 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
         while (block.NextBlockAddress != GlobalConstants.InvalidAddress)
         {
             block = new DHBlock<T>(dynamicHashing.FileBlockManager.OverflowFileBlockFactor, block.NextBlockAddress);
-            block.ReadFromBinaryFile(dynamicHashing.FileBlockManager.OverflowFilePath, block.BlockAddress);
+            block.ReadFromBinaryFile(dynamicHashing.FileBlockManager.OverFlowFileStream, block.BlockAddress);
 
             if (block.TryFind(record, out foundRecord))
             {
@@ -146,7 +146,7 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
         {
 
             TotalRecordsCount--;
-            block.WriteToBinaryFile(dynamicHashing.FileBlockManager.MainFilePath, block.BlockAddress);
+            block.WriteToBinaryFile(dynamicHashing.FileBlockManager.MainFileStream, block.BlockAddress);
             HandlePostDeletionActions(block,false, blocksWithEmptySpaces, mainBlockHasEmptySpace);
 
             ////Maybe use for striasanie, but check parents reffereces
@@ -163,7 +163,7 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
             {
 
                 block = new DHBlock<T>(dynamicHashing.FileBlockManager.OverflowFileBlockFactor, block.NextBlockAddress);
-                block.ReadFromBinaryFile(dynamicHashing.FileBlockManager.OverflowFilePath, block.BlockAddress);
+                block.ReadFromBinaryFile(dynamicHashing.FileBlockManager.OverFlowFileStream, block.BlockAddress);
                 
 
                 deletedRecord = block.Delete((T)record);
@@ -176,7 +176,7 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
                 if (deletedRecord != null)
                 {
                     TotalRecordsCount--;
-                    block.WriteToBinaryFile(dynamicHashing.FileBlockManager.OverflowFilePath, block.BlockAddress);
+                    block.WriteToBinaryFile(dynamicHashing.FileBlockManager.OverFlowFileStream, block.BlockAddress);
                     if(isFirstIteration && block.NextBlockAddress == GlobalConstants.InvalidAddress)
                     {
                         blocksWithEmptySpaces.Clear();
@@ -229,7 +229,7 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
             while(findingLastBlock.NextBlockAddress != GlobalConstants.InvalidAddress)
             {
                 var tempBlock = new DHBlock<T>(dynamicHashing.FileBlockManager.OverflowFileBlockFactor, findingLastBlock.NextBlockAddress);
-                tempBlock.ReadFromBinaryFile(dynamicHashing.FileBlockManager.OverflowFilePath, findingLastBlock.NextBlockAddress);
+                tempBlock.ReadFromBinaryFile(dynamicHashing.FileBlockManager.OverFlowFileStream, findingLastBlock.NextBlockAddress);
                 if(tempBlock.ValidRecordsCount < _fileBlockManager.OverflowFileBlockFactor)
                 {
                     blocksWithEmptySpaces.Add(tempBlock);
@@ -241,7 +241,7 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
             var takingRecordsFrom = findingLastBlock;
             var takenRecords = new List<IDHRecord<T>>();
 
-            takingRecordsFrom.ReadFromBinaryFile(dynamicHashing.FileBlockManager.OverflowFilePath, takingRecordsFrom.BlockAddress);
+            takingRecordsFrom.ReadFromBinaryFile(dynamicHashing.FileBlockManager.OverFlowFileStream, takingRecordsFrom.BlockAddress);
             //Take records from the last block
             while (recordsNeeded > 0)
             {
@@ -287,7 +287,7 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
                 } 
                 else
                 {
-                    oldBlock.WriteToBinaryFile(dynamicHashing.FileBlockManager.OverflowFilePath, oldBlock.BlockAddress);
+                    oldBlock.WriteToBinaryFile(dynamicHashing.FileBlockManager.OverFlowFileStream, oldBlock.BlockAddress);
                 }
 
 
@@ -303,11 +303,11 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
 
                 if(blocksWithEmptySpaces.Count == 0 && mainBlockHasEmptySpace)
                 {
-                    blockWithEmptySpace.ReadFromBinaryFile(dynamicHashing.FileBlockManager.MainFilePath, blockWithEmptySpace.BlockAddress);
+                    blockWithEmptySpace.ReadFromBinaryFile(dynamicHashing.FileBlockManager.MainFileStream, blockWithEmptySpace.BlockAddress);
                 } 
                 else
                 {
-                    blockWithEmptySpace.ReadFromBinaryFile(dynamicHashing.FileBlockManager.OverflowFilePath, blockWithEmptySpace.BlockAddress);
+                    blockWithEmptySpace.ReadFromBinaryFile(dynamicHashing.FileBlockManager.OverFlowFileStream, blockWithEmptySpace.BlockAddress);
                 }
 
                 int freeSpaces = blockWithEmptySpace.MaxRecordsCount - blockWithEmptySpace.ValidRecordsCount;
@@ -318,11 +318,11 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
 
                 if (blocksWithEmptySpaces.Count == 0 && mainBlockHasEmptySpace)
                 {
-                    blockWithEmptySpace.WriteToBinaryFile(dynamicHashing.FileBlockManager.MainFilePath, blockWithEmptySpace.BlockAddress);
+                    blockWithEmptySpace.WriteToBinaryFile(dynamicHashing.FileBlockManager.MainFileStream, blockWithEmptySpace.BlockAddress);
                 }
                 else
                 {
-                    blockWithEmptySpace.WriteToBinaryFile(dynamicHashing.FileBlockManager.OverflowFilePath, blockWithEmptySpace.BlockAddress);
+                    blockWithEmptySpace.WriteToBinaryFile(dynamicHashing.FileBlockManager.OverFlowFileStream, blockWithEmptySpace.BlockAddress);
                 }
 
                     
@@ -422,11 +422,11 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
                 // If there are still valid records, update the block in the file
                 if (isOverflow)
                 {
-                    block.WriteToBinaryFile(dynamicHashing.FileBlockManager.OverflowFilePath, block.BlockAddress);
+                    block.WriteToBinaryFile(dynamicHashing.FileBlockManager.OverFlowFileStream, block.BlockAddress);
                 }
                 else
                 {
-                    block.WriteToBinaryFile(dynamicHashing.FileBlockManager.MainFilePath, block.BlockAddress);
+                    block.WriteToBinaryFile(dynamicHashing.FileBlockManager.MainFileStream, block.BlockAddress);
                 }
 
 
@@ -509,7 +509,7 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
     private DHBlock<T> ReadCurrentBlock()
     {
         var currentBlock = new DHBlock<T>(dynamicHashing.MainBlockFactor, _blockAddress);
-        currentBlock.ReadFromBinaryFile(dynamicHashing.FileBlockManager.MainFilePath, _blockAddress);
+        currentBlock.ReadFromBinaryFile(dynamicHashing.FileBlockManager.MainFileStream, _blockAddress);
         return currentBlock;
     }
 
@@ -691,7 +691,7 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
             if (overflowRecords.Any())
             {
                 var currentBlock = new DHBlock<T>(dynamicHashing.FileBlockManager.MainFileBlockFactor, finalExternalNode._blockAddress);
-                currentBlock.ReadFromBinaryFile(dynamicHashing.FileBlockManager.MainFilePath, finalExternalNode._blockAddress);
+                currentBlock.ReadFromBinaryFile(dynamicHashing.FileBlockManager.MainFileStream, finalExternalNode._blockAddress);
                 bool isFirstIteration = true;
                 while (currentBlock.NextBlockAddress != GlobalConstants.InvalidAddress)
                 {
@@ -701,7 +701,7 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
                        int recordsToInsertOverflow = Math.Min(overflowRecords.Count, dynamicHashing.FileBlockManager.OverflowFileBlockFactor - currentBlock.ValidRecordsCount);
                         recordsForInsertion = overflowRecords.Take(recordsToInsertOverflow).ToList();
                         currentBlock.AddRecords(recordsForInsertion);
-                        currentBlock.WriteToBinaryFile(dynamicHashing.FileBlockManager.OverflowFilePath, currentBlock.BlockAddress);
+                        currentBlock.WriteToBinaryFile(dynamicHashing.FileBlockManager.OverFlowFileStream, currentBlock.BlockAddress);
                         overflowRecords = overflowRecords.Skip(recordsToInsertOverflow).ToList();
                         if(overflowRecords.Count == 0)
                         {
@@ -709,7 +709,7 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
                         }
 
                     }
-                    currentBlock.ReadBlockInfoFromBinaryFile(dynamicHashing.FileBlockManager.OverflowFilePath, currentBlock.NextBlockAddress);
+                    currentBlock.ReadBlockInfoFromBinaryFile(dynamicHashing.FileBlockManager.OverFlowFileStream, currentBlock.NextBlockAddress);
                     isFirstIteration = false;
                 }
 
@@ -718,15 +718,15 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
                     var newBlock = new DHBlock<T>(dynamicHashing.FileBlockManager.OverflowFileBlockFactor, dynamicHashing.FileBlockManager.GetFreeBlock(true));
                     newBlock.PreviousBlockAddress = currentBlock.BlockAddress;
                     newBlock.AddRecords(overflowRecords);
-                    newBlock.WriteToBinaryFile(dynamicHashing.FileBlockManager.OverflowFilePath, newBlock.BlockAddress);
+                    newBlock.WriteToBinaryFile(dynamicHashing.FileBlockManager.OverFlowFileStream, newBlock.BlockAddress);
                     currentBlock.NextBlockAddress = newBlock.BlockAddress;
                     if(isFirstIteration)
                     {
-                        currentBlock.WriteToBinaryFile(dynamicHashing.FileBlockManager.MainFilePath, currentBlock.BlockAddress);
+                        currentBlock.WriteToBinaryFile(dynamicHashing.FileBlockManager.MainFileStream, currentBlock.BlockAddress);
                     } 
                     else
                     {
-                        currentBlock.WriteToBinaryFile(dynamicHashing.FileBlockManager.OverflowFilePath, currentBlock.BlockAddress);
+                        currentBlock.WriteToBinaryFile(dynamicHashing.FileBlockManager.OverFlowFileStream, currentBlock.BlockAddress);
                     }
                     //currentBlock.WriteToBinaryFile(dynamicHashing.FileBlockManager.OverflowFilePath, currentBlock.BlockAddress);
                 }
@@ -745,7 +745,7 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
     {
 
         var currentBlock = new DHBlock<T>(fileBlockManager.MainFileBlockFactor, lastMainBlockAddress);
-        currentBlock.ReadFromBinaryFile(fileBlockManager.MainFilePath, lastMainBlockAddress);
+        currentBlock.ReadFromBinaryFile(fileBlockManager.MainFileStream, lastMainBlockAddress);
 
 
         if (currentBlock.NextBlockAddress == GlobalConstants.InvalidAddress)
@@ -755,10 +755,10 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
 
             firstOverflowBlock.PreviousBlockAddress = currentBlock.BlockAddress;
             currentBlock.NextBlockAddress = firstOverflowBlock.BlockAddress;
-            currentBlock.WriteToBinaryFile(fileBlockManager.MainFilePath, currentBlock.BlockAddress);
+            currentBlock.WriteToBinaryFile(fileBlockManager.MainFileStream, currentBlock.BlockAddress);
 
             firstOverflowBlock.AddRecord(record);
-            firstOverflowBlock.WriteToBinaryFile(fileBlockManager.OverflowFilePath, firstOverflowBlock.BlockAddress);
+            firstOverflowBlock.WriteToBinaryFile(fileBlockManager.OverFlowFileStream, firstOverflowBlock.BlockAddress);
 
             return true;
         }
@@ -767,7 +767,7 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
         {
             //Read next block
             var nextBlock = new DHBlock<T>(fileBlockManager.OverflowFileBlockFactor, currentBlock.NextBlockAddress);        
-            nextBlock.ReadFromBinaryFile(fileBlockManager.OverflowFilePath, currentBlock.NextBlockAddress);
+            nextBlock.ReadFromBinaryFile(fileBlockManager.OverFlowFileStream, currentBlock.NextBlockAddress);
 
             //Check if record already exists
             foreach (var rec in nextBlock.RecordsList)
@@ -782,7 +782,7 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
             if (nextBlock.ValidRecordsCount < fileBlockManager.OverflowFileBlockFactor)
             {
                 nextBlock.AddRecord(record);
-                nextBlock.WriteToBinaryFile(fileBlockManager.OverflowFilePath, nextBlock.BlockAddress);
+                nextBlock.WriteToBinaryFile(fileBlockManager.OverFlowFileStream, nextBlock.BlockAddress);
                 return true;
             } 
 
@@ -792,10 +792,10 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
                 var nextNextBlock = new DHBlock<T>(fileBlockManager.OverflowFileBlockFactor, fileBlockManager.GetFreeBlock(true));
                 nextNextBlock.PreviousBlockAddress = nextBlock.BlockAddress;
                 nextNextBlock.AddRecord(record);
-                nextNextBlock.WriteToBinaryFile(fileBlockManager.OverflowFilePath, nextNextBlock.BlockAddress);
+                nextNextBlock.WriteToBinaryFile(fileBlockManager.OverFlowFileStream, nextNextBlock.BlockAddress);
 
                 nextBlock.NextBlockAddress = nextNextBlock.BlockAddress;
-                nextBlock.WriteToBinaryFile(fileBlockManager.OverflowFilePath, nextBlock.BlockAddress);
+                nextBlock.WriteToBinaryFile(fileBlockManager.OverFlowFileStream, nextBlock.BlockAddress);
                 return true;
             } 
             else
@@ -827,7 +827,7 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
             }
         }
         block.AddRecord(record);
-        block.WriteToBinaryFile(dynamicHashing.FileBlockManager.MainFilePath, _blockAddress);
+        block.WriteToBinaryFile(dynamicHashing.FileBlockManager.MainFileStream, _blockAddress);
         _recordsCount++;
     }
 
@@ -837,7 +837,7 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
         EnsureBlockAddress();
         var block = ReadOrCreateBlock(blockFactor);
         block.AddRecords(records);
-        block.WriteToBinaryFile(dynamicHashing.FileBlockManager.MainFilePath, _blockAddress);
+        block.WriteToBinaryFile(dynamicHashing.FileBlockManager.MainFileStream, _blockAddress);
         _recordsCount += records.Count;
     }
 
@@ -866,7 +866,7 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
         var block = new DHBlock<T>(blockFactor, _blockAddress);
         if (_recordsCount > 0)
         {
-            block.ReadFromBinaryFile(dynamicHashing.FileBlockManager.MainFilePath, _blockAddress);
+            block.ReadFromBinaryFile(dynamicHashing.FileBlockManager.MainFileStream, _blockAddress);
         }
         return block;
     }
