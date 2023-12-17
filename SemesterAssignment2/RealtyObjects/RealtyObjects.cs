@@ -69,6 +69,16 @@ public class Property : RealtyObject, IDHRecord<Property>
         throw new Exception("Property can only be positioned on 6 parcels.");
     }
 
+    public bool TryRemoveParcel(int parcel)
+    {
+        if (PositionedOnParcels.Count > 0)
+        {
+            PositionedOnParcels.Remove(parcel);
+            return true;
+        }
+        return false;
+    }
+
     public void RemoveParcel(int parcel)
     {
         PositionedOnParcels.Remove(parcel);
@@ -224,9 +234,14 @@ public class Parcel : RealtyObject, IDHRecord<Parcel>
         throw new Exception("Parcel can only be occupied by 5 properties.");
     }
 
-    public void RemoveProperty(int property)
+    public bool TryRemoveProperty(int property)
     {
-        OccupiedByProperties.Remove(property);
+        if (OccupiedByProperties.Count > 0)
+        {
+            OccupiedByProperties.Remove(property);
+            return true;
+        }
+        return false;
     }
 
     public int GetSize()

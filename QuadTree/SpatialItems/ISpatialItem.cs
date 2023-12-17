@@ -167,6 +167,10 @@ public class Rectangle : ISpatialItem
     #region Overrides
     public static bool operator ==(Rectangle left, Rectangle right)
     {
+        if(right is null)
+        {
+            return false;
+        }
         return left.LowerLeft == right.LowerLeft && left.UpperRight == right.UpperRight;
     }
 

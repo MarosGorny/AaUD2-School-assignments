@@ -239,13 +239,68 @@ public class ApplicationLogicDH
 
     public bool DeleteParcel(int conscriptionNumber)
     {
-        var parcel = _dynamicHashingParcels.Delete(new Parcel(conscriptionNumber, "", new GPSRectangle(new GPSPoint(), new GPSPoint())));
+        var parcel = _dynamicHashingParcels.Delete(new Parcel(conscriptionNumber, "", new GPSRectangle(new GPSPoint(), new GPSPoint()))) as Parcel;
+        if(parcel == null)
+        {
+            return false;
+        }
+        
+        
+        var quadTreeParcel = _quadTreeParcels.Delete(new QuadTreeObject<int, string>(conscriptionNumber, "",parcel.Bounds));
+
+        var properties = _quadTreeProperties.Find(quadTreeParcel);
+
+        foreach(var connectedProperty in properties)
+        {
+            var found = _dynamicHashingProperties.TryFind(new Property(connectedProperty.Key, -1, "", new GPSRectangle(new GPSPoint(), new GPSPoint())), out var foundProperty, out var foundBlock, out var isOverFlowBlock);
+            if(found)
+            {
+                ((Property)foundProperty).TryRemoveParcel(conscriptionNumber);
+                foundBlock.RecordsList[foundBlock.RecordsList.IndexOf(foundProperty)] = foundProperty;
+                if (isOverFlowBlock)
+                {
+                    foundBlock.WriteToBinaryFile(_dynamicHashingProperties.FileBlockManager.OverFlowFileStream, foundBlock.BlockAddress);
+                }
+                else
+                {
+                    foundBlock.WriteToBinaryFile(_dynamicHashingProperties.FileBlockManager.MainFileStream, foundBlock.BlockAddress);
+                }
+            }
+        }      
+
         return parcel != null;
     }
 
     public bool DeleteProperty(int propertyNumber)
     {
-        var property = _dynamicHashingProperties.Delete(new Property(propertyNumber, -1, "", new GPSRectangle(new GPSPoint(), new GPSPoint())) );
+        var property = _dynamicHashingProperties.Delete(new Property(propertyNumber, -1, "", new GPSRectangle(new GPSPoint(), new GPSPoint()))) as Property;
+        if(property == null)
+        {
+            return false;
+        }
+        var quadTreeProperty = _quadTreeProperties.Delete(new QuadTreeObject<int, string>(propertyNumber, "", property.Bounds));
+
+        var parcels = _quadTreeParcels.Find(quadTreeProperty);
+
+        foreach(var connectedParcel in parcels)
+        {
+            var found = _dynamicHashingParcels.TryFind(new Parcel(connectedParcel.Key, "", new GPSRectangle(new GPSPoint(), new GPSPoint())), out var foundParcel, out var foundBlock, out var isOverFlowBlock);
+            if(found)
+            {
+                ((Parcel)foundParcel).TryRemoveProperty(propertyNumber);
+                foundBlock.RecordsList[foundBlock.RecordsList.IndexOf(foundParcel)] = foundParcel;
+                if (isOverFlowBlock)
+                {
+                    foundBlock.WriteToBinaryFile(_dynamicHashingParcels.FileBlockManager.OverFlowFileStream, foundBlock.BlockAddress);
+                }
+                else
+                {
+                    foundBlock.WriteToBinaryFile(_dynamicHashingParcels.FileBlockManager.MainFileStream, foundBlock.BlockAddress);
+                }
+            }
+        }
+
+
         return property != null;
     }
 
