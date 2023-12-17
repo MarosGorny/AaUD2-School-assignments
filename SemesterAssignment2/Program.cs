@@ -16,15 +16,18 @@ namespace SemesterAssignment2
             Parcel parcel = new Parcel(1, "Parcel 1", new GPSRectangle(new GPSPoint(LatitudeDirection.N, 0, LongitudeDirection.E, 0), new GPSPoint(LatitudeDirection.N, 10, LongitudeDirection.E, 50)));
             Property property = new Property(2,200, "Property 1", new GPSRectangle(new GPSPoint(LatitudeDirection.N, 0, LongitudeDirection.E, 0), new GPSPoint(LatitudeDirection.N, 10, LongitudeDirection.E, 50)));
 
+            applicationLogicDH.AddObject(property);
             applicationLogicDH.AddObject(parcel);
             //applicationLogicDH.AddObject(parcel);
             var parcels = applicationLogicDH.GetAllParcels();
+            var properties = applicationLogicDH.GetAllProperties();
+
             Parcel editParcel = new Parcel(1, "Parcel 2", new GPSRectangle(new GPSPoint(LatitudeDirection.N, 0, LongitudeDirection.E, 0), new GPSPoint(LatitudeDirection.N, 10, LongitudeDirection.E, 50)));
             applicationLogicDH.EditParcel(editParcel);
 
-            applicationLogicDH.AddObject(property);
+            
             parcels = applicationLogicDH.GetAllParcels();
-            var properties = applicationLogicDH.GetAllProperties();
+            
 
             Property editProperty = new Property(2, 200, "Property 3", new GPSRectangle(new GPSPoint(LatitudeDirection.N, 0, LongitudeDirection.E, 0), new GPSPoint(LatitudeDirection.N, 10, LongitudeDirection.E, 50)));
             applicationLogicDH.EditProperty(editProperty);

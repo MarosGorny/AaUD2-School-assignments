@@ -16,6 +16,20 @@ public abstract class RealtyObject : Rectangle
     }
 }
 
+public class PropertyQuadObject
+{
+    public int PropertyNumber { get; set; }
+    public string Description { get; set; }
+    public GPSRectangle Bounds { get; set; }
+
+    public PropertyQuadObject(int propertyNumber, int conscriptionNumber, string description, GPSRectangle bounds)
+    {
+        PropertyNumber = propertyNumber;
+        Description = description;
+        Bounds = bounds;
+    }
+}
+
 /// <summary>
 /// Represents a real estate property.
 /// </summary>
@@ -28,7 +42,7 @@ public class Property : RealtyObject, IDHRecord<Property>
 
     [StringLength(15)]
     public string Description { get; set; } = "";
-    public List<int> PositionedOnParcels { get; private set; } = new List<int>();
+    public List<int> PositionedOnParcels { get; set; } = new List<int>();
 
     public Property() : base("Default Description", new GPSRectangle(new GPSPoint(), new GPSPoint()))
     {
@@ -147,13 +161,27 @@ public class Property : RealtyObject, IDHRecord<Property>
             for (int i = 0; i < 6; i++)
             {
                 int parcelId = reader.ReadInt32();
-                if (parcelId != 0)
+                if (parcelId != -1)
                 {
                     PositionedOnParcels.Add(parcelId);
                 }
             }
         }
         return this;
+    }
+}
+
+public class ParcelQuadObject
+{
+    public int ParcelNumber { get; set; }
+    public string Description { get; set; }
+    public GPSRectangle Bounds { get; set; }
+
+    public ParcelQuadObject(int parcelNumber, string description, GPSRectangle bounds)
+    {
+        ParcelNumber = parcelNumber;
+        Description = description;
+        Bounds = bounds;    
     }
 }
 
