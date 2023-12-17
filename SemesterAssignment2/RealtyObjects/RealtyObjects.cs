@@ -179,6 +179,20 @@ public class Property : RealtyObject, IDHRecord<Property>
         }
         return this;
     }
+
+    public override string ToString()
+    {
+        var positionedOnParcelsString = PositionedOnParcels.Count > 0
+            ? string.Join(", ", PositionedOnParcels)
+            : "None";
+
+        return $"Property Number: {PropertyNumber}, " +
+               $"Conscription Number: {ConscriptionNumber}, " +
+               $"Description: {Description}, " +
+               $"Positioned on Parcels: {positionedOnParcelsString}, " +
+               $"Bounds: {Bounds}";
+    }
+
 }
 
 public class ParcelQuadObject
@@ -324,9 +338,16 @@ public class Parcel : RealtyObject, IDHRecord<Parcel>
         }
     }
 
-    //public void ReleaseProperties()
-    //{
-    //    OccupiedByProperties.ForEach(property => property.RemoveParcel(this));
-    //    OccupiedByProperties.Clear();
-    //}
+    public override string ToString()
+    {
+        var occupiedByPropertiesString = OccupiedByProperties.Count > 0
+            ? string.Join(", ", OccupiedByProperties)
+            : "None";
+
+        return $"Parcel Number: {ParcelNumber}, " +
+               $"Description: {Description}, " +
+               $"Occupied by Properties: {occupiedByPropertiesString}, " +
+               $"Bounds: {Bounds}";
+    }
+
 }

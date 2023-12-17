@@ -286,4 +286,6 @@ public interface IDHRecord<T> where T : IDHRecord<T>
     /// <param name="byteArray">The byte array to create the record from.</param>
     /// <returns>A new record instance created from the byte array.</returns>
     T FromByteArray(byte[] byteArray);
+
+    
 }

@@ -135,7 +135,14 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
         } 
         else
         {
-            prepareShakeDown = (TotalRecordsCount - dynamicHashing.FileBlockManager.MainFileBlockFactor) % dynamicHashing.FileBlockManager.OverflowFileBlockFactor == 1;
+            if(dynamicHashing.FileBlockManager.OverflowFileBlockFactor == 1)
+            {
+                prepareShakeDown = true;
+            } else
+            {
+                prepareShakeDown = (TotalRecordsCount - dynamicHashing.FileBlockManager.MainFileBlockFactor) % dynamicHashing.FileBlockManager.OverflowFileBlockFactor == 1;
+            }
+
         }
 
         var block = ReadCurrentBlock();

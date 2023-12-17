@@ -468,24 +468,78 @@ public class FileBlockManager<T> where T : IDHRecord<T>, new()
     }
 
 
+    //public string SequentialFileOutput(int maxHashSize)
+    //{
+    //    StringBuilder output = new StringBuilder();
+
+    //    output.AppendLine("\n---------------------------------------------------------------");
+    //    output.AppendLine("Max Hash Size: " + maxHashSize + "\n");
+
+    //    // Process the main file
+    //    output.AppendLine("Main Block Factor: " + MainFileBlockFactor);
+    //    output.AppendLine("Main file size: " + CurrentMainFileSize);
+    //    output.AppendLine("First free block: " + firstFreeBlockMainFile);
+    //    output.AppendLine("Main File Contents:");
+    //    output.Append(ProcessFileSequentially(MainFileStream, MainFileBlockFactor));
+
+    //    // Process the overflow file
+    //    output.AppendLine("\nOverflow Block Factor: " + OverflowFileBlockFactor);
+    //    output.AppendLine("Overflow file size: " + CurrentOverflowFileSize);
+    //    output.AppendLine("First free block: " + firstFreeBlockOverflowFile);
+    //    output.AppendLine("Overflow File Contents:");
+    //    output.Append(ProcessFileSequentially(OverFlowFileStream, OverflowFileBlockFactor));
+
+    //    return output.ToString();
+    //}
+
+    //private string ProcessFileSequentially(FileStream fileStream, int blockFactor)
+    //{
+    //    StringBuilder fileOutput = new StringBuilder();
+
+    //    int currentAddress = 0;
+    //    long fileSize = fileStream.Length;
+
+    //    while (currentAddress < fileSize)
+    //    {
+    //        DHBlock<T> block = new DHBlock<T>(blockFactor, currentAddress);
+    //        block.ReadFromBinaryFile(fileStream, currentAddress);
+            
+    //        fileOutput.AppendLine($"Block at Address {block.BlockAddress}:");
+    //        fileOutput.AppendLine($"  Valid Records Count: {block.ValidRecordsCount}");
+    //        fileOutput.AppendLine($"  Next Block Address: {block.NextBlockAddress}");
+    //        fileOutput.AppendLine($"  Previous Block Address: {block.PreviousBlockAddress}");
+    //        foreach (var record in block.RecordsList)
+    //        {
+    //            fileOutput.AppendLine($"    {record}");
+    //        }
+
+    //        if(block.BlockAddress != -1 && block.ValidRecordsCount == 0)
+    //        {
+    //            Console.WriteLine(  );
+    //        }
+
+    //        currentAddress += block.GetSize();
+    //    }
+
+    //    return fileOutput.ToString();
+    //}
+
     public string SequentialFileOutput(int maxHashSize)
     {
         StringBuilder output = new StringBuilder();
 
-        output.AppendLine("\n---------------------------------------------------------------");
-        output.AppendLine("Max Hash Size: " + maxHashSize + "\n");
+        output.AppendLine("---------------------------------------------------------------");
+        output.AppendLine($"Max Hash Size: {maxHashSize}");
+        output.AppendLine();
 
         // Process the main file
-        output.AppendLine("Main Block Factor: " + MainFileBlockFactor);
-        output.AppendLine("Main file size: " + CurrentMainFileSize);
-        output.AppendLine("First free block: " + firstFreeBlockMainFile);
+        output.AppendLine($"Main File - Block Factor: {MainFileBlockFactor}, File Size: {CurrentMainFileSize}, First Free Block: {firstFreeBlockMainFile}");
         output.AppendLine("Main File Contents:");
         output.Append(ProcessFileSequentially(MainFileStream, MainFileBlockFactor));
 
         // Process the overflow file
-        output.AppendLine("\nOverflow Block Factor: " + OverflowFileBlockFactor);
-        output.AppendLine("Overflow file size: " + CurrentOverflowFileSize);
-        output.AppendLine("First free block: " + firstFreeBlockOverflowFile);
+        output.AppendLine();
+        output.AppendLine($"Overflow File - Block Factor: {OverflowFileBlockFactor}, File Size: {CurrentOverflowFileSize}, First Free Block: {firstFreeBlockOverflowFile}");
         output.AppendLine("Overflow File Contents:");
         output.Append(ProcessFileSequentially(OverFlowFileStream, OverflowFileBlockFactor));
 
@@ -503,19 +557,11 @@ public class FileBlockManager<T> where T : IDHRecord<T>, new()
         {
             DHBlock<T> block = new DHBlock<T>(blockFactor, currentAddress);
             block.ReadFromBinaryFile(fileStream, currentAddress);
-            
-            fileOutput.AppendLine($"Block at Address {block.BlockAddress}:");
-            fileOutput.AppendLine($"  Valid Records Count: {block.ValidRecordsCount}");
-            fileOutput.AppendLine($"  Next Block Address: {block.NextBlockAddress}");
-            fileOutput.AppendLine($"  Previous Block Address: {block.PreviousBlockAddress}");
+
+            fileOutput.AppendLine($"Block Address: {block.BlockAddress}, Valid Records: {block.ValidRecordsCount}, Next Block: {block.NextBlockAddress}, Previous Block: {block.PreviousBlockAddress}");
             foreach (var record in block.RecordsList)
             {
-                fileOutput.AppendLine($"    {record}");
-            }
-
-            if(block.BlockAddress != -1 && block.ValidRecordsCount == 0)
-            {
-                Console.WriteLine(  );
+                fileOutput.AppendLine($"    Record: {record}");
             }
 
             currentAddress += block.GetSize();
@@ -523,6 +569,7 @@ public class FileBlockManager<T> where T : IDHRecord<T>, new()
 
         return fileOutput.ToString();
     }
+
 
     //private List<T> GetAllRecordsFromFile(FileStream fileStream, int blockFactor)
     //{

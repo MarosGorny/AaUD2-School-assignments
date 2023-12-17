@@ -307,4 +307,9 @@ public class GPSRectangle : Rectangle
         : base(bottomLeft, topRight)
     {
     }
+
+    public override string ToString()
+    {
+        return $"{LowerLeft}, {UpperRight}";
+    }
 }

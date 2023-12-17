@@ -3,6 +3,7 @@ using DynamicHashingDS.DH;
 using QuadTreeDS.QuadTree;
 using QuadTreeDS.SpatialItems;
 using SemesterAssignment2.RealtyObjects;
+using System.Text;
 
 namespace SemesterAssignment2;
 public class ApplicationLogicDH
@@ -16,14 +17,14 @@ public class ApplicationLogicDH
 
     public ApplicationLogicDH(string parcelMainFilePath, string parcelOverflowFilePath,
                               string propertyMainFilePath, string propertyOverflowFilePath,
-                              int mainBlockFactor, int overflowBlockFactor)
+                              int mainBlockFactor, int overflowBlockFactor, int? maxHashSize)
     {
         var boundaryPointBottomLeft = new GPSPoint(LatitudeDirection.S, 90, LongitudeDirection.W, 180);
         var boundaryPointTopRight = new GPSPoint(LatitudeDirection.N, 90, LongitudeDirection.E, 180);
         _boundary = new Rectangle(boundaryPointBottomLeft, boundaryPointTopRight);
 
-        _dynamicHashingParcels = new DynamicHashing<Parcel>(mainBlockFactor,overflowBlockFactor,parcelMainFilePath,parcelOverflowFilePath);
-        _dynamicHashingProperties = new DynamicHashing<Property>(mainBlockFactor, overflowBlockFactor, propertyMainFilePath, propertyOverflowFilePath);
+        _dynamicHashingParcels = new DynamicHashing<Parcel>(mainBlockFactor,overflowBlockFactor,parcelMainFilePath,parcelOverflowFilePath, maxHashSize: maxHashSize);
+        _dynamicHashingProperties = new DynamicHashing<Property>(mainBlockFactor, overflowBlockFactor, propertyMainFilePath, propertyOverflowFilePath, maxHashSize: maxHashSize);
 
         _quadTreeParcels = new QuadTree<int, string>(_boundary);
         _quadTreeProperties = new QuadTree<int, string>(_boundary);
@@ -312,6 +313,20 @@ public class ApplicationLogicDH
     public void EditProperty(Property property)
     {
         _dynamicHashingProperties.Edit(property);
+    }
+
+
+    public string GetSequentialBlockOutputForAllFiles()
+    {
+        StringBuilder output = new StringBuilder();
+
+        output.AppendLine("---- Sequential Block Output for Parcels ----");
+        output.Append(_dynamicHashingParcels.FileBlockManager.SequentialFileOutput(_dynamicHashingParcels.MaxHashSize));
+
+        output.AppendLine("\n---- Sequential Block Output for Properties ----");
+        output.Append(_dynamicHashingProperties.FileBlockManager.SequentialFileOutput(_dynamicHashingProperties.MaxHashSize));
+
+        return output.ToString();
     }
 }
 

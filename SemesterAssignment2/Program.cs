@@ -12,7 +12,8 @@ namespace SemesterAssignment2
 
             ApplicationLogicDH applicationLogicDH = new ApplicationLogicDH("./ParcelMain.dat", "./ParcelOverflow.dat",
                                                                             "./PropertyMain.dat", "./PropertyOverflow.dat",
-                                                                            1,1);
+                                                                            1,1,
+                                                                            maxHashSize: 1);
             Parcel parcel = new Parcel(1, "Parcel 1", new GPSRectangle(new GPSPoint(LatitudeDirection.N, 0, LongitudeDirection.E, 0), new GPSPoint(LatitudeDirection.N, 10, LongitudeDirection.E, 50)));
             Parcel parcel2 = new Parcel(2, "Parcel 2", new GPSRectangle(new GPSPoint(LatitudeDirection.N, 0, LongitudeDirection.E, 0), new GPSPoint(LatitudeDirection.N, 10, LongitudeDirection.E, 50)));
             Parcel parcel3 = new Parcel(3, "Parcel 3", new GPSRectangle(new GPSPoint(LatitudeDirection.N, 0, LongitudeDirection.E, 0), new GPSPoint(LatitudeDirection.N, 10, LongitudeDirection.E, 50)));
@@ -24,10 +25,17 @@ namespace SemesterAssignment2
             Property property = new Property(2,200, "Property 1", new GPSRectangle(new GPSPoint(LatitudeDirection.N, 0, LongitudeDirection.E, 0), new GPSPoint(LatitudeDirection.N, 10, LongitudeDirection.E, 50)));
 
             applicationLogicDH.AddObject(property);
+            Console.WriteLine(applicationLogicDH.GetSequentialBlockOutputForAllFiles());
+
             applicationLogicDH.AddObject(parcel);
+            Console.WriteLine(applicationLogicDH.GetSequentialBlockOutputForAllFiles());
             applicationLogicDH.AddObject(parcel2);
+            Console.WriteLine(applicationLogicDH.GetSequentialBlockOutputForAllFiles());
             applicationLogicDH.AddObject(parcel3);
-            applicationLogicDH.AddObject(parcel4);
+            Console.WriteLine(applicationLogicDH.GetSequentialBlockOutputForAllFiles());
+
+            applicationLogicDH.DeleteParcel(1);
+            Console.WriteLine(applicationLogicDH.GetSequentialBlockOutputForAllFiles());
             applicationLogicDH.AddObject(parcel5);
             var parcels = applicationLogicDH.GetAllParcels();
             var properties = applicationLogicDH.GetAllProperties();
