@@ -45,11 +45,12 @@ public class DHInternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
     /// <param name="record">The record to find.</param>
     /// <param name="foundRecord">The found record if successful.</param>
     /// <returns>True if the record is found, otherwise false.</returns>
-    public override bool TryFind(IDHRecord<T> record, out IDHRecord<T>? foundRecord)
+    public override bool TryFind(IDHRecord<T> record, out IDHRecord<T>? foundRecord, out DHBlock<T> foundBlock, out bool isOverflowBlock)
     {
         var externalNode = FindExternalNode(record.GetHash());
-        return externalNode.TryFind(record, out foundRecord);
+        return externalNode.TryFind(record, out foundRecord, out foundBlock, out isOverflowBlock);
     }
+
 
     /// <summary>
     /// Deletes a record from the appropriate child node based on the hash.

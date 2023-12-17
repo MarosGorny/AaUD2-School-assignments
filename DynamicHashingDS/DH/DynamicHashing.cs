@@ -1,5 +1,6 @@
 ﻿using DynamicHashingDS.Data;
 using DynamicHashingDS.Nodes;
+using Newtonsoft.Json;
 
 namespace DynamicHashingDS.DH;
 
@@ -63,9 +64,9 @@ public class DynamicHashing<T> where T : IDHRecord<T>, new()
         return deletedRecord;
     }
 
-    public bool TryFind(IDHRecord<T> record, out IDHRecord<T>? foundRecord)
+    public bool TryFind(IDHRecord<T> record, out IDHRecord<T>? foundRecord, out DHBlock<T> foundBlock, out bool isOverflowBlock)
     {  
-        return _root.TryFind(record,out foundRecord);
+        return _root.TryFind(record,out foundRecord, out foundBlock,out isOverflowBlock);
     }
 
     /// <summary>
@@ -78,6 +79,26 @@ public class DynamicHashing<T> where T : IDHRecord<T>, new()
         //PrintNodeHierarchy(_root);
         //Console.WriteLine(FileBlockManager.SequentialFileOutput(MaxHashSize));
         Console.WriteLine();
+    }
+
+    public bool Edit(IDHRecord<T> record)
+    {
+        bool found = _root.TryFind(record, out var foundRecord, out var foundBlock, out bool isOverflowBlock);
+        if(found)
+        {
+            foundBlock.RecordsList[foundBlock.RecordsList.IndexOf(foundRecord)] = record;
+            if(isOverflowBlock)
+            {
+                foundBlock.WriteToBinaryFile(_overflowFileStream,foundBlock.BlockAddress);
+            }
+            else
+            {
+                foundBlock.WriteToBinaryFile(_mainFileStream,foundBlock.BlockAddress);
+            }
+            return true;
+        }
+        return false;
+
     }
 
     /// <summary>
@@ -169,6 +190,78 @@ public class DynamicHashing<T> where T : IDHRecord<T>, new()
         // For example, re-initialize the root node, clear records, etc.
         InitializeRootNode();
     }
+
+    public void ExportTrie(DHNode<T> root, string filePath)
+    {
+        using (StreamWriter file = File.CreateText(filePath))
+        {
+            JsonSerializer serializer = new JsonSerializer();
+            Queue<DHNode<T>> queue = new Queue<DHNode<T>>();
+            queue.Enqueue(root);
+
+            while (queue.Count > 0)
+            {
+                var node = queue.Dequeue();
+                string json = JsonConvert.SerializeObject(node, Formatting.Indented);
+                file.WriteLine(json);
+
+                if (node is DHInternalNode<T> internalNode)
+                {
+                    if (internalNode.LeftChild != null)
+                        queue.Enqueue(internalNode.LeftChild);
+                    if (internalNode.RightChild != null)
+                        queue.Enqueue(internalNode.RightChild);
+                }
+            }
+        }
+    }
+
+    public DHNode<T> ImportTrie(string filePath)
+    {
+        using (StreamReader file = File.OpenText(filePath))
+        {
+            JsonSerializer serializer = new JsonSerializer();
+            Queue<DHNode<T>> parentsQueue = new Queue<DHNode<T>>();
+            DHNode<T> root = null;
+            DHNode<T> currentParent = null;
+
+            while (!file.EndOfStream)
+            {
+                string json = file.ReadLine();
+                DHNode<T> node = JsonConvert.DeserializeObject<DHNode<T>>(json);
+
+                if (root == null)
+                {
+                    root = node;
+                    currentParent = root;
+                }
+                else
+                {
+                    if (currentParent is DHInternalNode<T> internalNode)
+                    {
+                        if (internalNode.LeftChild == null)
+                        {
+                            internalNode.LeftChild = node;
+                            parentsQueue.Enqueue(node);
+                        }
+                        else if (internalNode.RightChild == null)
+                        {
+                            internalNode.RightChild = node;
+                            currentParent = parentsQueue.Dequeue();
+                            parentsQueue.Enqueue(node);
+                        }
+                    }
+                }
+            }
+
+            return root;
+        }
+    }
+
+
+
+
+
 
 
     ~DynamicHashing()

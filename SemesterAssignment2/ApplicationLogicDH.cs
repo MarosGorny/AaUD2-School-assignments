@@ -76,13 +76,13 @@ public class ApplicationLogicDH
 
     public Parcel TryFindParcel(int conscriptionNumber)
     {
-        var parcel = _dynamicHashingParcels.TryFind(new Parcel(conscriptionNumber, "", new GPSRectangle(new GPSPoint(), new GPSPoint())),out var foundParcel);
+        var parcel = _dynamicHashingParcels.TryFind(new Parcel(conscriptionNumber, "", new GPSRectangle(new GPSPoint(), new GPSPoint())),out var foundParcel, out var foundBlock, out var isOverFlowBlock);
         return foundParcel as Parcel;
     }
 
     public Property TryFindProperty(int propertyNumber)
     {
-        var property = _dynamicHashingProperties.TryFind(new Property(propertyNumber, -1, "", new GPSRectangle(new GPSPoint(), new GPSPoint())) , out var foundProperty);
+        var property = _dynamicHashingProperties.TryFind(new Property(propertyNumber, -1, "", new GPSRectangle(new GPSPoint(), new GPSPoint())) , out var foundProperty, out var foundBlock, out var isOverFlowBlock);
         return foundProperty as Property;
     }
 
@@ -96,6 +96,16 @@ public class ApplicationLogicDH
     {
         var property = _dynamicHashingProperties.Delete(new Property(propertyNumber, -1, "", new GPSRectangle(new GPSPoint(), new GPSPoint())) );
         return property != null;
+    }
+
+    public void EditParcel(Parcel parcel)
+    {
+        _dynamicHashingParcels.Edit(parcel);
+    }
+
+    public void EditProperty(Property property)
+    {
+        _dynamicHashingProperties.Edit(property);
     }
 }
 

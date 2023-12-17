@@ -61,6 +61,6 @@ public abstract class DHNode<T> where T : IDHRecord<T>, new()
     /// <param name="record">The record to find.</param>
     /// <param name="foundRecord">When this method returns, contains the found record if it exists; otherwise null.</param>
     /// <returns>True if a record was found; otherwise, false.</returns>
-    public abstract bool TryFind(IDHRecord<T> record, out IDHRecord<T>? foundRecord);
+    public abstract bool TryFind(IDHRecord<T> record, out IDHRecord<T>? foundRecord, out DHBlock<T> foundBlock, out bool isOverflowBlock);
 
 }

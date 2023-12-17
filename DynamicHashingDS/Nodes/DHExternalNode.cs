@@ -70,11 +70,13 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
     /// This method first checks if the current node is valid for the operation.
     /// If valid, it proceeds to search for the record in the current block.
     /// </remarks>
-    public override bool TryFind(IDHRecord<T> record, out IDHRecord<T>? foundRecord)
+    public override bool TryFind(IDHRecord<T> record, out IDHRecord<T>? foundRecord, out DHBlock<T> foundBlock, out bool isOverflowBlock)
     {
         if (!IsValidNode())
         {
             foundRecord = null;
+            foundBlock = null;
+            isOverflowBlock = false;
             return false;
         }
 
@@ -82,6 +84,8 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
 
         if (block.TryFind(record, out foundRecord))
         {
+            foundBlock = block;
+            isOverflowBlock = false;
             return true;
         }
 
@@ -92,11 +96,15 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
 
             if (block.TryFind(record, out foundRecord))
             {
+                foundBlock = block;
+                isOverflowBlock = true;
                 return true;
             }
         }
 
+        foundBlock = null;
         foundRecord = null;
+        isOverflowBlock = false;
         return false;
     }
 
@@ -185,27 +193,6 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
             }
         }
         return deletedRecord;
-    }
-
-    private void ShortenChain(DHInternalNode<T> parentInternal)
-    {
-        DHExternalNode<T> nonEmptyChild = parentInternal.LeftChild == this ?
-                                  (DHExternalNode<T>)parentInternal.RightChild :
-                                  (DHExternalNode<T>)parentInternal.LeftChild;
-
-
-        var isLeftChild = ((DHInternalNode<T>)parentInternal.Parent).LeftChild == parentInternal;
-
-        if(isLeftChild)
-        {
-            ((DHInternalNode<T>)parentInternal.Parent).LeftChild = nonEmptyChild;
-        }
-        else
-        {
-            ((DHInternalNode<T>)parentInternal.Parent).RightChild = nonEmptyChild;
-        }
-
-        //nonEmptyChild.Depth--; just for now
     }
 
 
@@ -463,6 +450,7 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
             if (existingRecord.MyEquals((T)record))
             {
                 recordExists = true;
+                throw new Exception("Record already exists");
                 return false;
             }
             allRecords.Add(existingRecord);

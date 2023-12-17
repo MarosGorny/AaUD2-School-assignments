@@ -322,7 +322,7 @@ class DynamicHashingTester
         if (!_useSelectedIds || _insertedRecords.Count == 0)
         {
             record = GenerateRandomRecord();
-            found = _dynamicHashing.TryFind(record, out foundRecord);
+            found = _dynamicHashing.TryFind(record, out foundRecord, out var foundBlock, out var isOverFlowBlock);
             Console.WriteLine($"Find record {record}: {foundRecord}");
         }
         else
@@ -331,7 +331,7 @@ class DynamicHashingTester
             int index = _random.Next(_insertedRecords.Count);
             record = _insertedRecords[index];
 
-            found = _dynamicHashing.TryFind(record, out foundRecord);
+            found = _dynamicHashing.TryFind(record, out foundRecord, out var foundBlock, out var isOverFlowBlock);
 
 
             Console.WriteLine($"Found: {foundRecord}");
@@ -435,27 +435,27 @@ class DynamicHashingTester
 
         var dynamicHashing = new DynamicHashing<DummyClass>(2, 2, "testMain.bin", "testFlow.bin", 2);
 
-        dynamicHashing.TryFind(dummy1, out var foundRecord);
+        dynamicHashing.TryFind(dummy1, out var foundRecord, out var foundBlock, out bool isOverFlowBlock);
         Console.WriteLine("Found: " + foundRecord);
         //Console.WriteLine("Deleted: " + dynamicHashing.Delete(dummy1));
 
 
         dynamicHashing.Insert(dummy1);
 
-        dynamicHashing.TryFind(dummy1, out var foundRecord1);
+        dynamicHashing.TryFind(dummy1, out var foundRecord1, out foundBlock, out isOverFlowBlock);
         Console.WriteLine("Found: " + foundRecord1);
         //Console.WriteLine("Deleted: " + dynamicHashing.Delete(dummy1));
 
         dynamicHashing.Insert(dummy1);
 
-        dynamicHashing.TryFind(dummy3, out var foundRecord3);
+        dynamicHashing.TryFind(dummy3, out var foundRecord3, out foundBlock, out isOverFlowBlock);
         Console.WriteLine(foundRecord3);
 
         dynamicHashing.Insert(dummy3);
         //Console.WriteLine("Deleted: " + dynamicHashing.Delete(dummy3));
         dynamicHashing.Insert(dummy3);
 
-        dynamicHashing.TryFind(dummy3, out var foundRecord4);
+        dynamicHashing.TryFind(dummy3, out var foundRecord4, out foundBlock, out isOverFlowBlock);
         Console.WriteLine(foundRecord4);
 
         dynamicHashing.Insert(dummy);

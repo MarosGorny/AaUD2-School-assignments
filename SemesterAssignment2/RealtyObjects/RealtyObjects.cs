@@ -39,8 +39,10 @@ public class Property : RealtyObject, IDHRecord<Property>
     {
         ConscriptionNumber = conscriptionNumber;
         PropertyNumber = propertyNumber;
+        Description = description;
         this.SetLowerLeft(gpsRectangle.LowerLeft as GPSPoint);
         this.SetUpperRight(gpsRectangle.UpperRight as GPSPoint);
+        Bounds = gpsRectangle;
     }
 
     public bool TryAddParcel(int parcel)
@@ -136,6 +138,9 @@ public class Property : RealtyObject, IDHRecord<Property>
             // Deserialize GPSRectangle
             var lowerLeft = GPSPoint.Deserialize(reader);
             var upperRight = GPSPoint.Deserialize(reader);
+
+            this.SetLowerLeft(lowerLeft);
+            this.SetUpperRight(upperRight);
             Bounds = new GPSRectangle(lowerLeft, upperRight);
 
             PositionedOnParcels.Clear();
@@ -167,12 +172,13 @@ public class Parcel : RealtyObject, IDHRecord<Parcel>
         : base(description, gpsRectangle)
     {
         ParcelNumber = parcelNumber;
+        Description = description;
         this.SetLowerLeft(gpsRectangle.LowerLeft as GPSPoint);
         this.SetUpperRight(gpsRectangle.UpperRight as GPSPoint);
         Bounds = gpsRectangle;
 
-        this.SetUpperRight(gpsRectangle.UpperRight as GPSPoint);
-        this.SetLowerLeft(gpsRectangle.LowerLeft as GPSPoint);
+        //this.SetUpperRight(gpsRectangle.UpperRight as GPSPoint);
+        //this.SetLowerLeft(gpsRectangle.LowerLeft as GPSPoint);
     }
 
     public Parcel() : base("Default Description", new GPSRectangle(new GPSPoint(), new GPSPoint()))
