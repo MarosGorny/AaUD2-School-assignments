@@ -16,6 +16,14 @@ public class RealtyObjectsGenerator
         return (parcels, propertisWithinParcels);
     }
 
+    public (Parcel, Property) GenerateSingleRealtyObject(GPSRectangle boundary)
+    {
+        var parcel = GenerateParcels(1, boundary).First();
+        var property = GeneratePropertiesWithinParcels(1, new List<Parcel> { parcel }, true).First();
+
+        return (parcel, property);
+    }
+
     public List<Parcel> GenerateParcels(int parcelCount, GPSRectangle boundary)
     {
         var parcels = new List<Parcel>();

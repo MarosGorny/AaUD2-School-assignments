@@ -136,8 +136,6 @@ public partial class MainForm : Form
     {
         string sequentialOutput = Program.ApplicationLogic.GetSequentialBlockOutputForAllFiles();
         CustomMessageBox.Show(sequentialOutput);
-
-        //MessageBox.Show(sequentialOutput, "Sequential Output");
     }
 
 }

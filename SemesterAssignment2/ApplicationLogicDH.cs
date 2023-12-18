@@ -111,6 +111,7 @@ public class ApplicationLogicDH
         var properties = _quadTreeProperties.Find(newParcel.Bounds);
         if (properties.Count >= 5)
         {
+            return;
             throw new Exception("Parcel can only be occupied by 5 properties.");
         }
 
@@ -169,6 +170,7 @@ public class ApplicationLogicDH
                 var parcelsList = ((Property)property).PositionedOnParcels;
                 if (parcelsList.Count >= 6)
                 {
+                    continue;
                     throw new Exception("Property can only be positioned on 6 parcels.");
                 }
 
@@ -508,6 +510,7 @@ public class ApplicationLogicDH
         var realtyObjectsGenerator = new RealtyObjectsGenerator();
         var (parcels, properties) = realtyObjectsGenerator.GenerateRealtyObjects(parcelCount, propertyCount, boundary);
 
+
         ClosesFiles();
 
         DeleteFileIfExists("./ParcelMain.dat");
@@ -528,16 +531,43 @@ public class ApplicationLogicDH
         //DeleteFileIfExists(_dynamicHashingProperties?.MainFilePath);
         //DeleteFileIfExists(_dynamicHashingProperties?.OverflowFilePath);
 
-
-        foreach (var parcel in parcels)
+        if (parcelCount <= propertyCount)
         {
-            AddParcel(parcel);
+            for (int i = 0; i < parcelCount; i++)
+            {
+                AddParcel(parcels[i]);
+                AddProperty(properties[i]);
+            }
+
+            for (int i = parcelCount; i < propertyCount; i++)
+            {
+                AddProperty(properties[i]);
+            }
+        }
+        else
+        {
+            for (int i = 0; i < propertyCount; i++)
+            {
+                AddParcel(parcels[i]);
+                AddProperty(properties[i]);
+            }
+
+            for (int i = propertyCount; i < parcelCount; i++)
+            {
+                AddParcel(parcels[i]);
+            }
         }
 
-        foreach (var property in properties)
-        {
-            AddProperty(property);
-        }
+
+        //foreach (var parcel in parcels)
+        //{
+        //    AddParcel(parcel);
+        //}
+
+        //foreach (var property in properties)
+        //{
+        //    AddProperty(property);
+        //}
 
     }
 
