@@ -302,6 +302,7 @@
             updateButton.TabIndex = 63;
             updateButton.Text = "Update";
             updateButton.UseVisualStyleBackColor = true;
+            updateButton.Click += updateButton_Click;
             // 
             // insertGPS2GroupBox
             // 

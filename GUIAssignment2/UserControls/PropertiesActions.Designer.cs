@@ -336,6 +336,9 @@
             propertyGridView.RowHeadersWidth = 51;
             propertyGridView.Size = new Size(758, 740);
             propertyGridView.TabIndex = 53;
+            propertyGridView.CellContentClick += dataGridView1_CellContentClick;
+            propertyGridView.CellMouseClick += propertyGridView_CellMouseClick;
+            propertyGridView.CellMouseDoubleClick += dataGridView1_CellMouseDoubleClick;
             // 
             // PropertyNumber
             // 

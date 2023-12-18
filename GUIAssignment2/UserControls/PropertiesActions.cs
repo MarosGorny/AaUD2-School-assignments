@@ -368,7 +368,7 @@ public partial class FindProperties : UserControl
 
     private void UpdatePropertyData(Property oldProperty, Property updatedProperty)
     {
-        Program.ApplicationLogic.EditProperty(updatedProperty);
+        Program.ApplicationLogic.EditProperty(oldProperty,updatedProperty);
         //Program.ApplicationLogic.DeleteProperty(oldProperty);
         //Program.ApplicationLogic.AddProperty(updatedProperty);
         RefreshPropertyDisplay();
@@ -376,7 +376,7 @@ public partial class FindProperties : UserControl
 
     private void UpdateParcelData(Parcel oldParcel, Parcel updatedParcel)
     {
-        Program.ApplicationLogic.EditParcel(updatedParcel);
+        Program.ApplicationLogic.EditParcel(oldParcel, updatedParcel);
         //Program.ApplicationLogic.DeleteParcel(oldParcel);
         //Program.ApplicationLogic.AddParcel(updatedParcel);
         RefreshPropertyDisplay();

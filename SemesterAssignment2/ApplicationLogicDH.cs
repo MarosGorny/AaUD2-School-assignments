@@ -309,14 +309,26 @@ public class ApplicationLogicDH
         return property != null;
     }
 
-    public void EditParcel(Parcel parcel)
+    public void EditParcel(Parcel oldParcel ,Parcel parcel)
     {
         _dynamicHashingParcels.Edit(parcel);
+
+        if(parcel.Bounds != oldParcel.Bounds)
+        {
+            _quadTreeParcels.Delete(new QuadTreeObject<int, string>(oldParcel.ParcelNumber, "", oldParcel.Bounds));
+            _quadTreeParcels.Insert(new QuadTreeObject<int, string>(parcel.ParcelNumber, "", parcel.Bounds));
+        }
     }
 
-    public void EditProperty(Property property)
+    public void EditProperty(Property oldProperty, Property property)
     {
         _dynamicHashingProperties.Edit(property);
+
+        if(property.Bounds != oldProperty.Bounds)
+        {
+            _quadTreeProperties.Delete(new QuadTreeObject<int, string>(oldProperty.PropertyNumber, "", oldProperty.Bounds));
+            _quadTreeProperties.Insert(new QuadTreeObject<int, string>(property.PropertyNumber, "", property.Bounds));
+        }
     }
 
 

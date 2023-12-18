@@ -31,7 +31,7 @@ public partial class RealtyEditForm : Form
 
     private void SetupPropertyFields(Property property)
     {
-        titleLabel.Text = $"Edit Property: {property.ConscriptionNumber}";
+        titleLabel.Text = $"Edit Property: {property.PropertyNumber}";
         descriptionTextBox.Text = property.Description;
         if (string.IsNullOrEmpty(descriptionTextBox.Text))
             descriptionTextBox.PlaceholderText = "Description of property";
