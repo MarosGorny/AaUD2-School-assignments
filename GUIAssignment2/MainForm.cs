@@ -86,7 +86,8 @@ public partial class MainForm : Form
                 //Program.ApplicationLogic.ClearAll();
                 foreach (var realtyObject in realtyObjects)
                 {
-                    Program.ApplicationLogic.AddObject(realtyObject);
+                    Program.ApplicationLogic.AddObjectToQuadTree(realtyObject);
+                    //Program.ApplicationLogic.AddObject(realtyObject);
                 }
                 MessageBox.Show("Imported");
             }

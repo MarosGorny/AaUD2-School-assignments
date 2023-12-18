@@ -79,8 +79,26 @@ public class ApplicationLogicDH
             case Property property:
                 AddProperty(property);
                 break;
-            case Parcel newParcel:
-                AddParcel(newParcel);
+            case Parcel parcel:
+                AddParcel(parcel);
+                break;
+            default:
+                throw new Exception("Unknown realty object type");
+        }
+    }
+
+    public void AddObjectToQuadTree(RealtyObject realtyObject)
+    {
+        switch (realtyObject)
+        {
+
+            case PropertyQuadObject propertyQuadObject:
+
+                _quadTreeProperties.Insert(new QuadTreeObject<int, string>(propertyQuadObject.PropertyNumber, propertyQuadObject.Description, propertyQuadObject.Bounds));
+                break;
+
+            case ParcelQuadObject parcelQuadObject:
+                _quadTreeParcels.Insert(new QuadTreeObject<int, string>(parcelQuadObject.ParcelNumber, parcelQuadObject.Description, parcelQuadObject.Bounds));
                 break;
             default:
                 throw new Exception("Unknown realty object type");
