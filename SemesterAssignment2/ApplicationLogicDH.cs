@@ -416,8 +416,43 @@ public class ApplicationLogicDH
         return allPropertyObjects;
     }
 
+    public void GenerateNewData(int propertyCount, int parcelCount, GPSRectangle boundary)
+    {
+        var realtyObjectsGenerator = new RealtyObjectsGenerator();
+        var (parcels, properties) = realtyObjectsGenerator.GenerateRealtyObjects(parcelCount, propertyCount, boundary);
 
-    public void ClosesFiles()
+        ClosesFiles();
+
+        _quadTreeParcels = new QuadTree<int, string>(_quadTreeParcels.Boundary);
+        _quadTreeProperties = new QuadTree<int, string>(_quadTreeProperties.Boundary);
+
+        DeleteFileIfExists(_dynamicHashingParcels.MainFilePath);
+        DeleteFileIfExists(_dynamicHashingParcels.OverflowFilePath);
+
+        DeleteFileIfExists(_dynamicHashingProperties.MainFilePath);
+        DeleteFileIfExists(_dynamicHashingProperties.OverflowFilePath);
+
+        foreach (var parcel in parcels)
+        {
+            AddParcel(parcel);
+        }
+
+        foreach (var property in properties)
+        {
+            AddProperty(property);
+        }
+
+    }
+
+    private void DeleteFileIfExists(string filePath)
+    {
+        if (File.Exists(filePath))
+        {
+            File.Delete(filePath);
+        }
+    }
+
+    private void ClosesFiles()
     {
         _dynamicHashingParcels.CloseFileStreams();
         _dynamicHashingProperties.CloseFileStreams();
