@@ -51,11 +51,6 @@
             conscriptionNumberNumericUpDown = new NumericUpDown();
             insertPropertyButton = new Button();
             propertyGridView = new DataGridView();
-            PropertyNumber = new DataGridViewTextBoxColumn();
-            LeftBottom = new DataGridViewTextBoxColumn();
-            RightTop = new DataGridViewTextBoxColumn();
-            Edit = new DataGridViewImageColumn();
-            Delete = new DataGridViewImageColumn();
             longGroupBox = new GroupBox();
             longNumericUpDown = new NumericUpDown();
             longERadioButton = new RadioButton();
@@ -70,6 +65,12 @@
             insertPropertyGroupBox = new GroupBox();
             label2 = new Label();
             propertyNumberNumericUpDown = new NumericUpDown();
+            PropertyNumber = new DataGridViewTextBoxColumn();
+            LeftBottom = new DataGridViewTextBoxColumn();
+            RightTop = new DataGridViewTextBoxColumn();
+            Search = new DataGridViewImageColumn();
+            Edit = new DataGridViewImageColumn();
+            Delete = new DataGridViewImageColumn();
             insertGPS1GroupBox.SuspendLayout();
             gps1LongGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)gps1LongNumericUpDown).BeginInit();
@@ -329,7 +330,7 @@
             propertyGridView.AllowUserToOrderColumns = true;
             propertyGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             propertyGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            propertyGridView.Columns.AddRange(new DataGridViewColumn[] { PropertyNumber, LeftBottom, RightTop, Edit, Delete });
+            propertyGridView.Columns.AddRange(new DataGridViewColumn[] { PropertyNumber, LeftBottom, RightTop, Search, Edit, Delete });
             propertyGridView.Location = new Point(333, 19);
             propertyGridView.Name = "propertyGridView";
             propertyGridView.ReadOnly = true;
@@ -339,48 +340,6 @@
             propertyGridView.CellContentClick += dataGridView1_CellContentClick;
             propertyGridView.CellMouseClick += propertyGridView_CellMouseClick;
             propertyGridView.CellMouseDoubleClick += dataGridView1_CellMouseDoubleClick;
-            // 
-            // PropertyNumber
-            // 
-            PropertyNumber.HeaderText = "Property Number";
-            PropertyNumber.MinimumWidth = 6;
-            PropertyNumber.Name = "PropertyNumber";
-            PropertyNumber.ReadOnly = true;
-            // 
-            // LeftBottom
-            // 
-            LeftBottom.FillWeight = 87.28442F;
-            LeftBottom.HeaderText = "Left Bottom Position";
-            LeftBottom.MinimumWidth = 6;
-            LeftBottom.Name = "LeftBottom";
-            LeftBottom.ReadOnly = true;
-            // 
-            // RightTop
-            // 
-            RightTop.FillWeight = 87.28442F;
-            RightTop.HeaderText = "Right Top Position";
-            RightTop.MinimumWidth = 6;
-            RightTop.Name = "RightTop";
-            RightTop.ReadOnly = true;
-            // 
-            // Edit
-            // 
-            Edit.FillWeight = 25F;
-            Edit.HeaderText = "";
-            Edit.Image = (Image)resources.GetObject("Edit.Image");
-            Edit.MinimumWidth = 6;
-            Edit.Name = "Edit";
-            Edit.ReadOnly = true;
-            Edit.ToolTipText = "Edit";
-            // 
-            // Delete
-            // 
-            Delete.FillWeight = 25F;
-            Delete.HeaderText = "";
-            Delete.Image = (Image)resources.GetObject("Delete.Image");
-            Delete.MinimumWidth = 6;
-            Delete.Name = "Delete";
-            Delete.ReadOnly = true;
             // 
             // longGroupBox
             // 
@@ -540,6 +499,57 @@
             propertyNumberNumericUpDown.TabIndex = 55;
             propertyNumberNumericUpDown.Value = new decimal(new int[] { 1, 0, 0, 0 });
             // 
+            // PropertyNumber
+            // 
+            PropertyNumber.HeaderText = "Property Number";
+            PropertyNumber.MinimumWidth = 6;
+            PropertyNumber.Name = "PropertyNumber";
+            PropertyNumber.ReadOnly = true;
+            // 
+            // LeftBottom
+            // 
+            LeftBottom.FillWeight = 87.28442F;
+            LeftBottom.HeaderText = "Left Bottom Position";
+            LeftBottom.MinimumWidth = 6;
+            LeftBottom.Name = "LeftBottom";
+            LeftBottom.ReadOnly = true;
+            // 
+            // RightTop
+            // 
+            RightTop.FillWeight = 87.28442F;
+            RightTop.HeaderText = "Right Top Position";
+            RightTop.MinimumWidth = 6;
+            RightTop.Name = "RightTop";
+            RightTop.ReadOnly = true;
+            // 
+            // Search
+            // 
+            Search.FillWeight = 25F;
+            Search.HeaderText = "";
+            Search.Image = (Image)resources.GetObject("Search.Image");
+            Search.MinimumWidth = 6;
+            Search.Name = "Search";
+            Search.ReadOnly = true;
+            // 
+            // Edit
+            // 
+            Edit.FillWeight = 25F;
+            Edit.HeaderText = "";
+            Edit.Image = (Image)resources.GetObject("Edit.Image");
+            Edit.MinimumWidth = 6;
+            Edit.Name = "Edit";
+            Edit.ReadOnly = true;
+            Edit.ToolTipText = "Edit";
+            // 
+            // Delete
+            // 
+            Delete.FillWeight = 25F;
+            Delete.HeaderText = "";
+            Delete.Image = (Image)resources.GetObject("Delete.Image");
+            Delete.MinimumWidth = 6;
+            Delete.Name = "Delete";
+            Delete.ReadOnly = true;
+            // 
             // FindProperties
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -617,6 +627,7 @@
         private DataGridViewTextBoxColumn PropertyNumber;
         private DataGridViewTextBoxColumn LeftBottom;
         private DataGridViewTextBoxColumn RightTop;
+        private DataGridViewImageColumn Search;
         private DataGridViewImageColumn Edit;
         private DataGridViewImageColumn Delete;
     }

@@ -66,6 +66,7 @@
             ParcelTableID = new DataGridViewTextBoxColumn();
             LeftBottom = new DataGridViewTextBoxColumn();
             RightTop = new DataGridViewTextBoxColumn();
+            Search = new DataGridViewImageColumn();
             Edit = new DataGridViewImageColumn();
             Delete = new DataGridViewImageColumn();
             insertGPS1GroupBox.SuspendLayout();
@@ -465,7 +466,7 @@
             parcelGridView.AllowUserToOrderColumns = true;
             parcelGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             parcelGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            parcelGridView.Columns.AddRange(new DataGridViewColumn[] { ParcelTableID, LeftBottom, RightTop, Edit, Delete });
+            parcelGridView.Columns.AddRange(new DataGridViewColumn[] { ParcelTableID, LeftBottom, RightTop, Search, Edit, Delete });
             parcelGridView.Location = new Point(344, 24);
             parcelGridView.Name = "parcelGridView";
             parcelGridView.ReadOnly = true;
@@ -499,6 +500,15 @@
             RightTop.MinimumWidth = 6;
             RightTop.Name = "RightTop";
             RightTop.ReadOnly = true;
+            // 
+            // Search
+            // 
+            Search.FillWeight = 25F;
+            Search.HeaderText = "";
+            Search.Image = (Image)resources.GetObject("Search.Image");
+            Search.MinimumWidth = 6;
+            Search.Name = "Search";
+            Search.ReadOnly = true;
             // 
             // Edit
             // 
@@ -590,6 +600,7 @@
         private DataGridViewTextBoxColumn ParcelTableID;
         private DataGridViewTextBoxColumn LeftBottom;
         private DataGridViewTextBoxColumn RightTop;
+        private DataGridViewImageColumn Search;
         private DataGridViewImageColumn Edit;
         private DataGridViewImageColumn Delete;
     }

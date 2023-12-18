@@ -429,6 +429,26 @@ public partial class FindParcels : UserControl
             editForm.RealtyObjectUpdated += EditForm_RealtyObjectUpdated;
             editForm.Show();
         }
+        else if (e.RowIndex >= 0 && e.ColumnIndex >= 0 && e.ColumnIndex == parcelGridView.Columns.Count - 3)
+        //LOOK INTO Parcel
+        {
+            int parcelNumber = int.Parse(GetCellValue(parcelGridView, 0, e.RowIndex));
+
+            var property = Program.ApplicationLogic.TryFindParcel(parcelNumber);
+            if (property is null)
+            {
+                MessageBox.Show($"Parcel {parcelNumber} does not exist", "Parcel not found");
+                return;
+            }
+            else
+            {
+                MessageBox.Show($"Parcel: {parcelNumber}" +
+                                $"\nDsecription: {property.Description}" +
+                                $"\nOccupied By Properties: {string.Join(", ", property.OccupiedByProperties)}" +
+                                $"\nGPS {property.Bounds}", "Parcel found");
+                return;
+            }
+        }
     }
 
     private void searchPropertiesButton_Click(object sender, EventArgs e)

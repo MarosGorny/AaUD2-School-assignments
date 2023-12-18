@@ -292,6 +292,27 @@ public partial class FindProperties : UserControl
             editForm.RealtyObjectUpdated += EditForm_RealtyObjectUpdated;
             editForm.Show();
         }
+        else if (e.RowIndex >= 0 && e.ColumnIndex >= 0 && e.ColumnIndex == propertyGridView.Columns.Count - 3)
+        //LOOK INTO PROPERTY
+        {
+            int propertyNumber = int.Parse(GetCellValue(propertyGridView, 0, e.RowIndex));
+            
+            var property = Program.ApplicationLogic.TryFindProperty(propertyNumber);
+            if (property is null)
+            {
+                MessageBox.Show($"Property {propertyNumber} does not exist", "Property not found");
+                return;
+            } 
+            else
+            {
+                MessageBox.Show($"Property: {propertyNumber}" +
+                                $"\nConscription Number: {property.ConscriptionNumber}" +
+                                $"\nDsecription: {property.Description}" +
+                                $"\nPositioned on parcels: {string.Join(", ", property.PositionedOnParcels)}" +
+                                $"\nGPS {property.Bounds}", "Property found");
+                return;
+            }
+        }
     }
 
     private void EditForm_RealtyObjectUpdated(object sender, RealtyObjectEventArgs e)

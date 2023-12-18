@@ -271,6 +271,48 @@ public partial class FindAllObjects : UserControl
             editForm.RealtyObjectUpdated += EditForm_RealtyObjectUpdated;
             editForm.Show();
         }
+        else if (e.RowIndex >= 0 && e.ColumnIndex >= 0 && e.ColumnIndex == allObjectsGridView.Columns.Count - 3)
+        //LOOK INTO Parcel/PROPERTY
+        {
+            bool isProperty = GetCellValue(allObjectsGridView, 0, e.RowIndex) == "Property";
+            int idNumber = int.Parse(GetCellValue(allObjectsGridView, 1, e.RowIndex));
+
+
+            if(isProperty)
+            {
+                var foundProperty = Program.ApplicationLogic.TryFindProperty(idNumber);
+                if (foundProperty is null)
+                {
+                    MessageBox.Show($"Property {idNumber} does not exist", "Property not found");
+                    return;
+                }
+                else
+                {
+                    MessageBox.Show($"Property: {idNumber}" +
+                                    $"\nConscription Number: {foundProperty.ConscriptionNumber}" +
+                                    $"\nDsecription: {foundProperty.Description}" +
+                                    $"\nPositioned on parcels: {string.Join(", ", foundProperty.PositionedOnParcels)}" +
+                                    $"\nGPS {foundProperty.Bounds}", "Property found");
+                    return;
+                }
+            }else
+            {
+                var foundParcel = Program.ApplicationLogic.TryFindParcel(idNumber);
+                if (foundParcel is null)
+                {
+                    MessageBox.Show($"Parcel {idNumber} does not exist", "Parcel not found");
+                    return;
+                }
+                else
+                {
+                    MessageBox.Show($"Parcel: {idNumber}" +
+                                    $"\nDsecription: {foundParcel.Description}" +
+                                    $"\nOccupied By Properties: {string.Join(", ", foundParcel.OccupiedByProperties)}" +
+                                    $"\nGPS {foundParcel.Bounds}", "Parcel found");
+                    return;
+                }
+            }
+        }
     }
 
     private void EditForm_RealtyObjectUpdated(object sender, RealtyObjectEventArgs e)

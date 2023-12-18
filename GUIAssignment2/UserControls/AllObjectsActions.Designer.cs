@@ -54,6 +54,7 @@
             PropertyTableID = new DataGridViewTextBoxColumn();
             LeftBottom = new DataGridViewTextBoxColumn();
             RightTop = new DataGridViewTextBoxColumn();
+            Search = new DataGridViewImageColumn();
             Edit = new DataGridViewImageColumn();
             Delete = new DataGridViewImageColumn();
             ((System.ComponentModel.ISupportInitialize)latNumericUpDown2).BeginInit();
@@ -289,7 +290,7 @@
             allObjectsGridView.AllowUserToOrderColumns = true;
             allObjectsGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             allObjectsGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            allObjectsGridView.Columns.AddRange(new DataGridViewColumn[] { Type, PropertyTableID, LeftBottom, RightTop, Edit, Delete });
+            allObjectsGridView.Columns.AddRange(new DataGridViewColumn[] { Type, PropertyTableID, LeftBottom, RightTop, Search, Edit, Delete });
             allObjectsGridView.Location = new Point(34, 265);
             allObjectsGridView.Name = "allObjectsGridView";
             allObjectsGridView.ReadOnly = true;
@@ -343,9 +344,18 @@
             RightTop.Name = "RightTop";
             RightTop.ReadOnly = true;
             // 
+            // Search
+            // 
+            Search.FillWeight = 25F;
+            Search.HeaderText = "";
+            Search.Image = (Image)resources.GetObject("Search.Image");
+            Search.MinimumWidth = 6;
+            Search.Name = "Search";
+            Search.ReadOnly = true;
+            // 
             // Edit
             // 
-            Edit.FillWeight = 50F;
+            Edit.FillWeight = 25F;
             Edit.HeaderText = "";
             Edit.Image = (Image)resources.GetObject("Edit.Image");
             Edit.MinimumWidth = 6;
@@ -354,7 +364,7 @@
             // 
             // Delete
             // 
-            Delete.FillWeight = 50F;
+            Delete.FillWeight = 25F;
             Delete.HeaderText = "";
             Delete.Image = (Image)resources.GetObject("Delete.Image");
             Delete.MinimumWidth = 6;
@@ -420,6 +430,7 @@
         private DataGridViewTextBoxColumn PropertyTableID;
         private DataGridViewTextBoxColumn LeftBottom;
         private DataGridViewTextBoxColumn RightTop;
+        private DataGridViewImageColumn Search;
         private DataGridViewImageColumn Edit;
         private DataGridViewImageColumn Delete;
     }

@@ -129,18 +129,32 @@
   <metadata name="RightTop.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
-  <metadata name="Edit.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <metadata name="Search.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="Edit.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+  <data name="Search.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
         YQUAAAAJcEhZcwAAAHUAAAB1AePCB2UAAAAZdEVYdFNvZnR3YXJlAHd3dy5pbmtzY2FwZS5vcmeb7jwa
-        AAAA1klEQVQ4T83RzQoBURjG8eMCWPpI4pZY28hHsbKiZGHpImzkPpS1lHytXIAiXIL/c2YomsNh5alf
-        M6PeZ94zzA9JYYE1cvrhm2h4hxHKWMEkUEPXoYUYNLxFH3uoZA4zwwRDhx4y0HADikq0iUrNFXqDK0no
-        vNpEqULDKrW5hNeofBxWXAWu4SyeNnYVLHE/s676BjpzB3U8ElVQgN6uvK49QDu4DRJVUMQBG2gT+7XD
-        eBWkUULePj3Hq+Bd/rDgBJ3ZJ/r/x6jYpzBNHHH2oG2niIMYcwM0EEErDlQEwQAAAABJRU5ErkJggg==
+        AAABEUlEQVQ4T53SvS8EQRjH8fNW6Si5UoT2rqD3ZxEJJb1rvFwU1+lo3EuiUGh0XCJBIhI9VwjC97tr
+        c2Nzs4df8klmnr15bnZ2Srms4AiPeMc96qigMBPYxyd6OMEeWniFzTYQzS5cfIBpC0HKsKHPVy3k47az
+        xbGMo4k3zFkI4zu/YCqZxbMA/2grmQV5wnE6HJprnKfDfjwkz+A36eAqHfbzgNN0ODS3sMmPHMJdzCaz
+        eJbgGawnsyBVfMBP5WkPyiQu8YwZC/lswu5enEULQZbhYp+3MYqBWYPf2R924bvefc+9nS527I2NNpnH
+        NvxUNziDV9htuyi77oVNijKCHdikgTH8OeFOahb+E5uwk9LFF4NfQo8dRu9lAAAAAElFTkSuQmCC
+</value>
+  </data>
+  <metadata name="Edit.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <data name="Edit.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAA
+        dAAAAHQBMYXlgQAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAADWSURBVDhPzdHN
+        CgFRGMbx4wJY+kjilljbyEexsqJkYekibOQ+lLWUfK1cgCJcgv9zZiiaw2HlqV8zo95n3jPMD0lhgTVy
+        +uGbaHiHEcpYwSRQQ9ehhRg0vEUfe6hkDjPDBEOHHjLQcAOKSrSJSs0VeoMrSei82kSpQsMqtbmE16h8
+        HFZcBa7hLJ42dhUscT+zrvoGOnMHdTwSVVCA3q68rj1AO7gNElVQxAEbaBP7tcN4FaRRQt4+Pcer4F3+
+        sOAEndkn+v/HqNinME0ccfagbaeIgxhzAzQQQSsOVATBAAAAAElFTkSuQmCC
 </value>
   </data>
   <metadata name="Delete.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
@@ -148,12 +162,12 @@
   </metadata>
   <data name="Delete.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAAAGoAAABqAdwYubUAAAAZdEVYdFNvZnR3YXJlAHd3dy5pbmtzY2FwZS5vcmeb7jwa
-        AAAAw0lEQVQ4T+3SMQrCQBQE0CWFlYLkBCIW4hmsU+cAFoKNZS6hnZIiRc5g5Q30BuKJ1pkwWZNvgqms
-        DDyczf8ZENZ57z/gyeFu5J27ITgXwRRWcFFu4jvOmKNWAZ45POA6EHdnzYI9HOvWb7gLuyrrRQw3eIL9
-        7xZ3uBuHApVkkCqP9Tsi8y6FjLk6h9AuKGABG2EuNBtUUMIStsJcavYv+FVBAhPg3SfmRLPegjUc6nMf
-        7nA3nM3wDLyuvKpdODu9v/HuBSMXd7xVqlb6AAAAAElFTkSuQmCC
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAA
+        agAAAGoB3Bi5tQAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAADDSURBVDhP7dIx
+        CsJAFATQJYWVguQEIhbiGaxT5wAWgo1lLqGdkiJFzmDlDfQG4onWmTBZk2+CqawMPJzN/xkQ1nnvP+DJ
+        4W7knbshOBfBFFZwUW7iO86Yo1YBnjk84DoQd2fNgj0c69ZvuAu7KutFDDd4gv3vFne4G4cClWSQKo/1
+        OyLzLoWMuTqH0C4oYAEbYS40G1RQwhK2wlxq9i/4VUECE+DdJ+ZEs96CNRzqcx/ucDeczfAMvK68ql04
+        O72/8e4FIxd3vFWqVvoAAAAASUVORK5CYII=
 </value>
   </data>
 </root>
