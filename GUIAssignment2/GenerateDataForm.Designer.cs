@@ -345,6 +345,7 @@
             overflowBlockFactorNumericUpDown.Size = new Size(420, 27);
             overflowBlockFactorNumericUpDown.TabIndex = 81;
             overflowBlockFactorNumericUpDown.Value = new decimal(new int[] { 1, 0, 0, 0 });
+            overflowBlockFactorNumericUpDown.Value = DiskInfo.GetSectorSizeForPath(".\\");
             // 
             // overflowBlockFactorLabel
             // 
@@ -376,6 +377,7 @@
             mainBlockFactorNumericUpDown.TabIndex = 79;
             mainBlockFactorNumericUpDown.Value = new decimal(new int[] { 1, 0, 0, 0 });
             mainBlockFactorNumericUpDown.ValueChanged += numericUpDown2_ValueChanged;
+            mainBlockFactorNumericUpDown.Value = DiskInfo.GetSectorSizeForPath(".\\");
             // 
             // maxHashSizeLabel
             // 
