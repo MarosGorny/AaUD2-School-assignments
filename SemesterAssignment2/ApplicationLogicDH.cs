@@ -59,6 +59,7 @@ public class ApplicationLogicDH
         }
     }
 
+
     public List<IDHRecord<Property>> GetAllProperties()
     {
         var properties = _dynamicHashingProperties.GetAllRecords();
@@ -381,6 +382,13 @@ public class ApplicationLogicDH
         return this.ImportQuadTreeCSV(filePath);
     }
 
+    public List<RealtyObject> GetAllQuadTreeRealtyObjects()
+    {
+        var allRealtyObjects = new List<RealtyObject>();
+        allRealtyObjects.AddRange(GetAllQuadTreeParcels().Cast<RealtyObject>().ToList());
+        allRealtyObjects.AddRange(GetAllQuadTreeProperties().Cast<RealtyObject>().ToList());
+        return allRealtyObjects;
+    }
 
 
     public void ExportQuadTreeCSV(string filePath)
@@ -481,6 +489,33 @@ public class ApplicationLogicDH
         _dynamicHashingProperties?.CloseFileStreams();
     }
 
+    public IEnumerable<PropertyQuadObject> FindProperties(Rectangle rectangle)
+    {
+        var foundObjects = new List<PropertyQuadObject>();
+
+        foreach (var foundProperty in _quadTreeProperties.Find(rectangle))
+        {
+            var newItem = new PropertyQuadObject(foundProperty.Key, foundProperty.Value, (GPSRectangle)foundProperty.Item);
+
+            foundObjects.Add(newItem);
+        }
+
+        return foundObjects;
+    }
+
+    public IEnumerable<ParcelQuadObject> FindParcels(Rectangle rectangle)
+    {
+        var foundObjects = new List<ParcelQuadObject>();
+
+        foreach (var foundParcel in _quadTreeParcels.Find(rectangle))
+        {
+            var newItem = new ParcelQuadObject(foundParcel.Key, foundParcel.Value, (GPSRectangle)foundParcel.Item);
+
+            foundObjects.Add(newItem);
+        }
+        return foundObjects;
+    }
+
     public IEnumerable<ParcelQuadObject> FindParcels(GPSPoint searchPoint)
     {
         var foundObjects = new List<ParcelQuadObject>();
@@ -512,6 +547,15 @@ public class ApplicationLogicDH
         }
 
         return foundObjects;
+    }
+
+    public IEnumerable<RealtyObject> FindObjectsInArea(Rectangle area)
+    {
+        var foundObjects = new List<RealtyObject>();
+        foundObjects.AddRange(FindParcels(area).Cast<RealtyObject>().ToList());
+        foundObjects.AddRange(FindProperties(area).Cast<RealtyObject>().ToList());
+        return foundObjects;
+
     }
 }
 

@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FindAllObjects));
             showAllButton = new Button();
             latNumericUpDown2 = new NumericUpDown();
             latNRadioButton2 = new RadioButton();
@@ -47,14 +48,14 @@
             longNumericUpDown = new NumericUpDown();
             longGroupBox = new GroupBox();
             longWRadioButton = new RadioButton();
-            RightTop = new DataGridViewTextBoxColumn();
-            LeftBottom = new DataGridViewTextBoxColumn();
-            ParcelList = new DataGridViewTextBoxColumn();
-            PropertyTableDescription = new DataGridViewTextBoxColumn();
-            PropertyTableID = new DataGridViewTextBoxColumn();
-            Type = new DataGridViewTextBoxColumn();
             allObjectsGridView = new DataGridView();
             leftBottomGPSLabel = new Label();
+            Type = new DataGridViewTextBoxColumn();
+            PropertyTableID = new DataGridViewTextBoxColumn();
+            LeftBottom = new DataGridViewTextBoxColumn();
+            RightTop = new DataGridViewTextBoxColumn();
+            Edit = new DataGridViewImageColumn();
+            Delete = new DataGridViewImageColumn();
             ((System.ComponentModel.ISupportInitialize)latNumericUpDown2).BeginInit();
             latGroupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)longNumericUpDown2).BeginInit();
@@ -74,6 +75,7 @@
             showAllButton.TabIndex = 66;
             showAllButton.Text = "Show All Properties And Parcels";
             showAllButton.UseVisualStyleBackColor = true;
+            showAllButton.Click += showAllButton_Click;
             // 
             // latNumericUpDown2
             // 
@@ -186,6 +188,7 @@
             searchAllObjectsButton.TabIndex = 59;
             searchAllObjectsButton.Text = "Search Properties And Parcels";
             searchAllObjectsButton.UseVisualStyleBackColor = true;
+            searchAllObjectsButton.Click += searchAllObjectsButton_Click;
             // 
             // latGroupBox
             // 
@@ -279,48 +282,6 @@
             longWRadioButton.Text = "W";
             longWRadioButton.UseVisualStyleBackColor = true;
             // 
-            // RightTop
-            // 
-            RightTop.HeaderText = "Right Top Position";
-            RightTop.MinimumWidth = 6;
-            RightTop.Name = "RightTop";
-            RightTop.ReadOnly = true;
-            // 
-            // LeftBottom
-            // 
-            LeftBottom.HeaderText = "Left Bottom Position";
-            LeftBottom.MinimumWidth = 6;
-            LeftBottom.Name = "LeftBottom";
-            LeftBottom.ReadOnly = true;
-            // 
-            // ParcelList
-            // 
-            ParcelList.HeaderText = "Property/Parcel List";
-            ParcelList.MinimumWidth = 6;
-            ParcelList.Name = "ParcelList";
-            ParcelList.ReadOnly = true;
-            // 
-            // PropertyTableDescription
-            // 
-            PropertyTableDescription.HeaderText = "Description";
-            PropertyTableDescription.MinimumWidth = 6;
-            PropertyTableDescription.Name = "PropertyTableDescription";
-            PropertyTableDescription.ReadOnly = true;
-            // 
-            // PropertyTableID
-            // 
-            PropertyTableID.HeaderText = "Conscription/Parcel Number";
-            PropertyTableID.MinimumWidth = 6;
-            PropertyTableID.Name = "PropertyTableID";
-            PropertyTableID.ReadOnly = true;
-            // 
-            // Type
-            // 
-            Type.HeaderText = "Type";
-            Type.MinimumWidth = 6;
-            Type.Name = "Type";
-            Type.ReadOnly = true;
-            // 
             // allObjectsGridView
             // 
             allObjectsGridView.AllowUserToAddRows = false;
@@ -328,13 +289,16 @@
             allObjectsGridView.AllowUserToOrderColumns = true;
             allObjectsGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             allObjectsGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            allObjectsGridView.Columns.AddRange(new DataGridViewColumn[] { Type, PropertyTableID, PropertyTableDescription, ParcelList, LeftBottom, RightTop });
+            allObjectsGridView.Columns.AddRange(new DataGridViewColumn[] { Type, PropertyTableID, LeftBottom, RightTop, Edit, Delete });
             allObjectsGridView.Location = new Point(34, 265);
             allObjectsGridView.Name = "allObjectsGridView";
             allObjectsGridView.ReadOnly = true;
             allObjectsGridView.RowHeadersWidth = 51;
             allObjectsGridView.Size = new Size(1036, 406);
             allObjectsGridView.TabIndex = 62;
+            allObjectsGridView.CellContentClick += allObjectsGridView_CellContentClick;
+            allObjectsGridView.CellMouseClick += allObjectsGridView_CellMouseClick;
+            allObjectsGridView.CellMouseDoubleClick += allObjectsGridView_CellMouseDoubleClick_1;
             // 
             // leftBottomGPSLabel
             // 
@@ -346,6 +310,56 @@
             leftBottomGPSLabel.Size = new Size(238, 38);
             leftBottomGPSLabel.TabIndex = 58;
             leftBottomGPSLabel.Text = "Left Bottom GPS";
+            // 
+            // Type
+            // 
+            Type.FillWeight = 88.78364F;
+            Type.HeaderText = "Type";
+            Type.MinimumWidth = 6;
+            Type.Name = "Type";
+            Type.ReadOnly = true;
+            // 
+            // PropertyTableID
+            // 
+            PropertyTableID.FillWeight = 88.78364F;
+            PropertyTableID.HeaderText = "Property/Parcel Number";
+            PropertyTableID.MinimumWidth = 6;
+            PropertyTableID.Name = "PropertyTableID";
+            PropertyTableID.ReadOnly = true;
+            // 
+            // LeftBottom
+            // 
+            LeftBottom.FillWeight = 88.78364F;
+            LeftBottom.HeaderText = "Left Bottom Position";
+            LeftBottom.MinimumWidth = 6;
+            LeftBottom.Name = "LeftBottom";
+            LeftBottom.ReadOnly = true;
+            // 
+            // RightTop
+            // 
+            RightTop.FillWeight = 88.78364F;
+            RightTop.HeaderText = "Right Top Position";
+            RightTop.MinimumWidth = 6;
+            RightTop.Name = "RightTop";
+            RightTop.ReadOnly = true;
+            // 
+            // Edit
+            // 
+            Edit.FillWeight = 50F;
+            Edit.HeaderText = "";
+            Edit.Image = (Image)resources.GetObject("Edit.Image");
+            Edit.MinimumWidth = 6;
+            Edit.Name = "Edit";
+            Edit.ReadOnly = true;
+            // 
+            // Delete
+            // 
+            Delete.FillWeight = 50F;
+            Delete.HeaderText = "";
+            Delete.Image = (Image)resources.GetObject("Delete.Image");
+            Delete.MinimumWidth = 6;
+            Delete.Name = "Delete";
+            Delete.ReadOnly = true;
             // 
             // FindAllObjects
             // 
@@ -400,13 +414,13 @@
         private NumericUpDown longNumericUpDown;
         private GroupBox longGroupBox;
         private RadioButton longWRadioButton;
-        private DataGridViewTextBoxColumn RightTop;
-        private DataGridViewTextBoxColumn LeftBottom;
-        private DataGridViewTextBoxColumn ParcelList;
-        private DataGridViewTextBoxColumn PropertyTableDescription;
-        private DataGridViewTextBoxColumn PropertyTableID;
-        private DataGridViewTextBoxColumn Type;
         private DataGridView allObjectsGridView;
         private Label leftBottomGPSLabel;
+        private DataGridViewTextBoxColumn Type;
+        private DataGridViewTextBoxColumn PropertyTableID;
+        private DataGridViewTextBoxColumn LeftBottom;
+        private DataGridViewTextBoxColumn RightTop;
+        private DataGridViewImageColumn Edit;
+        private DataGridViewImageColumn Delete;
     }
 }
