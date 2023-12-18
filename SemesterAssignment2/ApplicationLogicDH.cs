@@ -457,5 +457,20 @@ public class ApplicationLogicDH
         _dynamicHashingParcels.CloseFileStreams();
         _dynamicHashingProperties.CloseFileStreams();
     }
+
+    public IEnumerable<PropertyQuadObject> FindProperties(GPSPoint searchPoint)
+    {
+        var foundObjects = new List<PropertyQuadObject>();
+
+        foreach (var foundProperty in _quadTreeProperties.Find(searchPoint))
+        {
+            if (foundProperty.Item is PropertyQuadObject property)
+            {
+                foundObjects.Add(property);
+            }
+        }
+
+        return foundObjects;
+    }
 }
 

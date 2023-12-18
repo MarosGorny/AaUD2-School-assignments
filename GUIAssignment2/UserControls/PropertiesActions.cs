@@ -1,5 +1,7 @@
 ﻿using QuadTreeDS.SpatialItems;
+using SemesterAssignment2.RealtyObjects;
 using System.Data;
+using static GUIAssignment2.RealtyEditForm;
 
 namespace GUIAssignment2.UserControls;
 
@@ -47,28 +49,28 @@ public partial class FindProperties : UserControl
         return eastButton.Checked ? LongitudeDirection.E : LongitudeDirection.W;
     }
 
-    private void DisplayFoundProperties(IEnumerable<Property> properties)
+    private void DisplayFoundProperties(IEnumerable<PropertyQuadObject> properties)
     {
         //NEW CODE | After PROF. Jankovic wanted the change
         foreach (var property in properties)
         {
             string finalString = "";
-            foreach (var parcel in property.PositionedOnParcels)
-            {
-                string numberParcel = parcel.ParcelNumber.ToString() + " ";
-                string descriptionParcel = parcel.Description + " ";
-                string bottomLeftParcel = parcel.LowerLeft.ToString() + " ";
-                string topRightParcel = parcel.UpperRight.ToString() + " ";
-                finalString += numberParcel + descriptionParcel + bottomLeftParcel + topRightParcel + "\n";
-            }
+            //foreach (var parcel in property.PositionedOnParcels)
+            //{
+            //    string numberParcel = parcel.ParcelNumber.ToString() + " ";
+            //    string descriptionParcel = parcel.Description + " ";
+            //    string bottomLeftParcel = parcel.LowerLeft.ToString() + " ";
+            //    string topRightParcel = parcel.UpperRight.ToString() + " ";
+            //    finalString += numberParcel + descriptionParcel + bottomLeftParcel + topRightParcel + "\n";
+            //}
 
-            string listOfParcelsString = string.Join(", ", property.PositionedOnParcels.Select(parcel => parcel.ParcelNumber));
+            //string listOfParcelsString = string.Join(", ", property.PositionedOnParcels.Select(parcel => parcel.ParcelNumber));
             string bottomLeftString = property.LowerLeft.ToString();
             string topRightString = property.UpperRight.ToString();
 
             propertyGridView.Rows.Add(new object[]
             {
-                property.ConscriptionNumber,
+                -66, //property.ConscriptionNumber,
                 property.Description,
                 finalString, //instead of listOfParcelsString
                 bottomLeftString,
@@ -163,11 +165,12 @@ public partial class FindProperties : UserControl
 
             GPSRectangle area = new GPSRectangle(leftPoint, rightPoint);
 
+            int propertyNumber = (int)propertyNumberNumericUpDown.Value;
             int conscriptionNumber = (int)conscriptionNumberNumericUpDown.Value;
             string description = descriptionTextBox.Text;
 
-            Property property = new Property(conscriptionNumber, description, area);
-            Program.ApplicationLogic.AddProperty(property);
+            Property property = new Property(propertyNumber, conscriptionNumber, description, area);
+            Program.ApplicationLogic.AddObject(property);
 
             ResetInputFields();
         }
@@ -240,10 +243,12 @@ public partial class FindProperties : UserControl
     {
         // Check if the click is on a valid cell
         if (e.RowIndex >= 0 && e.ColumnIndex >= 0 && e.ColumnIndex == propertyGridView.Columns.Count - 1)
+        //DELETE PROPERTY
         {
-            int conscriptionNumber = int.Parse(GetCellValue(propertyGridView, 0, e.RowIndex));
+            int propertyNumber = int.Parse(GetCellValue(propertyGridView, 0, e.RowIndex));
+            //int conscriptionNumber = int.Parse(GetCellValue(propertyGridView, 0, e.RowIndex));
 
-            DialogResult dialogResult = MessageBox.Show($"Are you sure you want to delete Property {conscriptionNumber}?", "Delete Property", MessageBoxButtons.YesNo);
+            DialogResult dialogResult = MessageBox.Show($"Are you sure you want to delete Property {propertyNumber}?", "Delete Property", MessageBoxButtons.YesNo);
 
             if (dialogResult == DialogResult.No)
             {
@@ -251,34 +256,36 @@ public partial class FindProperties : UserControl
             }
 
             // Parse GPS points from cells
-            GPSPoint leftGPSPoint = ParseGPSPointFromCell(propertyGridView, 3, e.RowIndex);
-            GPSPoint rightGPSPoint = ParseGPSPointFromCell(propertyGridView, 4, e.RowIndex);
+            GPSPoint leftGPSPoint = ParseGPSPointFromCell(propertyGridView, 1, e.RowIndex);
+            GPSPoint rightGPSPoint = ParseGPSPointFromCell(propertyGridView, 2, e.RowIndex);
 
             GPSRectangle area = new GPSRectangle(leftGPSPoint, rightGPSPoint);
 
-            string description = GetCellValue(propertyGridView, 1, e.RowIndex);
-            Property property = new Property(conscriptionNumber, description, area);
+            //string description = GetCellValue(propertyGridView, 1, e.RowIndex);
+            //Property property = new Property(propertyNumber,-1, "", area);
 
-            if (Program.ApplicationLogic.DeleteProperty(property))
+            if (Program.ApplicationLogic.DeleteProperty(propertyNumber))
                 propertyGridView.Rows.RemoveAt(e.RowIndex);
         }
         else if (e.RowIndex >= 0 && e.ColumnIndex >= 0 && e.ColumnIndex == propertyGridView.Columns.Count - 2)
+        //EDIT PROPERTY
         {
-            int conscriptionNumber = int.Parse(GetCellValue(propertyGridView, 0, e.RowIndex));
-            string description = GetCellValue(propertyGridView, 1, e.RowIndex);
+
+            int propertyNumber = int.Parse(GetCellValue(propertyGridView, 0, e.RowIndex));
+            //string description = GetCellValue(propertyGridView, 1, e.RowIndex);
 
             // Parse GPS points from cells
-            GPSPoint leftGPSPoint = ParseGPSPointFromCell(propertyGridView, 3, e.RowIndex);
-            GPSPoint rightGPSPoint = ParseGPSPointFromCell(propertyGridView, 4, e.RowIndex);
+            GPSPoint leftGPSPoint = ParseGPSPointFromCell(propertyGridView, 1, e.RowIndex);
+            GPSPoint rightGPSPoint = ParseGPSPointFromCell(propertyGridView, 2, e.RowIndex);
             GPSRectangle area = new GPSRectangle(leftGPSPoint, rightGPSPoint);
 
-            Property property = new Property(conscriptionNumber, description, area);
-            var result = Program.ApplicationLogic.FindObject(property);
-            var foundProperty = result.foundObject as Property;
+            //Property property = new Property(propertyNumber, -1, "", area);
+            var result = Program.ApplicationLogic.TryFindProperty(propertyNumber);
+            var foundProperty = result as Property;
 
             if (foundProperty is null)
             {
-                MessageBox.Show($"Property {conscriptionNumber} does not exist", "Property not found");
+                MessageBox.Show($"Property {propertyNumber} does not exist", "Property not found");
                 return;
             }
             RealtyEditForm editForm = new RealtyEditForm(foundProperty);
@@ -326,11 +333,11 @@ public partial class FindProperties : UserControl
         if (oldProperty.ConscriptionNumber == updatedProperty.ConscriptionNumber)
             return true;
 
-        if (Program.ApplicationLogic.SearchKey(oldProperty, updatedProperty.ConscriptionNumber))
-        {
-            MessageBox.Show("Consription number cannot be changed");
-            return false;
-        }
+        //if (Program.ApplicationLogic.SearchKey(oldProperty, updatedProperty.ConscriptionNumber))
+        //{
+        //    MessageBox.Show("Consription number cannot be changed");
+        //    return false;
+        //}
 
         UpdatePropertyData(oldProperty, updatedProperty);
         return true;
@@ -341,14 +348,16 @@ public partial class FindProperties : UserControl
         if (oldParcel.ParcelNumber == updatedParcel.ParcelNumber)
             return true;
 
-        if (Program.ApplicationLogic.SearchKey(oldParcel, updatedParcel.ParcelNumber))
-        {
-            MessageBox.Show("Parcel number cannot be changed");
-            return false;
-        }
+        MessageBox.Show("Parcel number cannot be changed");
+        return false;
+        //if (Program.ApplicationLogic.SearchKey(oldParcel, updatedParcel.ParcelNumber))
+        //{
+        //    MessageBox.Show("Parcel number cannot be changed");
+        //    return false;
+        //}
 
-        UpdateParcelData(oldParcel, updatedParcel);
-        return true;
+        //UpdateParcelData(oldParcel, updatedParcel);
+        //return true;
     }
 
     private bool HasBoundaryChanged(RealtyObject oldRealtyObject, RealtyObject updatedRealtyObject)
@@ -359,15 +368,17 @@ public partial class FindProperties : UserControl
 
     private void UpdatePropertyData(Property oldProperty, Property updatedProperty)
     {
-        Program.ApplicationLogic.DeleteProperty(oldProperty);
-        Program.ApplicationLogic.AddProperty(updatedProperty);
+        Program.ApplicationLogic.EditProperty(updatedProperty);
+        //Program.ApplicationLogic.DeleteProperty(oldProperty);
+        //Program.ApplicationLogic.AddProperty(updatedProperty);
         RefreshPropertyDisplay();
     }
 
     private void UpdateParcelData(Parcel oldParcel, Parcel updatedParcel)
     {
-        Program.ApplicationLogic.DeleteParcel(oldParcel);
-        Program.ApplicationLogic.AddParcel(updatedParcel);
+        Program.ApplicationLogic.EditParcel(updatedParcel);
+        //Program.ApplicationLogic.DeleteParcel(oldParcel);
+        //Program.ApplicationLogic.AddParcel(updatedParcel);
         RefreshPropertyDisplay();
     }
 
@@ -379,4 +390,8 @@ public partial class FindProperties : UserControl
         DisplayFoundProperties(foundProperties);
     }
 
+    private void label2_Click(object sender, EventArgs e)
+    {
+
+    }
 }

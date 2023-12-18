@@ -1,4 +1,5 @@
 ﻿using QuadTreeDS.SpatialItems;
+using SemesterAssignment2.RealtyObjects;
 
 namespace GUIAssignment2;
 
@@ -48,6 +49,7 @@ public partial class RealtyEditForm : Form
         if (string.IsNullOrEmpty(descriptionTextBox.Text))
             descriptionTextBox.PlaceholderText = "Description of parcel";
         idNumberNumericUpDown.Value = parcel.ParcelNumber;
+        idNumberNumericUpDown.Enabled = false;
 
         // Assuming Parcel also has GPSPoint LowerLeft and UpperRight fields or similar.
         SetupGpsFields(gps1LatNumericUpDown, gps1LongNumericUpDown, gps1LatSRadioButton, gps1LongWRadioButton, parcel.LowerLeft as GPSPoint);
@@ -87,14 +89,15 @@ public partial class RealtyEditForm : Form
         // Update the object with new values from the form fields
         if (_realtyObject is Property property)
         {
-            originalObject = new Property(property.ConscriptionNumber, property.Description, oldArea);
+            originalObject = new Property(property.PropertyNumber, property.ConscriptionNumber, property.Description, oldArea);
             var conscriptionNumber = (int)idNumberNumericUpDown.Value;
             var description = descriptionTextBox.Text;
-            Property newProperty = new Property(conscriptionNumber, description, area);
+            Property newProperty = new Property(property.PropertyNumber, conscriptionNumber, description, area);
             _realtyObject = newProperty;
         }
         else if (_realtyObject is Parcel parcel)
         {
+
             originalObject = new Parcel(parcel.ParcelNumber, parcel.Description, oldArea);
             var parcenNumber = (int)idNumberNumericUpDown.Value;
             var description = descriptionTextBox.Text;
