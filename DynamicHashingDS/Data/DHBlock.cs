@@ -54,10 +54,14 @@ public class DHBlock<T> where T : IDHRecord<T>, new()
         } 
         else
         {
-            if (RecordsList.Contains(record))
+            foreach (var r in RecordsList)
             {
-                return false;
+                if (r.MyEquals((T)record))
+                {
+                    return false;
+                }
             }
+
 
             if (ValidRecordsCount < MaxRecordsCount)
             {

@@ -112,7 +112,17 @@ public class ApplicationLogicDH
             property.TryAddParcel(newParcel.ParcelNumber);
             propertiesIds.Add(property.PropertyNumber);
 
-            block.RecordsList[block.RecordsList.IndexOf(property)] = property;
+
+            for (int i = 0; i < block.RecordsList.Count; i++)
+            {
+                if (block.RecordsList[i].MyEquals(property))
+                {
+                    block.RecordsList[i] = property;
+                    break;
+                }
+            }
+
+            //block.RecordsList[block.RecordsList.IndexOf(property)] = property;
             if (isOverflowBlock)
             {
                 block.WriteToBinaryFile(_dynamicHashingProperties.FileBlockManager.OverFlowFileStream, block.BlockAddress);
@@ -179,11 +189,29 @@ public class ApplicationLogicDH
             var parcel = parcelsStack.Pop();
             var block = blocksStack.Pop();
             var isOverflowBlock = isOverflowStack.Pop();
+            if(isOverflowBlock)
+            {
+                block.ReadFromBinaryFile(_dynamicHashingParcels.FileBlockManager.OverFlowFileStream, block.BlockAddress);
+            }
+            else
+            {
+                block.ReadFromBinaryFile(_dynamicHashingParcels.FileBlockManager.MainFileStream, block.BlockAddress);
+            }
+
 
             parcel.TryAddProperty(property.PropertyNumber);
             parcelsIds.Add(parcel.ParcelNumber);
 
-            block.RecordsList[block.RecordsList.IndexOf(parcel)] = parcel;
+            for (int i = 0; i < block.RecordsList.Count; i++)
+            {
+                if (block.RecordsList[i].MyEquals(parcel))
+                {
+                    block.RecordsList[i] = parcel;
+                    break;
+                }
+            }
+
+            //block.RecordsList[block.RecordsList.IndexOf(parcel)] = parcel;
             if (isOverflowBlock)
             {
                 block.WriteToBinaryFile(_dynamicHashingParcels.FileBlockManager.OverFlowFileStream, block.BlockAddress);
@@ -262,7 +290,18 @@ public class ApplicationLogicDH
             if(found)
             {
                 ((Property)foundProperty).TryRemoveParcel(conscriptionNumber);
-                foundBlock.RecordsList[foundBlock.RecordsList.IndexOf(foundProperty)] = foundProperty;
+
+
+                for (int i = 0; i < foundBlock.RecordsList.Count; i++)
+                {
+                    if (foundBlock.RecordsList[i].MyEquals((Property)foundProperty))
+                    {
+                        foundBlock.RecordsList[i] = foundProperty;
+                        break;
+                    }
+                }
+
+                //foundBlock.RecordsList[foundBlock.RecordsList.IndexOf(foundProperty)] = foundProperty;
                 if (isOverFlowBlock)
                 {
                     foundBlock.WriteToBinaryFile(_dynamicHashingProperties.FileBlockManager.OverFlowFileStream, foundBlock.BlockAddress);
@@ -294,7 +333,17 @@ public class ApplicationLogicDH
             if(found)
             {
                 ((Parcel)foundParcel).TryRemoveProperty(propertyNumber);
-                foundBlock.RecordsList[foundBlock.RecordsList.IndexOf(foundParcel)] = foundParcel;
+
+                for (int i = 0; i < foundBlock.RecordsList.Count; i++)
+                {
+                    if (foundBlock.RecordsList[i].MyEquals((Parcel)foundParcel))
+                    {
+                        foundBlock.RecordsList[i] = foundParcel;
+                        break;
+                    }
+                }
+
+                //foundBlock.RecordsList[foundBlock.RecordsList.IndexOf(foundParcel)] = foundParcel;
                 if (isOverFlowBlock)
                 {
                     foundBlock.WriteToBinaryFile(_dynamicHashingParcels.FileBlockManager.OverFlowFileStream, foundBlock.BlockAddress);

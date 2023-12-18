@@ -88,8 +88,18 @@ public class DynamicHashing<T> where T : IDHRecord<T>, new()
         bool found = Root.TryFind(record, out var foundRecord, out var foundBlock, out bool isOverflowBlock);
         if(found)
         {
-            foundBlock.RecordsList[foundBlock.RecordsList.IndexOf(foundRecord)] = record;
-            if(isOverflowBlock)
+            //foundBlock.RecordsList[foundBlock.RecordsList.IndexOf(foundRecord)] = record;
+
+            for (int i = 0; i < foundBlock.RecordsList.Count; i++)
+            {
+                if (foundBlock.RecordsList[i].MyEquals((T)foundRecord))
+                {
+                    foundBlock.RecordsList[i] = record;
+                    break;
+                }
+            }
+
+            if (isOverflowBlock)
             {
                 foundBlock.WriteToBinaryFile(_overflowFileStream,foundBlock.BlockAddress);
             }
