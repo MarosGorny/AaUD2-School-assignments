@@ -1,5 +1,7 @@
 ﻿using QuadTreeDS.SpatialItems;
+using SemesterAssignment2.RealtyObjects;
 using System.Data;
+using static GUIAssignment2.RealtyEditForm;
 
 namespace GUIAssignment2.UserControls;
 
@@ -10,300 +12,299 @@ public partial class FindParcels : UserControl
         InitializeComponent();
     }
 
-    //private void parcelGridView_CellMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
-    //{
-    //    // Check if the click is on a valid cell
-    //    if (e.RowIndex >= 0 && e.ColumnIndex >= 0)
-    //    {
-    //        // Optionally, get the value of the cell that was double-clicked
-    //        var cellValue = parcelGridView[e.ColumnIndex, e.RowIndex].Value?.ToString() ?? "N/A";
+    private void parcelGridView_CellMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
+    {
+        // Check if the click is on a valid cell
+        if (e.RowIndex >= 0 && e.ColumnIndex >= 0)
+        {
+            // Optionally, get the value of the cell that was double-clicked
+            var cellValue = parcelGridView[e.ColumnIndex, e.RowIndex].Value?.ToString() ?? "N/A";
 
-    //        // Show the message box
-    //        MessageBox.Show($"Cell at row {e.RowIndex + 1}, column {e.ColumnIndex + 1} \nValue: {cellValue}\n", "Cell Double-Clicked");
-    //    }
-    //}
+            // Show the message box
+            MessageBox.Show($"Cell at row {e.RowIndex + 1}, column {e.ColumnIndex + 1} \nValue: {cellValue}\n", "Cell Double-Clicked");
+        }
+    }
 
-    //private void ClearParcelGridView()
-    //{
-    //    parcelGridView.Rows.Clear();
-    //    parcelGridView.Refresh();
-    //}
+    private void ClearParcelGridView()
+    {
+        parcelGridView.Rows.Clear();
+        parcelGridView.Refresh();
+    }
 
-    //private GPSPoint CreateSearchPointFromInputs()
-    //{
-    //    LatitudeDirection latDirection = GetSelectedLatitudeDirection(latNRadioButton, latSRadioButton);
-    //    LongitudeDirection longDirection = GetSelectedLongitudeDirection(longERadioButton, longWRadioButton);
+    private GPSPoint CreateSearchPointFromInputs()
+    {
+        LatitudeDirection latDirection = GetSelectedLatitudeDirection(latNRadioButton, latSRadioButton);
+        LongitudeDirection longDirection = GetSelectedLongitudeDirection(longERadioButton, longWRadioButton);
 
-    //    double latitude = Convert.ToDouble(latNumericUpDown.Value);
-    //    double longitude = Convert.ToDouble(longNumericUpDown.Value);
+        double latitude = Convert.ToDouble(latNumericUpDown.Value);
+        double longitude = Convert.ToDouble(longNumericUpDown.Value);
 
-    //    return new GPSPoint(latDirection, latitude, longDirection, longitude);
-    //}
+        return new GPSPoint(latDirection, latitude, longDirection, longitude);
+    }
 
-    //private LatitudeDirection GetSelectedLatitudeDirection(RadioButton northButton, RadioButton southButton)
-    //{
-    //    return northButton.Checked ? LatitudeDirection.N : LatitudeDirection.S;
-    //}
+    private LatitudeDirection GetSelectedLatitudeDirection(RadioButton northButton, RadioButton southButton)
+    {
+        return northButton.Checked ? LatitudeDirection.N : LatitudeDirection.S;
+    }
 
-    //private LongitudeDirection GetSelectedLongitudeDirection(RadioButton eastButton, RadioButton westButton)
-    //{
-    //    return eastButton.Checked ? LongitudeDirection.E : LongitudeDirection.W;
-    //}
+    private LongitudeDirection GetSelectedLongitudeDirection(RadioButton eastButton, RadioButton westButton)
+    {
+        return eastButton.Checked ? LongitudeDirection.E : LongitudeDirection.W;
+    }
 
-    //// Resets the numeric up/downs and textboxes to their default values.
-    //private void ResetInputFields()
-    //{
-    //    gps1LatNumericUpDown.Value = gps1LatNumericUpDown.Minimum;
-    //    gps1LongNumericUpDown.Value = gps1LongNumericUpDown.Minimum;
-    //    gps2LatNumericUpDown.Value = gps2LatNumericUpDown.Minimum;
-    //    gps2LongNumericUpDown.Value = gps2LongNumericUpDown.Minimum;
-    //    parcelNumberNumericUpDown.Value = parcelNumberNumericUpDown.Minimum;
-    //    descriptionTextBox.Text = "";
-    //}
+    // Resets the numeric up/downs and textboxes to their default values.
+    private void ResetInputFields()
+    {
+        gps1LatNumericUpDown.Value = gps1LatNumericUpDown.Minimum;
+        gps1LongNumericUpDown.Value = gps1LongNumericUpDown.Minimum;
+        gps2LatNumericUpDown.Value = gps2LatNumericUpDown.Minimum;
+        gps2LongNumericUpDown.Value = gps2LongNumericUpDown.Minimum;
+        parcelNumberNumericUpDown.Value = parcelNumberNumericUpDown.Minimum;
+        descriptionTextBox.Text = "";
+    }
 
-    //// Creates a GPSPoint based on user inputs from the form.
-    //private GPSPoint CreateGPSPointFromInputs(NumericUpDown numericUpDownLatitude,
-    //                                          NumericUpDown numericUpDownLongitude,
-    //                                          RadioButton radioButtonLatitudeNorth,
-    //                                          RadioButton radioButtonLongitudeEast)
-    //{
-    //    // Determine the latitude and longitude directions based on the radio button selections.
-    //    LatitudeDirection latitudeDirection = radioButtonLatitudeNorth.Checked ? LatitudeDirection.N : LatitudeDirection.S;
-    //    LongitudeDirection longitudeDirection = radioButtonLongitudeEast.Checked ? LongitudeDirection.E : LongitudeDirection.W;
+    // Creates a GPSPoint based on user inputs from the form.
+    private GPSPoint CreateGPSPointFromInputs(NumericUpDown numericUpDownLatitude,
+                                              NumericUpDown numericUpDownLongitude,
+                                              RadioButton radioButtonLatitudeNorth,
+                                              RadioButton radioButtonLongitudeEast)
+    {
+        // Determine the latitude and longitude directions based on the radio button selections.
+        LatitudeDirection latitudeDirection = radioButtonLatitudeNorth.Checked ? LatitudeDirection.N : LatitudeDirection.S;
+        LongitudeDirection longitudeDirection = radioButtonLongitudeEast.Checked ? LongitudeDirection.E : LongitudeDirection.W;
 
-    //    // Convert the numeric up/down values to doubles for latitude and longitude.
-    //    double latitude = Convert.ToDouble(numericUpDownLatitude.Value);
-    //    double longitude = Convert.ToDouble(numericUpDownLongitude.Value);
+        // Convert the numeric up/down values to doubles for latitude and longitude.
+        double latitude = Convert.ToDouble(numericUpDownLatitude.Value);
+        double longitude = Convert.ToDouble(numericUpDownLongitude.Value);
 
-    //    // Return a new GPSPoint with the specified values.
-    //    return new GPSPoint(latitudeDirection, latitude, longitudeDirection, longitude);
-    //}
+        // Return a new GPSPoint with the specified values.
+        return new GPSPoint(latitudeDirection, latitude, longitudeDirection, longitude);
+    }
 
-    //private void insertPropertyButton_Click(object sender, EventArgs e)
-    //{
-    //    try
-    //    {
-    //        GPSPoint leftPoint = CreateGPSPointFromInputs(
-    //            gps1LatNumericUpDown, gps1LongNumericUpDown,
-    //            gps1LatNRadioButton, gps1LongERadioButton
-    //        );
+    private void insertPropertyButton_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            GPSPoint leftPoint = CreateGPSPointFromInputs(
+                gps1LatNumericUpDown, gps1LongNumericUpDown,
+                gps1LatNRadioButton, gps1LongERadioButton
+            );
 
-    //        GPSPoint rightPoint = CreateGPSPointFromInputs(
-    //            gps2LatNumericUpDown, gps2LongNumericUpDown,
-    //            gps2LatNRadioButton, gps2LongERadioButton
-    //        );
+            GPSPoint rightPoint = CreateGPSPointFromInputs(
+                gps2LatNumericUpDown, gps2LongNumericUpDown,
+                gps2LatNRadioButton, gps2LongERadioButton
+            );
 
-    //        GPSRectangle area = new GPSRectangle(leftPoint, rightPoint);
+            GPSRectangle area = new GPSRectangle(leftPoint, rightPoint);
 
-    //        int parcelNumber = (int)parcelNumberNumericUpDown.Value;
-    //        string description = descriptionTextBox.Text;
+            int parcelNumber = (int)parcelNumberNumericUpDown.Value;
+            string description = descriptionTextBox.Text;
 
-    //        Parcel parcel = new Parcel(parcelNumber, description, area);
-    //        Program.ApplicationLogic.AddParcel(parcel);
+            Parcel parcel = new Parcel(parcelNumber, description, area);
+            Program.ApplicationLogic.AddObject(parcel);
 
-    //        ResetInputFields();
-    //    }
-    //    catch (ArgumentException ex)
-    //    {
-    //        MessageBox.Show(ex.Message);
-    //    }
-    //}
+            ResetInputFields();
+        }
+        catch (ArgumentException ex)
+        {
+            MessageBox.Show(ex.Message);
+        }
+    }
 
-    //private void parcelGridView_CellContentClick(object sender, DataGridViewCellEventArgs e)
-    //{
+    private void parcelGridView_CellContentClick(object sender, DataGridViewCellEventArgs e)
+    {
 
-    //}
+    }
 
-    //private GPSPoint ParseGPSPointFromCell(DataGridView gridView, int columnIndex, int rowIndex)
-    //{
-    //    var pointString = GetCellValue(gridView, columnIndex, rowIndex);
-    //    if (TryParseCoordinates(pointString, out LatitudeDirection latitudeDirection, out double latitude, out LongitudeDirection longitudeDirection, out double longitude))
-    //    {
-    //        return new GPSPoint(latitudeDirection, latitude, longitudeDirection, longitude);
-    //    }
-    //    throw new FormatException("Invalid GPS data");
-    //}
+    private GPSPoint ParseGPSPointFromCell(DataGridView gridView, int columnIndex, int rowIndex)
+    {
+        var pointString = GetCellValue(gridView, columnIndex, rowIndex);
+        if (TryParseCoordinates(pointString, out LatitudeDirection latitudeDirection, out double latitude, out LongitudeDirection longitudeDirection, out double longitude))
+        {
+            return new GPSPoint(latitudeDirection, latitude, longitudeDirection, longitude);
+        }
+        throw new FormatException("Invalid GPS data");
+    }
 
-    //private void EditForm_RealtyObjectUpdated(object sender, RealtyObjectEventArgs e)
-    //{
-    //    if (UpdatePropertyIfValid(e.OldRealtyObject, e.UpdatedRealtyObject)) return;
-    //    UpdateParcelIfValid(e.OldRealtyObject, e.UpdatedRealtyObject);
-    //}
+    private void EditForm_RealtyObjectUpdated(object sender, RealtyObjectEventArgs e)
+    {
+        if (UpdatePropertyIfValid(e.OldRealtyObject, e.UpdatedRealtyObject)) return;
+        UpdateParcelIfValid(e.OldRealtyObject, e.UpdatedRealtyObject);
+    }
 
-    //private bool UpdatePropertyIfValid(RealtyObject oldRealtyObject, RealtyObject updatedRealtyObject)
-    //{
-    //    if (!(oldRealtyObject is Property oldProperty) || !(updatedRealtyObject is Property updatedProperty))
-    //        return false;
+    private bool UpdatePropertyIfValid(RealtyObject oldRealtyObject, RealtyObject updatedRealtyObject)
+    {
+        if (!(oldRealtyObject is Property oldProperty) || !(updatedRealtyObject is Property updatedProperty))
+            return false;
 
-    //    if (!ValidateConscriptionNumberChange(oldProperty, updatedProperty)) return true;
+        if (!ValidateConscriptionNumberChange(oldProperty, updatedProperty)) return true;
 
-    //    if (HasBoundaryChanged(oldProperty, updatedProperty) || oldProperty.Description != updatedProperty.Description)
-    //    {
-    //        UpdatePropertyData(oldProperty, updatedProperty);
-    //    }
+        if (HasBoundaryChanged(oldProperty, updatedProperty) || oldProperty.Description != updatedProperty.Description)
+        {
+            UpdatePropertyData(oldProperty, updatedProperty);
+        }
 
-    //    return true;
-    //}
+        return true;
+    }
 
-    //private void UpdateParcelIfValid(RealtyObject oldRealtyObject, RealtyObject updatedRealtyObject)
-    //{
-    //    if (!(oldRealtyObject is Parcel oldParcel) || !(updatedRealtyObject is Parcel updatedParcel))
-    //        return;
+    private void UpdateParcelIfValid(RealtyObject oldRealtyObject, RealtyObject updatedRealtyObject)
+    {
+        if (!(oldRealtyObject is Parcel oldParcel) || !(updatedRealtyObject is Parcel updatedParcel))
+            return;
 
-    //    if (!ValidateParcelNumberChange(oldParcel, updatedParcel)) return;
+        if (!ValidateParcelNumberChange(oldParcel, updatedParcel)) return;
 
-    //    if (HasBoundaryChanged(oldParcel, updatedParcel) || oldParcel.Description != updatedParcel.Description)
-    //    {
-    //        UpdateParcelData(oldParcel, updatedParcel);
-    //    }
-    //}
+        if (HasBoundaryChanged(oldParcel, updatedParcel) || oldParcel.Description != updatedParcel.Description)
+        {
+            UpdateParcelData(oldParcel, updatedParcel);
+        }
+    }
 
-    //private bool ValidateConscriptionNumberChange(Property oldProperty, Property updatedProperty)
-    //{
-    //    if (oldProperty.ConscriptionNumber == updatedProperty.ConscriptionNumber)
-    //        return true;
+    private bool ValidateConscriptionNumberChange(Property oldProperty, Property updatedProperty)
+    {
+        if (oldProperty.ConscriptionNumber == updatedProperty.ConscriptionNumber)
+            return true;
 
-    //    if (Program.ApplicationLogic.SearchKey(oldProperty, updatedProperty.ConscriptionNumber))
-    //    {
-    //        MessageBox.Show("Consription number cannot be changed");
-    //        return false;
-    //    }
+        UpdatePropertyData(oldProperty, updatedProperty);
+        return true;
+    }
 
-    //    UpdatePropertyData(oldProperty, updatedProperty);
-    //    return true;
-    //}
+    private bool ValidateParcelNumberChange(Parcel oldParcel, Parcel updatedParcel)
+    {
+        if (oldParcel.ParcelNumber == updatedParcel.ParcelNumber)
+            return true;
 
-    //private bool ValidateParcelNumberChange(Parcel oldParcel, Parcel updatedParcel)
-    //{
-    //    if (oldParcel.ParcelNumber == updatedParcel.ParcelNumber)
-    //        return true;
+        MessageBox.Show("Parcel number cannot be changed");
+        return false;
 
-    //    if (Program.ApplicationLogic.SearchKey(oldParcel, updatedParcel.ParcelNumber * -1))
-    //    {
-    //        MessageBox.Show("Parcel number cannot be changed");
-    //        return false;
-    //    }
+        //if (Program.ApplicationLogic.SearchKey(oldParcel, updatedParcel.ParcelNumber * -1))
+        //{
+        //    MessageBox.Show("Parcel number cannot be changed");
+        //    return false;
+        //}
 
-    //    UpdateParcelData(oldParcel, updatedParcel);
-    //    return true;
-    //}
+        //UpdateParcelData(oldParcel, updatedParcel);
+        //return true;
+    }
 
-    //private bool HasBoundaryChanged(RealtyObject oldRealtyObject, RealtyObject updatedRealtyObject)
-    //{
-    //    return oldRealtyObject.LowerLeft != updatedRealtyObject.LowerLeft ||
-    //           oldRealtyObject.UpperRight != updatedRealtyObject.UpperRight;
-    //}
+    private bool HasBoundaryChanged(RealtyObject oldRealtyObject, RealtyObject updatedRealtyObject)
+    {
+        return oldRealtyObject.LowerLeft != updatedRealtyObject.LowerLeft ||
+               oldRealtyObject.UpperRight != updatedRealtyObject.UpperRight;
+    }
 
-    //private void UpdatePropertyData(Property oldProperty, Property updatedProperty)
-    //{
-    //    Program.ApplicationLogic.DeleteProperty(oldProperty);
-    //    Program.ApplicationLogic.AddProperty(updatedProperty);
-    //    RefreshPropertyDisplay();
-    //}
+    private void UpdatePropertyData(Property oldProperty, Property updatedProperty)
+    {
+        Program.ApplicationLogic.EditProperty(oldProperty, updatedProperty);
+        //Program.ApplicationLogic.DeleteProperty(oldProperty);
+        //Program.ApplicationLogic.AddProperty(updatedProperty);
+        RefreshPropertyDisplay();
+    }
 
-    //private void UpdateParcelData(Parcel oldParcel, Parcel updatedParcel)
-    //{
-    //    Program.ApplicationLogic.DeleteParcel(oldParcel);
-    //    Program.ApplicationLogic.AddParcel(updatedParcel);
-    //    RefreshPropertyDisplay();
-    //}
+    private void UpdateParcelData(Parcel oldParcel, Parcel updatedParcel)
+    {
+        Program.ApplicationLogic.EditParcel(oldParcel, updatedParcel);
+        //Program.ApplicationLogic.DeleteParcel(oldParcel);
+        //Program.ApplicationLogic.AddParcel(updatedParcel);
+        RefreshPropertyDisplay();
+    }
 
-    //private void DisplayFoundParcels(IEnumerable<Parcel> parcels)
-    //{
-    //    //NEW CODE AFTER PROF JANKOVIC WANTED THE CHANGE
-    //    foreach (var parcel in parcels)
-    //    {
-    //        string finalString = "";
-    //        foreach (var property in parcel.OccupiedByProperties)
-    //        {
-    //            string numberParcel = property.ConscriptionNumber.ToString() + " ";
-    //            string descriptionParcel = property.Description + " ";
-    //            string bottomLeftParcel = property.LowerLeft.ToString() + " ";
-    //            string topRightParcel = property.UpperRight.ToString() + " ";
-    //            finalString += numberParcel + descriptionParcel + bottomLeftParcel + topRightParcel + "\n";
-    //        }
+    private void DisplayFoundParcels(IEnumerable<ParcelQuadObject> parcels)
+    {
+        //NEW CODE AFTER PROF JANKOVIC WANTED THE CHANGE
+        foreach (var parcel in parcels)
+        {
+            //string finalString = "";
+            //foreach (var property in parcel.OccupiedByProperties)
+            //{
+            //    string numberParcel = property.ConscriptionNumber.ToString() + " ";
+            //    string descriptionParcel = property.Description + " ";
+            //    string bottomLeftParcel = property.LowerLeft.ToString() + " ";
+            //    string topRightParcel = property.UpperRight.ToString() + " ";
+            //    finalString += numberParcel + descriptionParcel + bottomLeftParcel + topRightParcel + "\n";
+            //}
 
-    //        string listOfParcelsString = string.Join(", ", parcel.OccupiedByProperties.Select(property => property.ConscriptionNumber));
-    //        string bottomLeftString = parcel.LowerLeft.ToString();
-    //        string topRightString = parcel.UpperRight.ToString();
+            //string listOfParcelsString = string.Join(", ", parcel.OccupiedByProperties.Select(property => property.ConscriptionNumber));
+            string bottomLeftString = parcel.LowerLeft.ToString();
+            string topRightString = parcel.UpperRight.ToString();
 
-    //        parcelGridView.Rows.Add(new object[]
-    //        {
-    //            parcel.ParcelNumber,
-    //            parcel.Description,
-    //            finalString, //INSTEAD OF listOfParcelsString
-    //            bottomLeftString,
-    //            topRightString
-    //        });
+            parcelGridView.Rows.Add(new object[]
+            {
+                parcel.ParcelNumber,
+                //parcel.Description,
+                //finalString, //INSTEAD OF listOfParcelsString
+                bottomLeftString,
+                topRightString
+            });
 
-    //        int newRowIdx = parcelGridView.Rows.Count - 1;
-    //        parcelGridView.Rows[newRowIdx].HeaderCell.Value = (newRowIdx + 1).ToString();
-    //    }
-    //    //OLD CODE BEFORE PROF JANKOVIC WANTED THE CHANGE
-    //    foreach (var parcel in parcels)
-    //    {
-    //        string listOfParcelsString = string.Join(", ", parcel.OccupiedByProperties.Select(property => property.ConscriptionNumber));
-    //        string bottomLeftString = parcel.LowerLeft.ToString();
-    //        string topRightString = parcel.UpperRight.ToString();
+            int newRowIdx = parcelGridView.Rows.Count - 1;
+            parcelGridView.Rows[newRowIdx].HeaderCell.Value = (newRowIdx + 1).ToString();
+        }
+        //OLD CODE BEFORE PROF JANKOVIC WANTED THE CHANGE
+        //foreach (var parcel in parcels)
+        //{
+        //    string listOfParcelsString = string.Join(", ", parcel.OccupiedByProperties.Select(property => property.ConscriptionNumber));
+        //    string bottomLeftString = parcel.LowerLeft.ToString();
+        //    string topRightString = parcel.UpperRight.ToString();
 
-    //        parcelGridView.Rows.Add(new object[]
-    //        {
-    //            parcel.ParcelNumber,
-    //            parcel.Description,
-    //            listOfParcelsString,
-    //            bottomLeftString,
-    //            topRightString
-    //        });
+        //    parcelGridView.Rows.Add(new object[]
+        //    {
+        //        parcel.ParcelNumber,
+        //        parcel.Description,
+        //        listOfParcelsString,
+        //        bottomLeftString,
+        //        topRightString
+        //    });
 
-    //        int newRowIdx = parcelGridView.Rows.Count - 1;
-    //        parcelGridView.Rows[newRowIdx].HeaderCell.Value = (newRowIdx + 1).ToString();
-    //    }
-    //}
+        //    int newRowIdx = parcelGridView.Rows.Count - 1;
+        //    parcelGridView.Rows[newRowIdx].HeaderCell.Value = (newRowIdx + 1).ToString();
+        //}
+    }
 
-    //private void RefreshPropertyDisplay()
-    //{
-    //    ClearParcelGridView();
-    //    GPSPoint searchPoint = CreateSearchPointFromInputs();
-    //    var foundParcels = Program.ApplicationLogic.FindParcels(searchPoint);
-    //    DisplayFoundParcels(foundParcels);
-    //}
+    private void RefreshPropertyDisplay()
+    {
+        ClearParcelGridView();
+        GPSPoint searchPoint = CreateSearchPointFromInputs();
+        var foundParcels = Program.ApplicationLogic.FindParcels(searchPoint);
+        DisplayFoundParcels(foundParcels);
+    }
 
-    //// Class level constants
-    //const int IconsSize = 2;
+    // Class level constants
+    const int IconsSize = 2;
 
-    //private string GetCellValue(DataGridView gridView, int columnIndex, int rowIndex)
-    //{
-    //    return gridView[columnIndex, rowIndex].Value?.ToString() ?? "N/A";
-    //}
+    private string GetCellValue(DataGridView gridView, int columnIndex, int rowIndex)
+    {
+        return gridView[columnIndex, rowIndex].Value?.ToString() ?? "N/A";
+    }
 
-    //public static bool TryParseCoordinates(string coordinates, out LatitudeDirection latitudeDirection, out double latitude, out LongitudeDirection longitudeDirection, out double longitude)
-    //{
-    //    // Initialize out parameters
-    //    latitudeDirection = default;
-    //    latitude = 0;
-    //    longitudeDirection = default;
-    //    longitude = 0;
+    public static bool TryParseCoordinates(string coordinates, out LatitudeDirection latitudeDirection, out double latitude, out LongitudeDirection longitudeDirection, out double longitude)
+    {
+        // Initialize out parameters
+        latitudeDirection = default;
+        latitude = 0;
+        longitudeDirection = default;
+        longitude = 0;
 
 
-    //    try
-    //    {
-    //        string[] parts = coordinates.Split(',');
-    //        // Split the first part by spaces to get latitude info
-    //        string[] latParts = parts[0].Trim().Split(' ');
-    //        Enum.TryParse(latParts[0], out latitudeDirection); // Get the direction (N/S)
+        try
+        {
+            string[] parts = coordinates.Split(',');
+            // Split the first part by spaces to get latitude info
+            string[] latParts = parts[0].Trim().Split(' ');
+            Enum.TryParse(latParts[0], out latitudeDirection); // Get the direction (N/S)
 
-    //        // Split the second part by spaces to get longitude info
-    //        string[] lonParts = parts[1].Trim().Split(' ');
-    //        Enum.TryParse(lonParts[0], out longitudeDirection); // Get the direction (E/W)
+            // Split the second part by spaces to get longitude info
+            string[] lonParts = parts[1].Trim().Split(' ');
+            Enum.TryParse(lonParts[0], out longitudeDirection); // Get the direction (E/W)
 
-    //        return true;
-    //    }
-    //    catch (Exception)
-    //    {
+            return true;
+        }
+        catch (Exception)
+        {
 
-    //        return false;
-    //    }
-    //}
+            return false;
+        }
+    }
 
     //private void searchPropertiesButton_Click(object sender, EventArgs e)
     //{
@@ -338,15 +339,15 @@ public partial class FindParcels : UserControl
     //    foreach (var foundParcel in foundParcels)
     //    {
     //        //THIS WAS ADDED JUST FOR THE PURPOSE OF THE ASSIGNMENT OF JANKOVIC
-    //        string finalString = "";
-    //        foreach (var property in foundParcel.OccupiedByProperties)
-    //        {
-    //            string numberParcel = property.ConscriptionNumber.ToString() + " ";
-    //            string descriptionParcel = property.Description + " ";
-    //            string bottomLeftParcel = property.LowerLeft.ToString() + " ";
-    //            string topRightParcel = property.UpperRight.ToString() + " ";
-    //            finalString += numberParcel + descriptionParcel + bottomLeftParcel + topRightParcel + "\n";
-    //        }
+    //        //string finalString = "";
+    //        //foreach (var property in foundParcel.OccupiedByProperties)
+    //        //{
+    //        //    string numberParcel = property.ConscriptionNumber.ToString() + " ";
+    //        //    string descriptionParcel = property.Description + " ";
+    //        //    string bottomLeftParcel = property.LowerLeft.ToString() + " ";
+    //        //    string topRightParcel = property.UpperRight.ToString() + " ";
+    //        //    finalString += numberParcel + descriptionParcel + bottomLeftParcel + topRightParcel + "\n";
+    //        //}
     //        //END OF ADDED CODE
 
 
@@ -377,54 +378,64 @@ public partial class FindParcels : UserControl
     //    }
     //}
 
-    //private void parcelGridView_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
-    //{
-    //    // Check if the click is on a valid cell
-    //    if (e.RowIndex >= 0 && e.ColumnIndex >= 0 && e.ColumnIndex == parcelGridView.Columns.Count - 1)
-    //    {
-    //        int parcelNumber = int.Parse(GetCellValue(parcelGridView, 0, e.RowIndex));
+    private void parcelGridView_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+    {
+        // Check if the click is on a valid cell
+        if (e.RowIndex >= 0 && e.ColumnIndex >= 0 && e.ColumnIndex == parcelGridView.Columns.Count - 1)
+        //DELETE Parcel
+        {
+            int parcelNumber = int.Parse(GetCellValue(parcelGridView, 0, e.RowIndex));
 
-    //        DialogResult dialogResult = MessageBox.Show($"Are you sure you want to delete Parcel {parcelNumber}?", "Delete Parcel", MessageBoxButtons.YesNo);
+            DialogResult dialogResult = MessageBox.Show($"Are you sure you want to delete Parcel {parcelNumber}?", "Delete Parcel", MessageBoxButtons.YesNo);
 
-    //        if (dialogResult == DialogResult.No)
-    //        {
-    //            return;
-    //        }
+            if (dialogResult == DialogResult.No)
+            {
+                return;
+            }
 
-    //        // Parse GPS points from cells
-    //        GPSPoint leftGPSPoint = ParseGPSPointFromCell(parcelGridView, 3, e.RowIndex);
-    //        GPSPoint rightGPSPoint = ParseGPSPointFromCell(parcelGridView, 4, e.RowIndex);
+            // Parse GPS points from cells
+            GPSPoint leftGPSPoint = ParseGPSPointFromCell(parcelGridView, 1, e.RowIndex);
+            GPSPoint rightGPSPoint = ParseGPSPointFromCell(parcelGridView, 2, e.RowIndex);
 
-    //        GPSRectangle area = new GPSRectangle(leftGPSPoint, rightGPSPoint);
+            GPSRectangle area = new GPSRectangle(leftGPSPoint, rightGPSPoint);
 
-    //        string description = GetCellValue(parcelGridView, 1, e.RowIndex);
-    //        Parcel parcel = new Parcel(parcelNumber, description, area);
+            //string description = GetCellValue(parcelGridView, 1, e.RowIndex);
+            //Parcel parcel = new Parcel(parcelNumber, description, area);
 
-    //        if (Program.ApplicationLogic.DeleteParcel(parcel))
-    //            parcelGridView.Rows.RemoveAt(e.RowIndex);
-    //    }
-    //    else if (e.RowIndex >= 0 && e.ColumnIndex >= 0 && e.ColumnIndex == parcelGridView.Columns.Count - 2)
-    //    {
-    //        int parcelNumber = int.Parse(GetCellValue(parcelGridView, 0, e.RowIndex));
-    //        string description = GetCellValue(parcelGridView, 1, e.RowIndex);
+            if (Program.ApplicationLogic.DeleteParcel(parcelNumber))
+                parcelGridView.Rows.RemoveAt(e.RowIndex);
+        }
+        else if (e.RowIndex >= 0 && e.ColumnIndex >= 0 && e.ColumnIndex == parcelGridView.Columns.Count - 2)
+        //EDIT Parcel
+        {
+            int parcelNumber = int.Parse(GetCellValue(parcelGridView, 0, e.RowIndex));
+            //string description = GetCellValue(parcelGridView, 1, e.RowIndex);
 
-    //        // Parse GPS points from cells
-    //        GPSPoint leftGPSPoint = ParseGPSPointFromCell(parcelGridView, 3, e.RowIndex);
-    //        GPSPoint rightGPSPoint = ParseGPSPointFromCell(parcelGridView, 4, e.RowIndex);
-    //        GPSRectangle area = new GPSRectangle(leftGPSPoint, rightGPSPoint);
+            // Parse GPS points from cells
+            GPSPoint leftGPSPoint = ParseGPSPointFromCell(parcelGridView, 1, e.RowIndex);
+            GPSPoint rightGPSPoint = ParseGPSPointFromCell(parcelGridView, 2, e.RowIndex);
+            GPSRectangle area = new GPSRectangle(leftGPSPoint, rightGPSPoint);
 
-    //        Parcel parcel = new Parcel(parcelNumber, description, area);
-    //        var result = Program.ApplicationLogic.FindObject(parcel);
-    //        var foundParcel = result.foundObject as Parcel;
+            //Parcel parcel = new Parcel(parcelNumber, description, area);
+            var result = Program.ApplicationLogic.TryFindParcel(parcelNumber);
+            var foundParcel = result as Parcel;
 
-    //        if (foundParcel is null)
-    //        {
-    //            MessageBox.Show($"Parcel {parcelNumber} does not exist", "Parcel not found");
-    //            return;
-    //        }
-    //        RealtyEditForm editForm = new RealtyEditForm(foundParcel);
-    //        editForm.RealtyObjectUpdated += EditForm_RealtyObjectUpdated;
-    //        editForm.Show();
-    //    }
-    //}
+            if (foundParcel is null)
+            {
+                MessageBox.Show($"Parcel {parcelNumber} does not exist", "Parcel not found");
+                return;
+            }
+            RealtyEditForm editForm = new RealtyEditForm(foundParcel);
+            editForm.RealtyObjectUpdated += EditForm_RealtyObjectUpdated;
+            editForm.Show();
+        }
+    }
+
+    private void searchPropertiesButton_Click(object sender, EventArgs e)
+    {
+        ClearParcelGridView();
+        GPSPoint searchPoint = CreateSearchPointFromInputs();
+        var foundParcels = Program.ApplicationLogic.FindParcels(searchPoint);
+        DisplayFoundParcels(foundParcels);
+    }
 }

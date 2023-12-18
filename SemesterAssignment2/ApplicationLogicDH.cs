@@ -481,6 +481,20 @@ public class ApplicationLogicDH
         _dynamicHashingProperties?.CloseFileStreams();
     }
 
+    public IEnumerable<ParcelQuadObject> FindParcels(GPSPoint searchPoint)
+    {
+        var foundObjects = new List<ParcelQuadObject>();
+
+        foreach (var foundParcel in _quadTreeParcels.Find(searchPoint))
+        {
+            var newItem = new ParcelQuadObject(foundParcel.Key, foundParcel.Value, (GPSRectangle)foundParcel.Item);
+
+            foundObjects.Add(newItem);
+        }
+
+        return foundObjects;
+    }
+
     public IEnumerable<PropertyQuadObject> FindProperties(GPSPoint searchPoint)
     {
         var foundObjects = new List<PropertyQuadObject>();

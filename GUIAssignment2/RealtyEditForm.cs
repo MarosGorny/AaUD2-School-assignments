@@ -33,6 +33,7 @@ public partial class RealtyEditForm : Form
     {
         titleLabel.Text = $"Edit Property: {property.PropertyNumber}";
         descriptionTextBox.Text = property.Description;
+        idLabel.Text = "Conscription Number";
         if (string.IsNullOrEmpty(descriptionTextBox.Text))
             descriptionTextBox.PlaceholderText = "Description of property";
 
@@ -46,6 +47,7 @@ public partial class RealtyEditForm : Form
     {
         titleLabel.Text = $"Edit Parcel: {parcel.ParcelNumber}";
         descriptionTextBox.Text = parcel.Description;
+        idLabel.Text = "Parcel Number";
         if (string.IsNullOrEmpty(descriptionTextBox.Text))
             descriptionTextBox.PlaceholderText = "Description of parcel";
         idNumberNumericUpDown.Value = parcel.ParcelNumber;

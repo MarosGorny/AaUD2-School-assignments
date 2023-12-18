@@ -61,15 +61,13 @@
             latNumericUpDown = new NumericUpDown();
             latNRadioButton = new RadioButton();
             latSRadioButton = new RadioButton();
+            insertGroupBox = new GroupBox();
+            parcelGridView = new DataGridView();
             ParcelTableID = new DataGridViewTextBoxColumn();
-            PropertyTableDescription = new DataGridViewTextBoxColumn();
-            PropertyList = new DataGridViewTextBoxColumn();
             LeftBottom = new DataGridViewTextBoxColumn();
             RightTop = new DataGridViewTextBoxColumn();
             Edit = new DataGridViewImageColumn();
             Delete = new DataGridViewImageColumn();
-            insertGroupBox = new GroupBox();
-            parcelGridView = new DataGridView();
             insertGPS1GroupBox.SuspendLayout();
             gps1LongGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)gps1LongNumericUpDown).BeginInit();
@@ -199,6 +197,7 @@
             insertParcelButton.TabIndex = 50;
             insertParcelButton.Text = "Insert Parcel";
             insertParcelButton.UseVisualStyleBackColor = true;
+            insertParcelButton.Click += insertPropertyButton_Click;
             // 
             // parcelNumberLabel
             // 
@@ -350,6 +349,7 @@
             searchPropertiesButton.TabIndex = 50;
             searchPropertiesButton.Text = "Search Parcels";
             searchPropertiesButton.UseVisualStyleBackColor = true;
+            searchPropertiesButton.Click += searchPropertiesButton_Click;
             // 
             // longGroupBox
             // 
@@ -443,6 +443,39 @@
             latSRadioButton.Text = "S";
             latSRadioButton.UseVisualStyleBackColor = true;
             // 
+            // insertGroupBox
+            // 
+            insertGroupBox.Controls.Add(parcelNumberLabel);
+            insertGroupBox.Controls.Add(parcelNumberNumericUpDown);
+            insertGroupBox.Controls.Add(insertGPS1GroupBox);
+            insertGroupBox.Controls.Add(insertGPS2GroupBox);
+            insertGroupBox.Controls.Add(insertParcelButton);
+            insertGroupBox.Controls.Add(descriptionTextBox);
+            insertGroupBox.Location = new Point(18, 240);
+            insertGroupBox.Name = "insertGroupBox";
+            insertGroupBox.Size = new Size(316, 515);
+            insertGroupBox.TabIndex = 53;
+            insertGroupBox.TabStop = false;
+            insertGroupBox.Text = "Insert parcel";
+            // 
+            // parcelGridView
+            // 
+            parcelGridView.AllowUserToAddRows = false;
+            parcelGridView.AllowUserToDeleteRows = false;
+            parcelGridView.AllowUserToOrderColumns = true;
+            parcelGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            parcelGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            parcelGridView.Columns.AddRange(new DataGridViewColumn[] { ParcelTableID, LeftBottom, RightTop, Edit, Delete });
+            parcelGridView.Location = new Point(344, 24);
+            parcelGridView.Name = "parcelGridView";
+            parcelGridView.ReadOnly = true;
+            parcelGridView.RowHeadersWidth = 51;
+            parcelGridView.Size = new Size(749, 741);
+            parcelGridView.TabIndex = 51;
+            parcelGridView.CellContentClick += parcelGridView_CellContentClick;
+            parcelGridView.CellMouseClick += parcelGridView_CellMouseClick;
+            parcelGridView.CellMouseDoubleClick += parcelGridView_CellMouseDoubleClick;
+            // 
             // ParcelTableID
             // 
             ParcelTableID.FillWeight = 88.1550751F;
@@ -450,22 +483,6 @@
             ParcelTableID.MinimumWidth = 6;
             ParcelTableID.Name = "ParcelTableID";
             ParcelTableID.ReadOnly = true;
-            // 
-            // PropertyTableDescription
-            // 
-            PropertyTableDescription.FillWeight = 88.1550751F;
-            PropertyTableDescription.HeaderText = "Description";
-            PropertyTableDescription.MinimumWidth = 6;
-            PropertyTableDescription.Name = "PropertyTableDescription";
-            PropertyTableDescription.ReadOnly = true;
-            // 
-            // PropertyList
-            // 
-            PropertyList.FillWeight = 88.1550751F;
-            PropertyList.HeaderText = "Property List";
-            PropertyList.MinimumWidth = 6;
-            PropertyList.Name = "PropertyList";
-            PropertyList.ReadOnly = true;
             // 
             // LeftBottom
             // 
@@ -500,36 +517,6 @@
             Delete.MinimumWidth = 6;
             Delete.Name = "Delete";
             Delete.ReadOnly = true;
-            // 
-            // insertGroupBox
-            // 
-            insertGroupBox.Controls.Add(parcelNumberLabel);
-            insertGroupBox.Controls.Add(parcelNumberNumericUpDown);
-            insertGroupBox.Controls.Add(insertGPS1GroupBox);
-            insertGroupBox.Controls.Add(insertGPS2GroupBox);
-            insertGroupBox.Controls.Add(insertParcelButton);
-            insertGroupBox.Controls.Add(descriptionTextBox);
-            insertGroupBox.Location = new Point(18, 240);
-            insertGroupBox.Name = "insertGroupBox";
-            insertGroupBox.Size = new Size(316, 515);
-            insertGroupBox.TabIndex = 53;
-            insertGroupBox.TabStop = false;
-            insertGroupBox.Text = "Insert parcel";
-            // 
-            // parcelGridView
-            // 
-            parcelGridView.AllowUserToAddRows = false;
-            parcelGridView.AllowUserToDeleteRows = false;
-            parcelGridView.AllowUserToOrderColumns = true;
-            parcelGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            parcelGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            parcelGridView.Columns.AddRange(new DataGridViewColumn[] { ParcelTableID, PropertyTableDescription, PropertyList, LeftBottom, RightTop, Edit, Delete });
-            parcelGridView.Location = new Point(344, 24);
-            parcelGridView.Name = "parcelGridView";
-            parcelGridView.ReadOnly = true;
-            parcelGridView.RowHeadersWidth = 51;
-            parcelGridView.Size = new Size(749, 741);
-            parcelGridView.TabIndex = 51;
             // 
             // FindParcels
             // 
@@ -598,14 +585,12 @@
         private NumericUpDown latNumericUpDown;
         private RadioButton latNRadioButton;
         private RadioButton latSRadioButton;
+        private GroupBox insertGroupBox;
+        private DataGridView parcelGridView;
         private DataGridViewTextBoxColumn ParcelTableID;
-        private DataGridViewTextBoxColumn PropertyTableDescription;
-        private DataGridViewTextBoxColumn PropertyList;
         private DataGridViewTextBoxColumn LeftBottom;
         private DataGridViewTextBoxColumn RightTop;
         private DataGridViewImageColumn Edit;
         private DataGridViewImageColumn Delete;
-        private GroupBox insertGroupBox;
-        private DataGridView parcelGridView;
     }
 }
