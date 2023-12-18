@@ -355,6 +355,54 @@ public class ApplicationLogicDH
         _dynamicHashingProperties.FileBlockManager.ImportFromFile("exportPropertyFileBlockInfo.json");
     }
 
+
+
+    public void ExportQuadTreeCSV(string filePath)
+    {
+        var allRealtyObjects = GetAllQuadTreeParcels().Cast<RealtyObject>().ToList();
+        allRealtyObjects.AddRange(GetAllQuadTreeProperties().Cast<RealtyObject>().ToList());
+
+        RealtyObjectCSVHelper.ExportToCSV(allRealtyObjects, filePath);
+    }
+
+    public List<RealtyObject> ImportQuadTreeCSV(string filePath)
+    {
+        return RealtyObjectCSVHelper.ImportFromCSV(filePath);
+    }
+
+    private List<ParcelQuadObject> GetAllQuadTreeParcels()
+    {
+        var allParcelObjects = new List<ParcelQuadObject>();
+        foreach (var nodes in _quadTreeParcels.Root.InOrderTraversal())
+        {
+            foreach (var parcel in nodes.Data)
+            {
+                var id = parcel.Key;
+                var description = parcel.Value;
+                var bounds = (GPSRectangle)parcel.Item;
+                allParcelObjects.Add(new ParcelQuadObject(id, description, bounds));
+            }
+        }
+        return allParcelObjects;
+    }
+
+    private List<PropertyQuadObject> GetAllQuadTreeProperties()
+    {
+        var allPropertyObjects = new List<PropertyQuadObject>();
+        foreach (var nodes in _quadTreeProperties.Root.InOrderTraversal())
+        {
+            foreach (var property in nodes.Data)
+            {
+                var id = property.Key;
+                var description = property.Value;
+                var bounds = (GPSRectangle)property.Item;
+                allPropertyObjects.Add(new PropertyQuadObject(id, description, bounds));
+            }
+        }
+        return allPropertyObjects;
+    }
+
+
     public void ClosesFiles()
     {
         _dynamicHashingParcels.CloseFileStreams();

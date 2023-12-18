@@ -16,17 +16,16 @@ public abstract class RealtyObject : Rectangle
     }
 }
 
-public class PropertyQuadObject
+public class PropertyQuadObject : RealtyObject
 {
     public int PropertyNumber { get; set; }
     public string Description { get; set; }
-    public GPSRectangle Bounds { get; set; }
 
-    public PropertyQuadObject(int propertyNumber, int conscriptionNumber, string description, GPSRectangle bounds)
+    public PropertyQuadObject(int propertyNumber, string description, GPSRectangle bounds)
+        : base(description, bounds)
     {
         PropertyNumber = propertyNumber;
         Description = description;
-        Bounds = bounds;
     }
 }
 
@@ -195,17 +194,16 @@ public class Property : RealtyObject, IDHRecord<Property>
 
 }
 
-public class ParcelQuadObject
+public class ParcelQuadObject : RealtyObject
 {
     public int ParcelNumber { get; set; }
     public string Description { get; set; }
-    public GPSRectangle Bounds { get; set; }
 
     public ParcelQuadObject(int parcelNumber, string description, GPSRectangle bounds)
+        : base(description, bounds)
     {
         ParcelNumber = parcelNumber;
-        Description = description;
-        Bounds = bounds;    
+        Description = description; 
     }
 }
 

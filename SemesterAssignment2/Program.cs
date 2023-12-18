@@ -12,13 +12,16 @@ namespace SemesterAssignment2
             
 
             ApplicationLogicDH applicationLogicDH = new ApplicationLogicDH();
-            applicationLogicDH.ImportTrie();
+            //applicationLogicDH.ImportTrie();
+
+      
+
             //applicationLogicDH.ExportTrie();
 
-            //applicationLogicDH.CreateDynamicHashings("./ParcelMain.dat", "./ParcelOverflow.dat",
-            //                                                                "./PropertyMain.dat", "./PropertyOverflow.dat",
-            //                                                                1, 1,
-            //                                                                maxHashSize: 2);
+            applicationLogicDH.CreateDynamicHashings("./ParcelMain.dat", "./ParcelOverflow.dat",
+                                                                            "./PropertyMain.dat", "./PropertyOverflow.dat",
+                                                                            1, 1,
+                                                                            maxHashSize: 2);
 
 
             Parcel parcel = new Parcel(1, "Parcel 1", new GPSRectangle(new GPSPoint(LatitudeDirection.N, 0, LongitudeDirection.E, 0), new GPSPoint(LatitudeDirection.N, 10, LongitudeDirection.E, 50)));
@@ -50,9 +53,12 @@ namespace SemesterAssignment2
             parcels = applicationLogicDH.GetAllParcels();
             properties = applicationLogicDH.GetAllProperties();
 
-            applicationLogicDH.ExportTrie();
-            applicationLogicDH.ClosesFiles();
-            
+            //applicationLogicDH.ExportQuadTreeCSV("./quadTreeAllObjects.csv");
+            //var lists = applicationLogicDH.ImportQuadTreeCSV("./quadTreeAllObjects.csv");
+
+            //applicationLogicDH.ExportTrie();
+            //applicationLogicDH.ClosesFiles();
+
 
             //applicationLogicDH.AddObject(parcel);
             parcels = applicationLogicDH.GetAllParcels();
