@@ -355,16 +355,18 @@ public class ApplicationLogicDH
         _dynamicHashingProperties.FileBlockManager.ImportFromFile("exportPropertyFileBlockInfo.json");
     }
 
-    public void ExportProgress()
+    public void ExportProgress(string filePath)
     {
         this.ExportTrie();
-        this.ExportQuadTreeCSV("./quadTreeAllObjects.csv");
+        this.ExportQuadTreeCSV(filePath);
+        //this.ExportQuadTreeCSV("./quadTreeAllObjects.csv");
     }
 
-    public void ImportProgress()
+    public List<RealtyObject> ImportProgress(string filePath)
     {
         this.ImportTrie();
-        this.ImportQuadTreeCSV("./quadTreeAllObjects.csv");
+        //return this.ImportQuadTreeCSV("./quadTreeAllObjects.csv");
+        return this.ImportQuadTreeCSV(filePath);
     }
 
 

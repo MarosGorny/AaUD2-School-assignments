@@ -80,9 +80,10 @@ public partial class MainForm : Form
             if (ofd.ShowDialog() == DialogResult.OK)
             {
                 string filePath = ofd.FileName;
-                var realtyObjects = Program.ApplicationLogic.ImportCSV(filePath);
-                Program.ApplicationLogic.CreateOptimalizedTrees(realtyObjects);
-                Program.ApplicationLogic.ClearAll();
+                //var realtyObjects = Program.ApplicationLogic.ImportCSV(filePath);
+                var realtyObjects = Program.ApplicationLogic.ImportProgress(filePath);
+                //Program.ApplicationLogic.CreateOptimalizedTrees(realtyObjects);
+                //Program.ApplicationLogic.ClearAll();
                 foreach (var realtyObject in realtyObjects)
                 {
                     Program.ApplicationLogic.AddObject(realtyObject);
@@ -110,7 +111,8 @@ public partial class MainForm : Form
                 {
                     string fullPath = Path.Combine(folderPath, fileName);
 
-                    Program.ApplicationLogic.ExportCSV(Program.ApplicationLogic.GetAllRealtyObjects(), fullPath);
+                    Program.ApplicationLogic.ExportProgress(fullPath);
+                    //Program.ApplicationLogic.ExportCSV(Program.ApplicationLogic.GetAllRealtyObjects(), fullPath);
                     MessageBox.Show("Exported");
                 }
             }
