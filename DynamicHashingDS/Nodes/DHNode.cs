@@ -1,5 +1,6 @@
 ﻿using DynamicHashingDS.Data;
 using DynamicHashingDS.DH;
+using Newtonsoft.Json;
 
 namespace DynamicHashingDS.Nodes;
 
@@ -19,15 +20,12 @@ public abstract class DHNode<T> where T : IDHRecord<T>, new()
     /// </summary>
     public int Depth { get; set; }
 
-    /// <summary>
-    /// Gets the maximum size of the hash used for indexing.
-    /// </summary>
-    protected int MaxHashSize { get; private set; }
 
     /// <summary>
     /// The DynamicHashing instance to which this node belongs.
     /// </summary>
-    protected DynamicHashing<T> dynamicHashing { get; private set; }
+    [JsonIgnore]
+    public DynamicHashing<T> dynamicHashing { get; set; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DHNode{T}"/> class.
@@ -37,7 +35,6 @@ public abstract class DHNode<T> where T : IDHRecord<T>, new()
     public DHNode(DynamicHashing<T> dynamicHashing, DHNode<T> parent)
     {
         this.dynamicHashing = dynamicHashing;
-        MaxHashSize = dynamicHashing.MaxHashSize;
 
         Parent = parent;
         Depth = Parent == null ? 0 : Parent.Depth + 1;
@@ -66,6 +63,6 @@ public abstract class DHNode<T> where T : IDHRecord<T>, new()
     /// <param name="record">The record to find.</param>
     /// <param name="foundRecord">When this method returns, contains the found record if it exists; otherwise null.</param>
     /// <returns>True if a record was found; otherwise, false.</returns>
-    public abstract bool TryFind(IDHRecord<T> record, out IDHRecord<T>? foundRecord);
+    public abstract bool TryFind(IDHRecord<T> record, out IDHRecord<T>? foundRecord, out DHBlock<T> foundBlock, out bool isOverflowBlock);
 
 }

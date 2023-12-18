@@ -127,8 +127,8 @@ public class Point : ISpatialItem
 /// </summary>
 public class Rectangle : ISpatialItem
 {
-    public Point LowerLeft { get; private set; }
-    public Point UpperRight { get; private set; }
+    public Point LowerLeft { get; set; }
+    public Point UpperRight { get; set; }
 
     public Rectangle(Point bottomLeft, Point topRight)
     {
@@ -167,6 +167,10 @@ public class Rectangle : ISpatialItem
     #region Overrides
     public static bool operator ==(Rectangle left, Rectangle right)
     {
+        if(right is null)
+        {
+            return false;
+        }
         return left.LowerLeft == right.LowerLeft && left.UpperRight == right.UpperRight;
     }
 
@@ -219,6 +223,16 @@ public class GPSPoint : Point
     public LatitudeDirection LatitudeDirection { get; set; }
     public LongitudeDirection LongitudeDirection { get; set; }
 
+    public GPSPoint()
+    : base(0.0, 0.0) // Default values for X and Y
+    {
+
+        LatitudeDirection = LatitudeDirection.N; 
+        LongitudeDirection = LongitudeDirection.E; 
+        X = 0.0 * (double)LatitudeDirection;
+        Y = 0.0 * (double)LongitudeDirection;
+    }
+
     public GPSPoint(LatitudeDirection latDir, double latVal, LongitudeDirection longDir, double longVal)
         : base(latVal, longVal)
     {
@@ -228,6 +242,33 @@ public class GPSPoint : Point
         // Compute the relative coordinates 
         X = latVal * (double)latDir;
         Y = longVal * (double)longDir;
+    }
+
+    public void Serialize(BinaryWriter writer)
+    {
+        writer.Write((int)LatitudeDirection);
+        writer.Write((int)LongitudeDirection);
+        writer.Write(X);
+        writer.Write(Y);
+    }
+
+    public static GPSPoint Deserialize(BinaryReader reader)
+    {
+        var latDir = (LatitudeDirection)reader.ReadInt32();
+        var longDir = (LongitudeDirection)reader.ReadInt32();
+        var x = reader.ReadDouble();
+        var y = reader.ReadDouble();
+
+        if (latDir == LatitudeDirection.S)
+        {
+            x *= -1;
+        }
+
+        if (longDir == LongitudeDirection.W)
+        {
+            y *= -1;
+        }
+        return new GPSPoint(latDir, x, longDir, y);
     }
 
     public override string ToString()
@@ -240,6 +281,23 @@ public class GPSPoint : Point
 
         return $"{LatitudeDirection} {xString}, {LongitudeDirection} {yString}";
     }
+
+    public int GetSize()
+    {
+        int size = 0;
+
+        size += sizeof(int); // Size for LatitudeDirection
+        size += sizeof(int); // Size for LongitudeDirection
+        size += sizeof(double); // Size for X
+        size += sizeof(double); // Size for Y
+
+        //size += sizeof(int); // Size for LatitudeDirection
+        //size += sizeof(int); // Size for LongitudeDirection
+        //size += sizeof(double); // Size for X
+        //size += sizeof(double); // Size for Y
+
+        return size;
+    }
 }
 
 public class GPSRectangle : Rectangle
@@ -250,4 +308,8 @@ public class GPSRectangle : Rectangle
     {
     }
 
+    public override string ToString()
+    {
+        return $"{LowerLeft}, {UpperRight}";
+    }
 }

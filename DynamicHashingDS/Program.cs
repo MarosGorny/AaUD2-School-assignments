@@ -8,7 +8,7 @@ internal class Program
 {
     static void Main(string[] args)
     {
-        DynamicHashingTester dynamicHashingTester = new DynamicHashingTester(-1, -1, -1);
+        DynamicHashingTester dynamicHashingTester = new DynamicHashingTester(1, 1, 1);
         dynamicHashingTester.RunComplexTesting();
 
         //DynamicHashing<DummyClass> dynamicHashing = new DynamicHashing<DummyClass>(1, 1, "mainFile.bin", "overflowFile.bin", 2);
