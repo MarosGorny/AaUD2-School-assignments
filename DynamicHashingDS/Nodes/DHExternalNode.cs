@@ -816,7 +816,7 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
         var block = ReadOrCreateBlock(blockFactor);
         foreach (var rec in block.RecordsList)
         {
-            if (rec.Equals(record))
+            if (rec.MyEquals((T)record))
             {
                 throw new Exception("Record already exists.");
             }

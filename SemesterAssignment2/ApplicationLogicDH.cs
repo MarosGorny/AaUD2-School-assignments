@@ -475,10 +475,14 @@ public class ApplicationLogicDH
 
         foreach (var foundProperty in _quadTreeProperties.Find(searchPoint))
         {
-            if (foundProperty.Item is PropertyQuadObject property)
-            {
-                foundObjects.Add(property);
-            }
+            var newItem = new PropertyQuadObject(foundProperty.Key, foundProperty.Value, (GPSRectangle)foundProperty.Item);
+
+            foundObjects.Add(newItem);
+
+            //if (foundProperty.Item is PropertyQuadObject property)
+            //{
+            //    foundObjects.Add(property);
+            //}
         }
 
         return foundObjects;

@@ -70,9 +70,9 @@ public partial class FindProperties : UserControl
 
             propertyGridView.Rows.Add(new object[]
             {
-                -66, //property.ConscriptionNumber,
-                property.Description,
-                finalString, //instead of listOfParcelsString
+                property.PropertyNumber, //property.ConscriptionNumber,
+                //property.Description,
+                //finalString, //instead of listOfParcelsString
                 bottomLeftString,
                 topRightString
             });

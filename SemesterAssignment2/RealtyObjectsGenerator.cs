@@ -125,7 +125,7 @@ public class RealtyObjectsGenerator
         //}
 
         //OLD CODE FOR RANDOM PROPERTIES
-        for (int i = 0; i < propertyCount; i++)
+        for (int i = 1; i <= propertyCount; i++)
         {
             Parcel selectedParcel = parcels[_random.Next(parcels.Count)];
             GPSRectangle parcelBoundary = selectedParcel.Bounds;
