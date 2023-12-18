@@ -128,6 +128,15 @@ public class ApplicationLogicDH
             var block = blocksStack.Pop();
             var isOverflowBlock = isOverflowStack.Pop();
 
+            if (isOverflowBlock)
+            {
+                block.ReadFromBinaryFile(_dynamicHashingProperties.FileBlockManager.OverFlowFileStream, block.BlockAddress);
+            }
+            else
+            {
+                block.ReadFromBinaryFile(_dynamicHashingProperties.FileBlockManager.MainFileStream, block.BlockAddress);
+            }
+
             property.TryAddParcel(newParcel.ParcelNumber);
             propertiesIds.Add(property.PropertyNumber);
 
