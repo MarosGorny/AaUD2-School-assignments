@@ -38,6 +38,7 @@
             ImportButton = new Button();
             generateDataButton = new Button();
             MainPanel = new Panel();
+            SeqOutput = new Button();
             panel1.SuspendLayout();
             ActionsTableLayoutPanel.SuspendLayout();
             FileTableLayoutPanel.SuspendLayout();
@@ -56,6 +57,7 @@
             // 
             ActionsTableLayoutPanel.ColumnCount = 1;
             ActionsTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            ActionsTableLayoutPanel.Controls.Add(SeqOutput, 0, 9);
             ActionsTableLayoutPanel.Controls.Add(FindRealtyNavButton, 0, 2);
             ActionsTableLayoutPanel.Controls.Add(FindParcelsNavButton, 0, 1);
             ActionsTableLayoutPanel.Controls.Add(FindPropertiesNavButton, 0, 0);
@@ -166,6 +168,17 @@
             MainPanel.Size = new Size(1118, 821);
             MainPanel.TabIndex = 41;
             // 
+            // SeqOutput
+            // 
+            SeqOutput.Dock = DockStyle.Fill;
+            SeqOutput.Location = new Point(3, 651);
+            SeqOutput.Name = "SeqOutput";
+            SeqOutput.Size = new Size(221, 67);
+            SeqOutput.TabIndex = 13;
+            SeqOutput.Text = "Sequential Output";
+            SeqOutput.UseVisualStyleBackColor = true;
+            SeqOutput.Click += SeqOutput_Click;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -194,5 +207,6 @@
         private Button ImportButton;
         private Button generateDataButton;
         private Panel MainPanel;
+        private Button SeqOutput;
     }
 }

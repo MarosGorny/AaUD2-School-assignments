@@ -131,4 +131,13 @@ public partial class MainForm : Form
         GenerateDataForm generateDataForm = new GenerateDataForm();
         generateDataForm.ShowDialog();
     }
+
+    private void SeqOutput_Click(object sender, EventArgs e)
+    {
+        string sequentialOutput = Program.ApplicationLogic.GetSequentialBlockOutputForAllFiles();
+        CustomMessageBox.Show(sequentialOutput);
+
+        //MessageBox.Show(sequentialOutput, "Sequential Output");
+    }
+
 }
