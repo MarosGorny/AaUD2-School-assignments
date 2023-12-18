@@ -1,4 +1,5 @@
 ﻿using DynamicHashingDS.Data;
+using Newtonsoft.Json;
 using System.Text;
 
 namespace DynamicHashingDS.DH;
@@ -9,14 +10,16 @@ namespace DynamicHashingDS.DH;
 /// <typeparam name="T">The type of records stored in the dynamic hashing structure.</typeparam>
 public class FileBlockManager<T> where T : IDHRecord<T>, new()
 {
+
+    private int firstFreeBlockMainFile;
+    private int firstFreeBlockOverflowFile;
+
+
     public FileStream MainFileStream { get; private set;}
     public FileStream OverFlowFileStream { get; private set;}
 
     public int CurrentMainFileSize { get; private set;}
     public int CurrentOverflowFileSize { get; private set;}
-
-    private int firstFreeBlockMainFile; 
-    private int firstFreeBlockOverflowFile; 
 
     public int MainFileBlockFactor { get; private set;} 
     public int OverflowFileBlockFactor { get; private set;}
@@ -569,6 +572,34 @@ public class FileBlockManager<T> where T : IDHRecord<T>, new()
 
         return fileOutput.ToString();
     }
+
+    public void ExportToFile(string filePath)
+    {
+        var exportData = new
+        {
+            CurrentMainFileSize = this.CurrentMainFileSize,
+            CurrentOverflowFileSize = this.CurrentOverflowFileSize,
+            FirstFreeBlockMainFile = this.firstFreeBlockMainFile,
+            FirstFreeBlockOverflowFile = this.firstFreeBlockOverflowFile
+        };
+
+        string json = JsonConvert.SerializeObject(exportData, Formatting.Indented);
+        File.WriteAllText(filePath, json);
+    }
+
+
+    public void ImportFromFile(string filePath)
+    {
+        string json = File.ReadAllText(filePath);
+        var importedData = JsonConvert.DeserializeObject<dynamic>(json);
+
+        this.CurrentMainFileSize = importedData.CurrentMainFileSize;
+        this.CurrentOverflowFileSize = importedData.CurrentOverflowFileSize;
+        this.firstFreeBlockMainFile = importedData.FirstFreeBlockMainFile;
+        this.firstFreeBlockOverflowFile = importedData.FirstFreeBlockOverflowFile;
+    }
+
+
 
 
     //private List<T> GetAllRecordsFromFile(FileStream fileStream, int blockFactor)

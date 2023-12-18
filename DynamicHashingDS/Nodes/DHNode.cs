@@ -1,5 +1,6 @@
 ﻿using DynamicHashingDS.Data;
 using DynamicHashingDS.DH;
+using Newtonsoft.Json;
 
 namespace DynamicHashingDS.Nodes;
 
@@ -23,7 +24,8 @@ public abstract class DHNode<T> where T : IDHRecord<T>, new()
     /// <summary>
     /// The DynamicHashing instance to which this node belongs.
     /// </summary>
-    protected DynamicHashing<T> dynamicHashing { get; private set; }
+    [JsonIgnore]
+    public DynamicHashing<T> dynamicHashing { get; set; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DHNode{T}"/> class.

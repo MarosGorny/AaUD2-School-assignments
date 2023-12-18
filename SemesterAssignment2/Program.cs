@@ -9,11 +9,18 @@ namespace SemesterAssignment2
     {
         static void Main(string[] args)
         {
+            
 
-            ApplicationLogicDH applicationLogicDH = new ApplicationLogicDH("./ParcelMain.dat", "./ParcelOverflow.dat",
-                                                                            "./PropertyMain.dat", "./PropertyOverflow.dat",
-                                                                            1,1,
-                                                                            maxHashSize: 1);
+            ApplicationLogicDH applicationLogicDH = new ApplicationLogicDH();
+            applicationLogicDH.ImportTrie();
+            //applicationLogicDH.ExportTrie();
+
+            //applicationLogicDH.CreateDynamicHashings("./ParcelMain.dat", "./ParcelOverflow.dat",
+            //                                                                "./PropertyMain.dat", "./PropertyOverflow.dat",
+            //                                                                1, 1,
+            //                                                                maxHashSize: 2);
+
+
             Parcel parcel = new Parcel(1, "Parcel 1", new GPSRectangle(new GPSPoint(LatitudeDirection.N, 0, LongitudeDirection.E, 0), new GPSPoint(LatitudeDirection.N, 10, LongitudeDirection.E, 50)));
             Parcel parcel2 = new Parcel(2, "Parcel 2", new GPSRectangle(new GPSPoint(LatitudeDirection.N, 0, LongitudeDirection.E, 0), new GPSPoint(LatitudeDirection.N, 10, LongitudeDirection.E, 50)));
             Parcel parcel3 = new Parcel(3, "Parcel 3", new GPSRectangle(new GPSPoint(LatitudeDirection.N, 0, LongitudeDirection.E, 0), new GPSPoint(LatitudeDirection.N, 10, LongitudeDirection.E, 50)));
@@ -25,6 +32,7 @@ namespace SemesterAssignment2
             Property property = new Property(2,200, "Property 1", new GPSRectangle(new GPSPoint(LatitudeDirection.N, 0, LongitudeDirection.E, 0), new GPSPoint(LatitudeDirection.N, 10, LongitudeDirection.E, 50)));
 
             applicationLogicDH.AddObject(property);
+           
             Console.WriteLine(applicationLogicDH.GetSequentialBlockOutputForAllFiles());
 
             applicationLogicDH.AddObject(parcel);
@@ -34,7 +42,6 @@ namespace SemesterAssignment2
             applicationLogicDH.AddObject(parcel3);
             Console.WriteLine(applicationLogicDH.GetSequentialBlockOutputForAllFiles());
 
-            applicationLogicDH.DeleteParcel(1);
             Console.WriteLine(applicationLogicDH.GetSequentialBlockOutputForAllFiles());
             applicationLogicDH.AddObject(parcel5);
             var parcels = applicationLogicDH.GetAllParcels();
@@ -42,6 +49,10 @@ namespace SemesterAssignment2
             applicationLogicDH.AddObject(parcel6);
             parcels = applicationLogicDH.GetAllParcels();
             properties = applicationLogicDH.GetAllProperties();
+
+            applicationLogicDH.ExportTrie();
+            applicationLogicDH.ClosesFiles();
+            
 
             //applicationLogicDH.AddObject(parcel);
             parcels = applicationLogicDH.GetAllParcels();

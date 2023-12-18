@@ -15,20 +15,24 @@ public class ApplicationLogicDH
 
     private Rectangle _boundary;
 
-    public ApplicationLogicDH(string parcelMainFilePath, string parcelOverflowFilePath,
-                              string propertyMainFilePath, string propertyOverflowFilePath,
-                              int mainBlockFactor, int overflowBlockFactor, int? maxHashSize)
+    public ApplicationLogicDH()
     {
         var boundaryPointBottomLeft = new GPSPoint(LatitudeDirection.S, 90, LongitudeDirection.W, 180);
         var boundaryPointTopRight = new GPSPoint(LatitudeDirection.N, 90, LongitudeDirection.E, 180);
         _boundary = new Rectangle(boundaryPointBottomLeft, boundaryPointTopRight);
 
-        _dynamicHashingParcels = new DynamicHashing<Parcel>(mainBlockFactor,overflowBlockFactor,parcelMainFilePath,parcelOverflowFilePath, maxHashSize: maxHashSize);
-        _dynamicHashingProperties = new DynamicHashing<Property>(mainBlockFactor, overflowBlockFactor, propertyMainFilePath, propertyOverflowFilePath, maxHashSize: maxHashSize);
 
         _quadTreeParcels = new QuadTree<int, string>(_boundary);
         _quadTreeProperties = new QuadTree<int, string>(_boundary);
 
+    }
+
+    public void CreateDynamicHashings(string parcelMainFilePath, string parcelOverflowFilePath,
+                                        string propertyMainFilePath, string propertyOverflowFilePath,
+                                        int mainBlockFactor, int overflowBlockFactor, int? maxHashSize)
+    {
+        _dynamicHashingParcels = new DynamicHashing<Parcel>(mainBlockFactor, overflowBlockFactor, parcelMainFilePath, parcelOverflowFilePath, maxHashSize: maxHashSize);
+        _dynamicHashingProperties = new DynamicHashing<Property>(mainBlockFactor, overflowBlockFactor, propertyMainFilePath, propertyOverflowFilePath, maxHashSize: maxHashSize);
     }
 
     public void SetPath(bool parcelPath, string mainPath, string overFlowPath)
@@ -327,6 +331,34 @@ public class ApplicationLogicDH
         output.Append(_dynamicHashingProperties.FileBlockManager.SequentialFileOutput(_dynamicHashingProperties.MaxHashSize));
 
         return output.ToString();
+    }
+
+    public void ExportTrie()
+    {
+        DynamicHashingExport<Parcel> dynamicHashingExportParcel = new DynamicHashingExport<Parcel>();
+        dynamicHashingExportParcel.ExportToFile(_dynamicHashingParcels, "exportParcel.json");
+        _dynamicHashingParcels.FileBlockManager.ExportToFile("exportParcelFileBlockInfo.json");
+
+        DynamicHashingExport<Property> dynamicHashingExportProperty = new DynamicHashingExport<Property>();
+        dynamicHashingExportProperty.ExportToFile(_dynamicHashingProperties, "exportProperty.json");
+        _dynamicHashingProperties.FileBlockManager.ExportToFile("exportPropertyFileBlockInfo.json");
+    }
+
+    public void ImportTrie()
+    {
+        _dynamicHashingParcels = DynamicHashingExport<Parcel>.ImportFromFile("exportParcel.json");
+        _dynamicHashingParcels.UpdateParentReferences();
+        _dynamicHashingParcels.FileBlockManager.ImportFromFile("exportParcelFileBlockInfo.json");
+
+        _dynamicHashingProperties = DynamicHashingExport<Property>.ImportFromFile("exportProperty.json");
+        _dynamicHashingProperties.UpdateParentReferences();
+        _dynamicHashingProperties.FileBlockManager.ImportFromFile("exportPropertyFileBlockInfo.json");
+    }
+
+    public void ClosesFiles()
+    {
+        _dynamicHashingParcels.CloseFileStreams();
+        _dynamicHashingProperties.CloseFileStreams();
     }
 }
 

@@ -10,16 +10,18 @@ namespace DynamicHashingDS.DH;
 /// <typeparam name="T">The type of records to be stored, which must implement IDHRecord.</typeparam>
 public class DynamicHashing<T> where T : IDHRecord<T>, new()
 {
-    private DHNode<T> _root;
     private FileStream _mainFileStream;
     private FileStream _overflowFileStream;
 
-    private string _mainFilePath;
-    private string _overflowFilePath;
+    public DHNode<T> Root { get; set; }
+
+    public string MainFilePath { get; private set; }
+    public string OverflowFilePath { get; private set; }
 
     public int MainBlockFactor { get; private set; }
     public int OverflowBlockFactor { get; private set; }
     public int MaxHashSize { get; private set; }
+    [JsonIgnore]
     public FileBlockManager<T> FileBlockManager { get; private set;}
 
 
@@ -57,7 +59,7 @@ public class DynamicHashing<T> where T : IDHRecord<T>, new()
 
     public IDHRecord<T>? Delete(IDHRecord<T> record)
     {
-        IDHRecord<T>? deletedRecord = _root.Delete(record);
+        IDHRecord<T>? deletedRecord = Root.Delete(record);
         ////PrintNodeHierarchy(_root);
         //Console.WriteLine(FileBlockManager.SequentialFileOutput(MaxHashSize));
         //Console.WriteLine();
@@ -66,7 +68,7 @@ public class DynamicHashing<T> where T : IDHRecord<T>, new()
 
     public bool TryFind(IDHRecord<T> record, out IDHRecord<T>? foundRecord, out DHBlock<T> foundBlock, out bool isOverflowBlock)
     {  
-        return _root.TryFind(record,out foundRecord, out foundBlock,out isOverflowBlock);
+        return Root.TryFind(record,out foundRecord, out foundBlock,out isOverflowBlock);
     }
 
     /// <summary>
@@ -75,7 +77,7 @@ public class DynamicHashing<T> where T : IDHRecord<T>, new()
     /// <param name="record">The record to insert.</param>
     public void Insert(IDHRecord<T> record)
     {
-        bool inserted = _root.Insert(record);
+        bool inserted = Root.Insert(record);
         //PrintNodeHierarchy(_root);
         //Console.WriteLine(FileBlockManager.SequentialFileOutput(MaxHashSize));
         Console.WriteLine();
@@ -83,7 +85,7 @@ public class DynamicHashing<T> where T : IDHRecord<T>, new()
 
     public bool Edit(IDHRecord<T> record)
     {
-        bool found = _root.TryFind(record, out var foundRecord, out var foundBlock, out bool isOverflowBlock);
+        bool found = Root.TryFind(record, out var foundRecord, out var foundBlock, out bool isOverflowBlock);
         if(found)
         {
             foundBlock.RecordsList[foundBlock.RecordsList.IndexOf(foundRecord)] = record;
@@ -112,20 +114,20 @@ public class DynamicHashing<T> where T : IDHRecord<T>, new()
         // Close existing file streams if they are open
         CloseFileStreams();
 
-        DeleteFileIfExists(mainFilePath);
+        //DeleteFileIfExists(mainFilePath);
         //File.Create(mainFilePath).Close();
 
-        DeleteFileIfExists(overflowFilePath);
+        //DeleteFileIfExists(overflowFilePath);
         //File.Create(overflowFilePath).Close();
 
         _mainFileStream = new FileStream(mainFilePath, FileMode.OpenOrCreate, FileAccess.ReadWrite);
         _overflowFileStream = new FileStream(overflowFilePath, FileMode.OpenOrCreate, FileAccess.ReadWrite);
-        _mainFilePath = mainFilePath;
-        _overflowFilePath = overflowFilePath;
+        MainFilePath = mainFilePath;
+        OverflowFilePath = overflowFilePath;
 
         // Clear the contents of the files
-        _mainFileStream.SetLength(0);
-        _overflowFileStream.SetLength(0);
+        //_mainFileStream.SetLength(0);
+        //_overflowFileStream.SetLength(0);
     }
 
     /// <summary>
@@ -145,9 +147,9 @@ public class DynamicHashing<T> where T : IDHRecord<T>, new()
     /// </summary>
     private void InitializeRootNode()
     {
-        _root = new DHInternalNode<T>(this, null);
-        ((DHInternalNode<T>)_root).ChangeLeftExternalNodeAddress(-1,0);
-        ((DHInternalNode<T>)_root).ChangeRightExternalNodeAddress(-1,0);
+        Root = new DHInternalNode<T>(this, null);
+        ((DHInternalNode<T>)Root).ChangeLeftExternalNodeAddress(-1,0);
+        ((DHInternalNode<T>)Root).ChangeRightExternalNodeAddress(-1,0);
     }
 
     public List<IDHRecord<T>> GetAllRecords()
@@ -183,35 +185,59 @@ public class DynamicHashing<T> where T : IDHRecord<T>, new()
         CloseFileStreams();
 
         // Re-open the file streams
-        _mainFileStream = new FileStream(_mainFilePath, FileMode.OpenOrCreate, FileAccess.ReadWrite);
-        _overflowFileStream = new FileStream(_overflowFilePath, FileMode.OpenOrCreate, FileAccess.ReadWrite);
+        _mainFileStream = new FileStream(MainFilePath, FileMode.OpenOrCreate, FileAccess.ReadWrite);
+        _overflowFileStream = new FileStream(OverflowFilePath, FileMode.OpenOrCreate, FileAccess.ReadWrite);
 
         // Reset other internal states as needed
         // For example, re-initialize the root node, clear records, etc.
         InitializeRootNode();
     }
 
-    public void ExportTrie(DHNode<T> root, string filePath)
+    public void ExportTrie(string filePath)
     {
         using (StreamWriter file = File.CreateText(filePath))
         {
-            JsonSerializer serializer = new JsonSerializer();
+            JsonSerializer serializer = new JsonSerializer
+            {
+                Formatting = Formatting.Indented,
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore ,
+            };
+
+            serializer.Serialize(file, new
+            {
+                MainBlockFactor,
+                OverflowBlockFactor,
+                MainFilePath,
+                OverflowFilePath,
+                MaxHashSize
+            });
+            file.WriteLine();
+
             Queue<DHNode<T>> queue = new Queue<DHNode<T>>();
-            queue.Enqueue(root);
+            queue.Enqueue(Root);
 
             while (queue.Count > 0)
             {
                 var node = queue.Dequeue();
-                string json = JsonConvert.SerializeObject(node, Formatting.Indented);
-                file.WriteLine(json);
 
-                if (node is DHInternalNode<T> internalNode)
+                if(node is DHExternalNode<T> externalNode)
                 {
-                    if (internalNode.LeftChild != null)
-                        queue.Enqueue(internalNode.LeftChild);
-                    if (internalNode.RightChild != null)
-                        queue.Enqueue(internalNode.RightChild);
+                    serializer.Serialize(file, externalNode);
+                } 
+                else if(node is DHInternalNode<T> internalNodeSer)
+                {
+                    serializer.Serialize(file, internalNodeSer);
                 }
+                
+                file.WriteLine();
+
+                //if (node is DHInternalNode<T> internalNode)
+                //{
+                //    if (internalNode.LeftChild != null)
+                //        queue.Enqueue(internalNode.LeftChild);
+                //    if (internalNode.RightChild != null)
+                //        queue.Enqueue(internalNode.RightChild);
+                //}
             }
         }
     }
@@ -260,6 +286,36 @@ public class DynamicHashing<T> where T : IDHRecord<T>, new()
 
 
 
+    public void UpdateParentReferences()
+    {
+        if (Root == null) return;
+
+        Queue<DHNode<T>> nodesQueue = new Queue<DHNode<T>>();
+        nodesQueue.Enqueue(Root);
+
+        while (nodesQueue.Count > 0)
+        {
+            DHNode<T> currentNode = nodesQueue.Dequeue();
+
+            currentNode.dynamicHashing  = this;
+
+            // Cast to internal node if possible
+            if (currentNode is DHInternalNode<T> internalNode)
+            {
+                if (internalNode.LeftChild != null)
+                {
+                    internalNode.LeftChild.Parent = internalNode;
+                    nodesQueue.Enqueue(internalNode.LeftChild);
+                }
+
+                if (internalNode.RightChild != null)
+                {
+                    internalNode.RightChild.Parent = internalNode;
+                    nodesQueue.Enqueue(internalNode.RightChild);
+                }
+            }
+        }
+    }
 
 
 

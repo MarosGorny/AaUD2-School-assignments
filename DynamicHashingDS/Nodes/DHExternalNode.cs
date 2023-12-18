@@ -1,5 +1,6 @@
 ﻿using DynamicHashingDS.Data;
 using DynamicHashingDS.DH;
+using Newtonsoft.Json;
 using System.Collections;
 using System.Security;
 
@@ -13,7 +14,8 @@ public class DHExternalNode<T> : DHNode<T> where T : IDHRecord<T>, new()
 {
     public int TotalRecordsCount = 0;
 
-    public int _recordsCount; 
+    public int _recordsCount;
+    [JsonProperty]
     private int _blockAddress;
 
     /// <summary>
