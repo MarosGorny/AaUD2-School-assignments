@@ -52,6 +52,13 @@
             parcelsCountNumericUpDown = new NumericUpDown();
             insertGPS1GroupBox = new GroupBox();
             insertGPS2GroupBox = new GroupBox();
+            overflowBlockFactorNumericUpDown = new NumericUpDown();
+            overflowBlockFactorLabel = new Label();
+            mainBlockFactorLabel = new Label();
+            mainBlockFactorNumericUpDown = new NumericUpDown();
+            maxHashSizeLabel = new Label();
+            maxHashSizeNumericUpDown = new NumericUpDown();
+            hashCheckBox = new CheckBox();
             ((System.ComponentModel.ISupportInitialize)propertiesCountNumericUpDown).BeginInit();
             ((System.ComponentModel.ISupportInitialize)gps2LatNumericUpDown).BeginInit();
             gps2LatGroupBox.SuspendLayout();
@@ -64,11 +71,14 @@
             ((System.ComponentModel.ISupportInitialize)parcelsCountNumericUpDown).BeginInit();
             insertGPS1GroupBox.SuspendLayout();
             insertGPS2GroupBox.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)overflowBlockFactorNumericUpDown).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)mainBlockFactorNumericUpDown).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)maxHashSizeNumericUpDown).BeginInit();
             SuspendLayout();
             // 
             // propertiesCountNumericUpDown
             // 
-            propertiesCountNumericUpDown.Location = new Point(189, 297);
+            propertiesCountNumericUpDown.Location = new Point(189, 278);
             propertiesCountNumericUpDown.Maximum = new decimal(new int[] { int.MaxValue, 0, 0, 0 });
             propertiesCountNumericUpDown.Name = "propertiesCountNumericUpDown";
             propertiesCountNumericUpDown.Size = new Size(420, 27);
@@ -77,12 +87,13 @@
             // 
             // generateButton
             // 
-            generateButton.Location = new Point(18, 330);
+            generateButton.Location = new Point(18, 412);
             generateButton.Name = "generateButton";
             generateButton.Size = new Size(591, 29);
             generateButton.TabIndex = 71;
             generateButton.Text = "Generate";
             generateButton.UseVisualStyleBackColor = true;
+            generateButton.Click += generateButton_Click;
             // 
             // gps2LatNumericUpDown
             // 
@@ -211,7 +222,7 @@
             // 
             propertiesCountLabel.AutoSize = true;
             propertiesCountLabel.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            propertiesCountLabel.Location = new Point(18, 297);
+            propertiesCountLabel.Location = new Point(18, 278);
             propertiesCountLabel.Name = "propertiesCountLabel";
             propertiesCountLabel.Size = new Size(129, 20);
             propertiesCountLabel.TabIndex = 78;
@@ -288,7 +299,7 @@
             // 
             parcelsCountLabel.AutoSize = true;
             parcelsCountLabel.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            parcelsCountLabel.Location = new Point(18, 267);
+            parcelsCountLabel.Location = new Point(18, 248);
             parcelsCountLabel.Name = "parcelsCountLabel";
             parcelsCountLabel.Size = new Size(106, 20);
             parcelsCountLabel.TabIndex = 75;
@@ -296,7 +307,7 @@
             // 
             // parcelsCountNumericUpDown
             // 
-            parcelsCountNumericUpDown.Location = new Point(189, 267);
+            parcelsCountNumericUpDown.Location = new Point(189, 248);
             parcelsCountNumericUpDown.Maximum = new decimal(new int[] { int.MaxValue, 0, 0, 0 });
             parcelsCountNumericUpDown.Name = "parcelsCountNumericUpDown";
             parcelsCountNumericUpDown.Size = new Size(420, 27);
@@ -325,11 +336,89 @@
             insertGPS2GroupBox.TabStop = false;
             insertGPS2GroupBox.Text = "Right Top GPS Point";
             // 
+            // overflowBlockFactorNumericUpDown
+            // 
+            overflowBlockFactorNumericUpDown.Location = new Point(189, 379);
+            overflowBlockFactorNumericUpDown.Maximum = new decimal(new int[] { int.MaxValue, 0, 0, 0 });
+            overflowBlockFactorNumericUpDown.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+            overflowBlockFactorNumericUpDown.Name = "overflowBlockFactorNumericUpDown";
+            overflowBlockFactorNumericUpDown.Size = new Size(420, 27);
+            overflowBlockFactorNumericUpDown.TabIndex = 81;
+            overflowBlockFactorNumericUpDown.Value = new decimal(new int[] { 1, 0, 0, 0 });
+            // 
+            // overflowBlockFactorLabel
+            // 
+            overflowBlockFactorLabel.AutoSize = true;
+            overflowBlockFactorLabel.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            overflowBlockFactorLabel.Location = new Point(18, 379);
+            overflowBlockFactorLabel.Name = "overflowBlockFactorLabel";
+            overflowBlockFactorLabel.Size = new Size(165, 20);
+            overflowBlockFactorLabel.TabIndex = 82;
+            overflowBlockFactorLabel.Text = "Overflow block factor:";
+            // 
+            // mainBlockFactorLabel
+            // 
+            mainBlockFactorLabel.AutoSize = true;
+            mainBlockFactorLabel.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            mainBlockFactorLabel.Location = new Point(18, 349);
+            mainBlockFactorLabel.Name = "mainBlockFactorLabel";
+            mainBlockFactorLabel.Size = new Size(136, 20);
+            mainBlockFactorLabel.TabIndex = 80;
+            mainBlockFactorLabel.Text = "Main block factor:";
+            // 
+            // mainBlockFactorNumericUpDown
+            // 
+            mainBlockFactorNumericUpDown.Location = new Point(189, 349);
+            mainBlockFactorNumericUpDown.Maximum = new decimal(new int[] { int.MaxValue, 0, 0, 0 });
+            mainBlockFactorNumericUpDown.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+            mainBlockFactorNumericUpDown.Name = "mainBlockFactorNumericUpDown";
+            mainBlockFactorNumericUpDown.Size = new Size(420, 27);
+            mainBlockFactorNumericUpDown.TabIndex = 79;
+            mainBlockFactorNumericUpDown.Value = new decimal(new int[] { 1, 0, 0, 0 });
+            mainBlockFactorNumericUpDown.ValueChanged += numericUpDown2_ValueChanged;
+            // 
+            // maxHashSizeLabel
+            // 
+            maxHashSizeLabel.AutoSize = true;
+            maxHashSizeLabel.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            maxHashSizeLabel.Location = new Point(18, 317);
+            maxHashSizeLabel.Name = "maxHashSizeLabel";
+            maxHashSizeLabel.Size = new Size(110, 20);
+            maxHashSizeLabel.TabIndex = 84;
+            maxHashSizeLabel.Text = "Max hash size:";
+            // 
+            // maxHashSizeNumericUpDown
+            // 
+            maxHashSizeNumericUpDown.Enabled = false;
+            maxHashSizeNumericUpDown.Location = new Point(189, 317);
+            maxHashSizeNumericUpDown.Maximum = new decimal(new int[] { 32, 0, 0, 0 });
+            maxHashSizeNumericUpDown.Name = "maxHashSizeNumericUpDown";
+            maxHashSizeNumericUpDown.Size = new Size(369, 27);
+            maxHashSizeNumericUpDown.TabIndex = 83;
+            // 
+            // hashCheckBox
+            // 
+            hashCheckBox.AutoCheck = false;
+            hashCheckBox.AutoSize = true;
+            hashCheckBox.Location = new Point(574, 322);
+            hashCheckBox.Name = "hashCheckBox";
+            hashCheckBox.Size = new Size(18, 17);
+            hashCheckBox.TabIndex = 85;
+            hashCheckBox.UseVisualStyleBackColor = true;
+            hashCheckBox.Click += checkBox1_CheckedChanged;
+            // 
             // GenerateDataForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(626, 369);
+            ClientSize = new Size(626, 453);
+            Controls.Add(hashCheckBox);
+            Controls.Add(maxHashSizeLabel);
+            Controls.Add(maxHashSizeNumericUpDown);
+            Controls.Add(overflowBlockFactorNumericUpDown);
+            Controls.Add(overflowBlockFactorLabel);
+            Controls.Add(mainBlockFactorLabel);
+            Controls.Add(mainBlockFactorNumericUpDown);
             Controls.Add(propertiesCountNumericUpDown);
             Controls.Add(generateButton);
             Controls.Add(propertiesCountLabel);
@@ -352,6 +441,9 @@
             ((System.ComponentModel.ISupportInitialize)parcelsCountNumericUpDown).EndInit();
             insertGPS1GroupBox.ResumeLayout(false);
             insertGPS2GroupBox.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)overflowBlockFactorNumericUpDown).EndInit();
+            ((System.ComponentModel.ISupportInitialize)mainBlockFactorNumericUpDown).EndInit();
+            ((System.ComponentModel.ISupportInitialize)maxHashSizeNumericUpDown).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -382,5 +474,12 @@
         private NumericUpDown parcelsCountNumericUpDown;
         private GroupBox insertGPS1GroupBox;
         private GroupBox insertGPS2GroupBox;
+        private NumericUpDown overflowBlockFactorNumericUpDown;
+        private Label overflowBlockFactorLabel;
+        private Label mainBlockFactorLabel;
+        private NumericUpDown mainBlockFactorNumericUpDown;
+        private Label maxHashSizeLabel;
+        private NumericUpDown maxHashSizeNumericUpDown;
+        private CheckBox hashCheckBox;
     }
 }

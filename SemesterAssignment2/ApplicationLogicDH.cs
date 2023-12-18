@@ -416,21 +416,31 @@ public class ApplicationLogicDH
         return allPropertyObjects;
     }
 
-    public void GenerateNewData(int propertyCount, int parcelCount, GPSRectangle boundary)
+    public void GenerateNewData(int propertyCount, int parcelCount, GPSRectangle boundary, int mainBlockFactor, int overflowBlockFactor, int? maxHashSize = null)
     {
         var realtyObjectsGenerator = new RealtyObjectsGenerator();
         var (parcels, properties) = realtyObjectsGenerator.GenerateRealtyObjects(parcelCount, propertyCount, boundary);
 
         ClosesFiles();
 
+        DeleteFileIfExists("./ParcelMain.dat");
+        DeleteFileIfExists("./ParcelOverflow.dat");
+
+        DeleteFileIfExists("./PropertyMain.dat");
+        DeleteFileIfExists("./PropertyOverflow.dat");
+
+        _dynamicHashingParcels = new DynamicHashing<Parcel>(mainBlockFactor, overflowBlockFactor, "./ParcelMain.dat", "./ParcelOverflow.dat", maxHashSize: maxHashSize);
+        _dynamicHashingProperties = new DynamicHashing<Property>(mainBlockFactor, overflowBlockFactor, "./PropertyMain.dat", "./PropertyOverflow.dat", maxHashSize: maxHashSize);
+
         _quadTreeParcels = new QuadTree<int, string>(_quadTreeParcels.Boundary);
         _quadTreeProperties = new QuadTree<int, string>(_quadTreeProperties.Boundary);
 
-        DeleteFileIfExists(_dynamicHashingParcels.MainFilePath);
-        DeleteFileIfExists(_dynamicHashingParcels.OverflowFilePath);
+        //DeleteFileIfExists(_dynamicHashingParcels?.MainFilePath);
+        //DeleteFileIfExists(_dynamicHashingParcels?.OverflowFilePath);
 
-        DeleteFileIfExists(_dynamicHashingProperties.MainFilePath);
-        DeleteFileIfExists(_dynamicHashingProperties.OverflowFilePath);
+        //DeleteFileIfExists(_dynamicHashingProperties?.MainFilePath);
+        //DeleteFileIfExists(_dynamicHashingProperties?.OverflowFilePath);
+
 
         foreach (var parcel in parcels)
         {
@@ -446,6 +456,7 @@ public class ApplicationLogicDH
 
     private void DeleteFileIfExists(string filePath)
     {
+        //string currentDirectory = Environment.CurrentDirectory;
         if (File.Exists(filePath))
         {
             File.Delete(filePath);
@@ -454,8 +465,8 @@ public class ApplicationLogicDH
 
     private void ClosesFiles()
     {
-        _dynamicHashingParcels.CloseFileStreams();
-        _dynamicHashingProperties.CloseFileStreams();
+        _dynamicHashingParcels?.CloseFileStreams();
+        _dynamicHashingProperties?.CloseFileStreams();
     }
 
     public IEnumerable<PropertyQuadObject> FindProperties(GPSPoint searchPoint)

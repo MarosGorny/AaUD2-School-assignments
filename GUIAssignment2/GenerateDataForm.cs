@@ -29,7 +29,11 @@ public partial class GenerateDataForm : Form
 
             GPSRectangle area = new GPSRectangle(leftPoint, rightPoint);
 
-            Program.ApplicationLogic.GenerateNewData(propertiesCount, parcelsCount, area);
+            var mainBlockFactor = (int)mainBlockFactorNumericUpDown.Value;
+            var overflowBlockFactor = (int)overflowBlockFactorNumericUpDown.Value;
+            var maxHashSize = (int)maxHashSizeNumericUpDown.Value == 0 ? null : (int?)maxHashSizeNumericUpDown.Value;
+
+            Program.ApplicationLogic.GenerateNewData(propertiesCount, parcelsCount, area, mainBlockFactor, overflowBlockFactor, maxHashSize);
             Close();
         }
         catch (Exception ex)
@@ -56,5 +60,27 @@ public partial class GenerateDataForm : Form
 
         // Return a new GPSPoint with the specified values.
         return new GPSPoint(latitudeDirection, latitude, longitudeDirection, longitude);
+    }
+
+    private void numericUpDown2_ValueChanged(object sender, EventArgs e)
+    {
+
+    }
+
+    private void checkBox1_CheckedChanged(object sender, EventArgs e)
+    {
+        hashCheckBox.Checked = !hashCheckBox.Checked;
+        if(hashCheckBox.Checked)
+        {
+            maxHashSizeNumericUpDown.Enabled = true;
+            maxHashSizeNumericUpDown.Value = 1;
+            maxHashSizeNumericUpDown.Minimum = 1;
+
+        } else
+        {
+            maxHashSizeNumericUpDown.Enabled = false;
+            maxHashSizeNumericUpDown.Minimum = 0;
+            maxHashSizeNumericUpDown.Value = 0;
+        }
     }
 }

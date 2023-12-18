@@ -87,6 +87,7 @@
             FindRealtyNavButton.TabIndex = 2;
             FindRealtyNavButton.Text = "Search Realty Objects";
             FindRealtyNavButton.UseVisualStyleBackColor = true;
+            FindRealtyNavButton.Click += SwitchToAllObjects_Click;
             // 
             // FindParcelsNavButton
             // 
@@ -97,6 +98,7 @@
             FindParcelsNavButton.TabIndex = 1;
             FindParcelsNavButton.Text = "Parcels";
             FindParcelsNavButton.UseVisualStyleBackColor = true;
+            FindParcelsNavButton.Click += SwitchToParcels_Click;
             // 
             // FindPropertiesNavButton
             // 
@@ -107,6 +109,7 @@
             FindPropertiesNavButton.TabIndex = 0;
             FindPropertiesNavButton.Text = "Properties";
             FindPropertiesNavButton.UseVisualStyleBackColor = true;
+            FindPropertiesNavButton.Click += SwitchToProperties_Click;
             // 
             // FileTableLayoutPanel
             // 
@@ -131,6 +134,7 @@
             ExportButton.TabIndex = 1;
             ExportButton.Text = "EXPORT";
             ExportButton.UseVisualStyleBackColor = true;
+            ExportButton.Click += ExportButton_Click;
             // 
             // ImportButton
             // 
@@ -141,6 +145,7 @@
             ImportButton.TabIndex = 0;
             ImportButton.Text = "IMPORT";
             ImportButton.UseVisualStyleBackColor = true;
+            ImportButton.Click += ImportButton_Click;
             // 
             // generateDataButton
             // 
@@ -151,6 +156,7 @@
             generateDataButton.TabIndex = 12;
             generateDataButton.Text = "Generate New Data";
             generateDataButton.UseVisualStyleBackColor = true;
+            generateDataButton.Click += generateDataButton_Click;
             // 
             // MainPanel
             // 
